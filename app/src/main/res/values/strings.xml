@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Dynamic Assistant</string>
+
+    <!-- Start Activity -->
+    <string name="start_fab_title">Add</string>
+    <string name="search_header">Add New Nickname</string>
+    <string name="search_text">Search</string>
+    <string name="text_list_of_found_nicknames">Found nicknames:</string>
+
+    <!-- Content Description -->
+    <string name="description_start_fab">Add account</string>
 </resources>

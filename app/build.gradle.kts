@@ -2,6 +2,7 @@ plugins {
 	id("com.android.application")
 	id("org.jetbrains.kotlin.android")
 	id("com.google.devtools.ksp")
+	id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -12,8 +13,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 33
-		versionCode = 1
-		versionName = "0.1.0"
+		versionCode = 2
+		versionName = "0.1.1"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -60,7 +61,12 @@ dependencies {
 	implementation("androidx.compose.ui:ui-graphics:1.4.3")
 	implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
 	implementation("androidx.compose.material3:material3:1.1.1")
+	implementation("androidx.compose.material:material:1.4.3")
+	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	ksp("androidx.room:room-compiler:2.5.2")
+	// Hilt
+	implementation ("com.google.dagger:hilt-android:2.47")
+	ksp ("com.google.dagger:hilt-compiler:2.47")
 	// Test
 	testImplementation("junit:junit:4.13.2")
 	androidTestImplementation("androidx.test.ext:junit:1.1.5")
