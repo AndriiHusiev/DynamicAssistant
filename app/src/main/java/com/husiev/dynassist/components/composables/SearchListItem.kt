@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.husiev.dynassist.R
@@ -20,12 +21,15 @@ import com.husiev.dynassist.R
 fun SearchListItem(
 	text: String,
 	modifier: Modifier = Modifier,
+	bgColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+	textColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+	dividerColor: Color = MaterialTheme.colorScheme.outlineVariant,
 	onClick: () -> Unit = {}
 ) {
 	Column(
 		modifier = modifier
 			.fillMaxWidth()
-			.background(color = MaterialTheme.colorScheme.secondaryContainer)
+			.background(color = bgColor)
 			.clickable(onClick = onClick),
 	) {
 		Row(
@@ -38,7 +42,7 @@ fun SearchListItem(
 						horizontal = dimensionResource(R.dimen.padding_medium),
 						vertical = dimensionResource(R.dimen.padding_small)
 					),
-				color = MaterialTheme.colorScheme.onSecondaryContainer,
+				color = textColor,
 				overflow = TextOverflow.Ellipsis,
 				maxLines = 1,
 			)
@@ -47,7 +51,7 @@ fun SearchListItem(
 			modifier = Modifier.padding(
 				horizontal = dimensionResource(R.dimen.padding_medium)
 			),
-			color = MaterialTheme.colorScheme.outlineVariant
+			color = dividerColor
 		)
 	}
 }

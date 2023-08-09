@@ -1,6 +1,8 @@
 package com.husiev.dynassist.components.composables
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -68,6 +70,7 @@ fun StartContent(
 	val state = rememberLazyListState()
 	
 	Scaffold(
+		modifier = modifier,
 		topBar = {
 			StartTopAppBar(title = stringResource(R.string.app_name))
 		},
@@ -79,8 +82,10 @@ fun StartContent(
 	) { innerPadding ->
 		LazyColumn(
 			state = state,
-			modifier = modifier
-				.padding(innerPadding),
+			modifier = Modifier
+				.padding(innerPadding)
+				.fillMaxSize()
+				.background(MaterialTheme.colorScheme.secondaryContainer),
 		) {
 			items(accounts) {account ->
 				AccountListItem(
@@ -102,9 +107,9 @@ fun StartContentPreview() {
 			StartAccountInfo("load","DTS"), StartAccountInfo("vector"),
 			StartAccountInfo("asset"), StartAccountInfo("format","KFC"),
 			StartAccountInfo("MaterialThemeColorSchemeOnSecondaryContainer","BTW"),
-			StartAccountInfo("modifier"), StartAccountInfo("You"),
-			StartAccountInfo("png"), StartAccountInfo("logo"),
-			StartAccountInfo("element"), StartAccountInfo("content","NIL"),
+//			StartAccountInfo("modifier"), StartAccountInfo("You"),
+//			StartAccountInfo("png"), StartAccountInfo("logo"),
+//			StartAccountInfo("element"), StartAccountInfo("content","NIL"),
 			)
 		)
 	}

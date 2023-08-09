@@ -1,34 +1,28 @@
 package com.husiev.dynassist.components.composables
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
@@ -71,6 +65,7 @@ fun SearchContent(
 	val state = rememberLazyListState()
 	
 	Scaffold(
+		modifier = modifier,
 		topBar = {
 			SearchTopAppBar(
 				title = stringResource(R.string.search_header),
@@ -79,19 +74,32 @@ fun SearchContent(
 			)
 		},
 	) { innerPadding ->
-		SearchBar(
-			onSearch = {}
-		)
-		
-		LazyColumn(
-			state = state,
-			modifier = modifier
-				.padding(innerPadding),
+		Column(
+			modifier = Modifier
+				.padding(innerPadding)
+				.fillMaxSize()
+				.background(MaterialTheme.colorScheme.secondaryContainer),
 		) {
-			items(accounts) {
-				SearchListItem(
-					text = it
-				)
+			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+			SearchBar(
+				Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)),
+				onSearch = {}
+			)
+			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+			
+			Divider(color = MaterialTheme.colorScheme.outline)
+			LazyColumn(
+				Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)),
+				state = state,
+			) {
+				items(accounts) {
+					SearchListItem(
+						text = it,
+						bgColor = MaterialTheme.colorScheme.secondaryContainer,
+						textColor = MaterialTheme.colorScheme.onSecondaryContainer,
+						dividerColor = MaterialTheme.colorScheme.outlineVariant,
+					)
+				}
 			}
 		}
 	}
@@ -99,32 +107,6 @@ fun SearchContent(
 	BackHandler(
 		enabled = true,
 		onBack = onChangeContent
-	)
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SearchBar(onSearch: (String) -> Unit) {
-	var text by remember { mutableStateOf("") }
-	val keyboardController = LocalSoftwareKeyboardController.current
-	val focusManager = LocalFocusManager.current
-	
-	
-	TextField(
-		value = text,
-		onValueChange = { text = it },
-		label = { Text("Search") },
-		leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-		modifier = Modifier.fillMaxWidth(),
-		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-		keyboardActions = KeyboardActions(onSearch = {
-			onSearch(text)
-			// Hide the keyboard after submitting the search
-			keyboardController?.hide()
-			//or hide keyboard
-			focusManager.clearFocus()
-			
-		})
 	)
 }
 

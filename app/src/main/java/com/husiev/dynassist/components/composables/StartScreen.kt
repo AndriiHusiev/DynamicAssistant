@@ -1,7 +1,6 @@
 package com.husiev.dynassist.components.composables
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,13 +26,13 @@ fun StartScreen(
 		if (it)
 			StartContent(
 				accounts = accounts,
-				modifier = modifier.fillMaxWidth(),
+				modifier = modifier,
 				onChangeContent = { showStartScreen = false }
 			)
 		else
 			SearchContent(
 				accounts = searchResult,
-				modifier = modifier.fillMaxWidth(),
+				modifier = modifier,
 				onChangeContent = { showStartScreen = true }
 			)
 	}
