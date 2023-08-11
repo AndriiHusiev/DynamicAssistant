@@ -5,8 +5,9 @@
     <string name="start_fab_title">Add</string>
     <string name="search_header">Add New Nickname</string>
     <string name="search_text">Search</string>
-    <string name="text_list_of_found_nicknames">Found nicknames:</string>
+    <string name="search_result_not_found">Sorry, there is no content found for your search \"%1$s\"</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
+    <string name="description_clear_search_text">Clear search text</string>
 </resources>

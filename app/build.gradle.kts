@@ -3,6 +3,7 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("com.google.devtools.ksp")
 	id("com.google.dagger.hilt.android")
+	id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 android {
@@ -13,8 +14,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 33
-		versionCode = 2
-		versionName = "0.1.1"
+		versionCode = 4
+		versionName = "0.1.3"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -40,6 +41,7 @@ android {
 	}
 	buildFeatures {
 		compose = true
+		buildConfig = true
 	}
 	composeOptions {
 		kotlinCompilerExtensionVersion = "1.4.8"
@@ -67,6 +69,11 @@ dependencies {
 	// Hilt
 	implementation ("com.google.dagger:hilt-android:2.47")
 	ksp ("com.google.dagger:hilt-compiler:2.47")
+	// Retrofit
+	implementation("com.squareup.retrofit2:retrofit:2.9.0")
+	implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+	implementation("com.squareup.okhttp3:okhttp:4.11.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 	// Test
 	testImplementation("junit:junit:4.13.2")
 	androidTestImplementation("androidx.test.ext:junit:1.1.5")

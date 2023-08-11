@@ -12,11 +12,12 @@ import com.husiev.dynassist.components.StartViewModel
 
 @Composable
 fun StartScreen(
-	settingsViewModel: StartViewModel,
+	searchViewModel: StartViewModel,
 	modifier: Modifier = Modifier
 ) {
-	val accounts by settingsViewModel.accounts.collectAsStateWithLifecycle()
-	val searchResult by settingsViewModel.searchResult.collectAsStateWithLifecycle()
+	val accounts by searchViewModel.accounts.collectAsStateWithLifecycle()
+	val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
+	val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
 	var showStartScreen by rememberSaveable { mutableStateOf(true) }
 	
 	Crossfade(
@@ -31,9 +32,12 @@ fun StartScreen(
 			)
 		else
 			SearchContent(
-				accounts = searchResult,
+				searchState = searchResult,
 				modifier = modifier,
-				onChangeContent = { showStartScreen = true }
+				searchQuery = searchQuery,
+				onChangeContent = { showStartScreen = true },
+				onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
+				onSearchTriggered = searchViewModel::onSearchTriggered,
 			)
 	}
 }
