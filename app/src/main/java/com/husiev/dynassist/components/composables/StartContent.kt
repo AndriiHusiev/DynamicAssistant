@@ -1,96 +1,77 @@
 package com.husiev.dynassist.components.composables
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.utils.StartAccountInfo
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
-@Composable
-fun StartTopAppBar(
-	title: String,
-	modifier: Modifier = Modifier,
-) {
-	TopAppBar(
-		title = { Text(
-			text = title,
-			color = MaterialTheme.colorScheme.onPrimary,
-			style = MaterialTheme.typography.titleLarge
-		) },
-		modifier = modifier,
-		backgroundColor = MaterialTheme.colorScheme.primary,
-	)
-}
-
-@Composable
-fun StartFAB(
-	title: String,
-	modifier: Modifier = Modifier,
-	image: ImageVector = Icons.Default.Add,
-	onClick: () -> Unit,
-) {
-	ExtendedFloatingActionButton(
-		text = { Text(text = title) },
-		icon = {
-			Icon(
-				imageVector = image,
-				contentDescription = stringResource(R.string.description_start_fab),
-			)
-		},
-		onClick = onClick,
-		modifier = modifier,
-		expanded = title != "",
-	)
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartContent(
 	accounts: List<StartAccountInfo>,
 	modifier: Modifier = Modifier,
+	theme: ThemeConfig = ThemeConfig.FOLLOW_SYSTEM,
+	onChangeTheme: (themeConfig: ThemeConfig) -> Unit = {},
 	onChangeContent: () -> Unit = {}
 ) {
 	val state = rememberLazyListState()
+	var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
+	if (showSettingsDialog) {
+		SettingsDialog(
+			theme = theme,
+			onDismiss = { showSettingsDialog = false },
+			onChangeTheme = onChangeTheme
+		)
+	}
 	
 	Scaffold(
 		modifier = modifier,
-		topBar = {
-			StartTopAppBar(title = stringResource(R.string.app_name))
-		},
-		floatingActionButton = {
-			StartFAB(title = stringResource(R.string.start_fab_title)) {
-				onChangeContent()
-			}
-		}
+		containerColor = Color.Transparent,
+		contentColor = MaterialTheme.colorScheme.onBackground,
 	) { innerPadding ->
-		LazyColumn(
-			state = state,
-			modifier = Modifier
-				.padding(innerPadding)
-				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.secondaryContainer),
-		) {
-			items(accounts) {account ->
-				AccountListItem(
-					account = account
-				)
+		Column {
+			DATopAppBar(
+				title = stringResource(R.string.app_name),
+				navigationIcon = Icons.Filled.Search,
+				navigationIconContentDescription = stringResource(R.string.description_search_text),
+				actionIcon = Icons.Filled.Settings,
+				actionIconContentDescription = stringResource(R.string.description_settings_text),
+				onActionClick = { showSettingsDialog = true },
+				onNavigationClick = onChangeContent,
+			)
+			LazyColumn(
+				state = state,
+				modifier = Modifier
+					.padding(innerPadding)
+					.fillMaxSize()
+//				.background(MaterialTheme.colorScheme.secondaryContainer),
+			) {
+				items(accounts) {account ->
+					AccountListItem(
+						account = account
+					)
+				}
 			}
 		}
 	}

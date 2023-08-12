@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
+import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SearchListItem(
@@ -39,7 +41,7 @@ fun SearchListItem(
 				text = text,
 				modifier = Modifier
 					.padding(
-						horizontal = dimensionResource(R.dimen.padding_medium),
+						horizontal = dimensionResource(R.dimen.padding_large),
 						vertical = dimensionResource(R.dimen.padding_small)
 					),
 				color = textColor,
@@ -52,6 +54,16 @@ fun SearchListItem(
 				horizontal = dimensionResource(R.dimen.padding_medium)
 			),
 			color = dividerColor
+		)
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchListItemPreview() {
+	DynamicAssistantTheme {
+		SearchListItem(
+			text = "qwerty"
 		)
 	}
 }

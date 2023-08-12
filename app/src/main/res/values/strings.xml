@@ -2,12 +2,22 @@
     <string name="app_name">Dynamic Assistant</string>
 
     <!-- Start Activity -->
-    <string name="start_fab_title">Add</string>
-    <string name="search_header">Add New Nickname</string>
-    <string name="search_text">Search</string>
-    <string name="search_result_not_found">Sorry, there is no content found for your search \"%1$s\"</string>
+    <string name="theme_settings_title">Theme settings</string>
+    <string name="confirm_dialog_button_text">OK</string>
+    <string name="theme_config_system_default">System default</string>
+    <string name="theme_config_light">Light</string>
+    <string name="theme_config_dark">Dark</string>
+    <string name="search_nickname_text">Search nickname</string>
+    <string name="search_result_not_found">Sorry, there is no nicknames found for your search \"%1$s\".\nTry another nickname query.</string>
+    <string name="search_loading_error">Failed to load players list:"</string>
+    <string name="search_loading_failed">Something went wrong: failed loading players list."</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
     <string name="description_clear_search_text">Clear search text</string>
+    <string name="back">Back</string>
+    <string name="description_loading_content">Loading Content</string>
+    <string name="description_loading_failed">Loading Failed</string>
+    <string name="description_search_text">Search</string>
+    <string name="description_settings_text">Settings</string>
 </resources>

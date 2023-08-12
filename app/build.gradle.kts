@@ -14,8 +14,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 33
-		versionCode = 4
-		versionName = "0.1.3"
+		versionCode = 5
+		versionName = "0.1.4"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -67,7 +67,8 @@ dependencies {
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	ksp("androidx.room:room-compiler:2.5.2")
 	// Hilt
-	implementation ("com.google.dagger:hilt-android:2.47")
+	implementation("com.google.dagger:hilt-android:2.47")
+	implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 	ksp ("com.google.dagger:hilt-compiler:2.47")
 	// Retrofit
 	implementation("com.squareup.retrofit2:retrofit:2.9.0")

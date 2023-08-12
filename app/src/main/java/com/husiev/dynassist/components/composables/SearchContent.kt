@@ -1,30 +1,31 @@
 package com.husiev.dynassist.components.composables
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,43 +33,18 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
+import com.husiev.dynassist.network.AccountInfo
+import com.husiev.dynassist.network.ErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState
-
-@Composable
-fun SearchTopAppBar(
-	title: String,
-	modifier: Modifier = Modifier,
-	canNavigateBack: Boolean = false,
-	onClose: () -> Unit = {},
-) {
-	TopAppBar(
-		title = { Text(
-			text = title,
-			color = MaterialTheme.colorScheme.onPrimary,
-			style = MaterialTheme.typography.titleLarge
-		) },
-		modifier = modifier,
-		navigationIcon = {
-			if (canNavigateBack) {
-				IconButton(onClick = onClose) {
-					Icon(
-						imageVector = Icons.Filled.ArrowBack,
-						contentDescription = null,
-						tint = MaterialTheme.colorScheme.onPrimary
-					)
-				}
-			}
-		},
-		backgroundColor = MaterialTheme.colorScheme.primary,
-	)
-}
+import com.husiev.dynassist.network.StartSearchInfo
+import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SearchContent(
-	searchState: SearchResultUiState,
 	modifier: Modifier = Modifier,
+	searchState: SearchResultUiState = SearchResultUiState.EmptyQuery,
 	onChangeContent: () -> Unit = {},
 	searchQuery: String = "",
 	onSearchQueryChanged: (String) -> Unit = {},
@@ -76,67 +52,48 @@ fun SearchContent(
 ) {
 	val state = rememberLazyListState()
 	
-	Scaffold(
-		modifier = modifier,
-		topBar = {
-			SearchTopAppBar(
-				title = stringResource(R.string.search_header),
-				canNavigateBack = true,
-				onClose = onChangeContent
-			)
-		},
-	) { innerPadding ->
-		Column(
-			modifier = Modifier
-				.padding(innerPadding)
-				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.secondaryContainer),
-		) {
-			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-			SearchBar(
-				modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)),
-				searchQuery = searchQuery,
-				onSearchQueryChanged = onSearchQueryChanged,
-				onSearchTriggered = onSearchTriggered,
-			)
-			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+	Column(
+		modifier = modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.secondaryContainer),
+	) {
+		SearchBar(
+			searchQuery = searchQuery,
+			onSearchQueryChanged = onSearchQueryChanged,
+			onSearchTriggered = onSearchTriggered,
+			onBackClick = onChangeContent,
+		)
+		
+		when (searchState) {
+			SearchResultUiState.EmptyQuery -> Unit
 			
-			Divider(color = MaterialTheme.colorScheme.outline)
+			SearchResultUiState.LoadFailed -> FailScreen(modifier = Modifier.fillMaxSize())
 			
-			when (searchState) {
-				SearchResultUiState.EmptyQuery,
-				SearchResultUiState.LoadFailed -> ErrorScreen(modifier = Modifier.fillMaxSize())
-				
-				SearchResultUiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
-				
-				is SearchResultUiState.Success -> {
-					if (searchState.isEmpty()) {
-						EmptySearchResultBody(searchQuery)
-					} else if (searchState.accounts.status == "ok") {
-						LazyColumn(
-							Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)),
-							state = state,
-						) {
-							searchState.accounts.data?.let {
-								items(it.map { account -> account.nickname }) { nickname ->
-									SearchListItem(
-										text = nickname,
-										bgColor = MaterialTheme.colorScheme.secondaryContainer,
-										textColor = MaterialTheme.colorScheme.onSecondaryContainer,
-										dividerColor = MaterialTheme.colorScheme.outlineVariant,
-									)
-								}
+			SearchResultUiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
+			
+			is SearchResultUiState.Success -> {
+				if (searchState.isEmpty()) {
+					EmptySearchResultBody(searchQuery)
+				} else if (searchState.accounts.status == "ok") {
+					LazyColumn(
+						state = state,
+					) {
+						searchState.accounts.data?.let {
+							items(it.map { account -> account.nickname }) { nickname ->
+								SearchListItem(
+									text = nickname,
+									bgColor = MaterialTheme.colorScheme.secondaryContainer,
+									textColor = MaterialTheme.colorScheme.onSecondaryContainer,
+									dividerColor = MaterialTheme.colorScheme.outlineVariant,
+								)
 							}
 						}
-					} else {
-						Text(searchState.accounts.status)
-						searchState.accounts.error?.let {
-							searchState.accounts.error.field?.let { txt -> Text("field: $txt") }
-							Text("message: ${searchState.accounts.error.message}")
-							Text("code: ${searchState.accounts.error.code}")
-							Text("value: ${searchState.accounts.error.value}")
-						}
 					}
+				} else {
+					ErrorScreen(
+						errorInfo = searchState.accounts,
+						modifier = Modifier.fillMaxSize()
+					)
 				}
 			}
 		}
@@ -167,33 +124,160 @@ fun EmptySearchResultBody(
 		),
 		style = MaterialTheme.typography.bodyLarge,
 		textAlign = TextAlign.Center,
-		modifier = Modifier.padding(vertical = 24.dp),
+		modifier = Modifier.padding(
+			horizontal = dimensionResource(R.dimen.padding_extra_large),
+			vertical = dimensionResource(R.dimen.padding_large)
+		),
 	)
 }
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
+	val infiniteTransition = rememberInfiniteTransition(label = "rotation")
+	val rotationAnim by infiniteTransition.animateFloat(
+		initialValue = 0f,
+		targetValue = 360f,
+		animationSpec = infiniteRepeatable(
+			animation = tween(3000, easing = LinearEasing),
+			repeatMode = RepeatMode.Restart
+		),
+		label = "rotationAnimation"
+	)
+	
 	Image(
-		modifier = modifier.size(200.dp),
 		painter = painterResource(R.drawable.loading_img),
-		contentDescription = stringResource(R.string.app_name)//loading)
+		contentDescription = stringResource(R.string.description_loading_content),
+		contentScale = ContentScale.Crop,
+		modifier = modifier
+			.graphicsLayer {
+				rotationZ = rotationAnim
+			}
 	)
 }
 
 @Composable
-fun ErrorScreen(modifier: Modifier = Modifier) {
+fun FailScreen(modifier: Modifier = Modifier) {
 	Column(
 		modifier = modifier,
 		verticalArrangement = Arrangement.Center,
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		Image(
-			painter = painterResource(R.drawable.loading_img),//ic_connection_error),
-			contentDescription = ""
+			painter = painterResource(R.drawable.ic_connection_error),
+			contentDescription = stringResource(R.string.description_loading_failed)
 		)
 		Text(
-			text = stringResource(R.string.app_name),//loading_failed),
-			modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+			text = stringResource(R.string.search_loading_failed),
+			modifier = Modifier.padding(
+				horizontal = dimensionResource(R.dimen.padding_extra_large),
+				vertical = dimensionResource(R.dimen.padding_big)
+			),
+			textAlign = TextAlign.Center
+		)
+	}
+}
+
+@Composable
+fun ErrorScreen(
+	errorInfo: StartSearchInfo,
+	modifier: Modifier = Modifier
+) {
+	Column(
+		modifier = modifier,
+		verticalArrangement = Arrangement.Center,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Column(
+			modifier = Modifier
+				.padding(horizontal = dimensionResource(R.dimen.padding_extra_large))
+				.fillMaxWidth()
+		) {
+			Image(
+				modifier = Modifier.fillMaxWidth(),
+				painter = painterResource(R.drawable.ic_loading_error),
+				contentDescription = stringResource(R.string.description_loading_failed),
+				alignment = Alignment.Center
+			)
+			
+			Text(
+				text = stringResource(R.string.search_loading_error),
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(
+						horizontal = dimensionResource(R.dimen.padding_extra_large),
+						vertical = dimensionResource(R.dimen.padding_big)
+					),
+				textAlign = TextAlign.Center
+			)
+			Text("status: ${errorInfo.status}")
+			errorInfo.error?.let {
+				errorInfo.error.field?.let { txt -> Text("field: $txt") }
+				Text("message: ${errorInfo.error.message}")
+				Text("code: ${errorInfo.error.code}")
+				Text("value: ${errorInfo.error.value}")
+			}
+		}
+	}
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark theme")
+@Composable
+fun SearchContentPreview() {
+	DynamicAssistantTheme {
+		SearchContent(searchState = SearchResultUiState.Success(
+			StartSearchInfo(
+				status = "ok",
+				data = listOf(
+					AccountInfo(1, "qwe"),
+					AccountInfo(1, "rty"),
+					AccountInfo(1, "asd"),
+					AccountInfo(1, "fgh"),
+				)
+			)
+		))
+	}
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Composable
+fun LoadingScreenPreview() {
+	DynamicAssistantTheme {
+		LoadingScreen(modifier = Modifier.fillMaxSize())
+	}
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Composable
+fun EmptySearchResultBodyPreview() {
+	DynamicAssistantTheme {
+		EmptySearchResultBody("asdf")
+	}
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Composable
+fun FailScreenScreenPreview() {
+	DynamicAssistantTheme {
+		FailScreen(modifier = Modifier.fillMaxSize())
+	}
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Composable
+fun ErrorScreenPreview() {
+	DynamicAssistantTheme {
+		ErrorScreen(
+			StartSearchInfo(
+				status = "error",
+				error = ErrorInfo(
+					field = "search",
+					message = "NOT_ENOUGH_BEER",
+					code = 407,
+					value = "2L"
+				)
+			),
+			modifier = Modifier.fillMaxSize()
 		)
 	}
 }

@@ -7,13 +7,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.components.StartViewModel
 
 @Composable
 fun StartScreen(
-	searchViewModel: StartViewModel,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	theme: ThemeConfig = ThemeConfig.FOLLOW_SYSTEM,
+	onChangeTheme: (themeConfig: ThemeConfig) -> Unit,
+	searchViewModel: StartViewModel = hiltViewModel(),
 ) {
 	val accounts by searchViewModel.accounts.collectAsStateWithLifecycle()
 	val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
@@ -28,6 +31,8 @@ fun StartScreen(
 			StartContent(
 				accounts = accounts,
 				modifier = modifier,
+				theme = theme,
+				onChangeTheme = onChangeTheme,
 				onChangeContent = { showStartScreen = false }
 			)
 		else
