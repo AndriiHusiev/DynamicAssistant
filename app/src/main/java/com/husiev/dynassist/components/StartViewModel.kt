@@ -7,6 +7,7 @@ import com.husiev.dynassist.components.utils.StartAccountInfo
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,7 +36,7 @@ class StartViewModel @Inject constructor(
 		private set
 	
 	fun onSearchTriggered(query: String) {
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			networkRepository.getList(query).collect {
 				searchResult.value = it
 			}
