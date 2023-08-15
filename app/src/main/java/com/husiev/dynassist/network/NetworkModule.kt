@@ -1,6 +1,5 @@
-package com.husiev.dynassist.di
+package com.husiev.dynassist.network
 
-import com.husiev.dynassist.network.NetworkApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

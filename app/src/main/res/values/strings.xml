@@ -11,6 +11,9 @@
     <string name="search_result_not_found">Sorry, there is no nicknames found for your search \"%1$s\".\nTry another nickname query.</string>
     <string name="search_loading_error">Failed to load players list:"</string>
     <string name="search_loading_failed">Something went wrong: failed loading players list."</string>
+    <string name="last_update_text">last update"</string>
+    <string name="open_text">Open"</string>
+    <string name="delete_text">Delete"</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
@@ -20,4 +23,5 @@
     <string name="description_loading_failed">Loading Failed</string>
     <string name="description_search_text">Search</string>
     <string name="description_settings_text">Settings</string>
+    <string name="description_start_menu_text">Show player options</string>
 </resources>

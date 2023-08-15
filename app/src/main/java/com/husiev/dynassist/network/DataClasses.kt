@@ -1,7 +1,9 @@
 package com.husiev.dynassist.network
 
+import com.husiev.dynassist.components.utils.StartAccountInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.Date
 
 @Serializable
 data class StartSearchInfo (
@@ -29,4 +31,10 @@ data class ErrorInfo (
 	val code: Int,
 	val message: String,
 	val value: String,
+)
+
+fun AccountInfo.asExternalModel() = StartAccountInfo(
+	id = accountId,
+	nickname = nickname,
+	updateTime = Date().time.toString()
 )

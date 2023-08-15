@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.utils.StartAccountInfo
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,9 @@ fun StartContent(
 	modifier: Modifier = Modifier,
 	theme: ThemeConfig = ThemeConfig.FOLLOW_SYSTEM,
 	onChangeTheme: (themeConfig: ThemeConfig) -> Unit = {},
-	onChangeContent: () -> Unit = {}
+	onChangeContent: () -> Unit = {},
+	onSelectPlayer: (Int) -> Unit = {},
+	onDeletePlayer: (StartAccountInfo) -> Unit = {},
 ) {
 	val state = rememberLazyListState()
 	var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
@@ -65,11 +68,12 @@ fun StartContent(
 				modifier = Modifier
 					.padding(innerPadding)
 					.fillMaxSize()
-//				.background(MaterialTheme.colorScheme.secondaryContainer),
 			) {
 				items(accounts) {account ->
 					AccountListItem(
-						account = account
+						account = account,
+						onClick = onSelectPlayer,
+						onDelete = onDeletePlayer
 					)
 				}
 			}
@@ -84,13 +88,17 @@ fun StartContent(
 @Composable
 fun StartContentPreview() {
 	DynamicAssistantTheme {
+		val dateTime = Date().time.toString()
 		StartContent(listOf(
-			StartAccountInfo("load","DTS"), StartAccountInfo("vector"),
-			StartAccountInfo("asset"), StartAccountInfo("format","KFC"),
-			StartAccountInfo("MaterialThemeColorSchemeOnSecondaryContainer","BTW"),
-//			StartAccountInfo("modifier"), StartAccountInfo("You"),
-//			StartAccountInfo("png"), StartAccountInfo("logo"),
-//			StartAccountInfo("element"), StartAccountInfo("content","NIL"),
+			StartAccountInfo(1, "load","DTS", dateTime),
+			StartAccountInfo(1, "vector", updateTime = dateTime),
+			StartAccountInfo(1, "asset", updateTime = dateTime),
+			StartAccountInfo(1, "format","KFC", dateTime),
+			StartAccountInfo(
+				id = 1,
+				nickname = "MaterialThemeColorSchemeOnSecondaryContainer",
+				clan = "BTW",
+				updateTime = dateTime),
 			)
 		)
 	}

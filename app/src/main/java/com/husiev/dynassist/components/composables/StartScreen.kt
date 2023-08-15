@@ -33,7 +33,8 @@ fun StartScreen(
 				modifier = modifier,
 				theme = theme,
 				onChangeTheme = onChangeTheme,
-				onChangeContent = { showStartScreen = false }
+				onChangeContent = { showStartScreen = false },
+				onDeletePlayer = searchViewModel::deleteAccount
 			)
 		else
 			SearchContent(
@@ -43,6 +44,10 @@ fun StartScreen(
 				onChangeContent = { showStartScreen = true },
 				onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
 				onSearchTriggered = searchViewModel::onSearchTriggered,
+				onSelectNickname = { startAccountInfo ->
+					searchViewModel.addAccount(startAccountInfo)
+					showStartScreen = true
+				}
 			)
 	}
 }

@@ -9,7 +9,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,10 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.utils.StartAccountInfo
 import com.husiev.dynassist.network.AccountInfo
 import com.husiev.dynassist.network.ErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState
 import com.husiev.dynassist.network.StartSearchInfo
+import com.husiev.dynassist.network.asExternalModel
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -48,14 +49,14 @@ fun SearchContent(
 	onChangeContent: () -> Unit = {},
 	searchQuery: String = "",
 	onSearchQueryChanged: (String) -> Unit = {},
-	onSearchTriggered: (String) -> Unit = {}
+	onSearchTriggered: (String) -> Unit = {},
+	onSelectNickname: (StartAccountInfo) -> Unit = {}
 ) {
 	val state = rememberLazyListState()
 	
 	Column(
 		modifier = modifier
 			.fillMaxSize()
-			.background(MaterialTheme.colorScheme.secondaryContainer),
 	) {
 		SearchBar(
 			searchQuery = searchQuery,
@@ -79,12 +80,10 @@ fun SearchContent(
 						state = state,
 					) {
 						searchState.accounts.data?.let {
-							items(it.map { account -> account.nickname }) { nickname ->
+							items(it) { account ->
 								SearchListItem(
-									text = nickname,
-									bgColor = MaterialTheme.colorScheme.secondaryContainer,
-									textColor = MaterialTheme.colorScheme.onSecondaryContainer,
-									dividerColor = MaterialTheme.colorScheme.outlineVariant,
+									accountInfo = account.asExternalModel(),
+									onClick = onSelectNickname
 								)
 							}
 						}

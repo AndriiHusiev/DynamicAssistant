@@ -4,12 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,16 +22,27 @@ private const val SEARCH_QUERY = "searchQuery"
 class StartViewModel @Inject constructor(
 	private val networkRepository: NetworkRepository,
 	private val savedStateHandle: SavedStateHandle,
+	private val databaseRepository: DatabaseRepository
 ) : ViewModel() {
-	private val _accounts = MutableStateFlow(
-			mutableListOf(
-			StartAccountInfo("load","DTS"), StartAccountInfo("vector"),
-			StartAccountInfo("asset"), StartAccountInfo("format","KFC"),
-			StartAccountInfo("modifier"), StartAccountInfo("You"),
-			StartAccountInfo("png"), StartAccountInfo("logo"),
-			StartAccountInfo("element"), StartAccountInfo("content","NIL"),
+	
+	val accounts: StateFlow<List<StartAccountInfo>> = databaseRepository.listOfPlayers
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5_000),
+			initialValue = emptyList()
 		)
-	)
+	
+	fun addAccount(account: StartAccountInfo) {
+		viewModelScope.launch(Dispatchers.IO) {
+			databaseRepository.addPlayer(account)
+		}
+	}
+	
+	fun deleteAccount(account: StartAccountInfo) {
+		viewModelScope.launch(Dispatchers.IO) {
+			databaseRepository.deletePlayer(account)
+		}
+	}
 	
 	var searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 	
@@ -45,11 +59,5 @@ class StartViewModel @Inject constructor(
 	
 	fun onSearchQueryChanged(query: String) {
 		savedStateHandle[SEARCH_QUERY] = query
-	}
-	
-	val accounts: StateFlow<List<StartAccountInfo>> = _accounts
-	
-	fun addAccount(account: StartAccountInfo) {
-		_accounts.value.add(account)
 	}
 }

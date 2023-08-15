@@ -14,8 +14,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 33
-		versionCode = 6
-		versionName = "0.1.5"
+		versionCode = 7
+		versionName = "0.1.6"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -43,6 +43,10 @@ android {
 		compose = true
 		buildConfig = true
 	}
+	sourceSets {
+		// Adds exported schema location as test app assets.
+		getByName("androidTest").assets.srcDir("$projectDir/schemas")
+	}
 	composeOptions {
 		kotlinCompilerExtensionVersion = "1.4.8"
 	}
@@ -65,7 +69,6 @@ dependencies {
 	implementation("androidx.compose.material3:material3:1.1.1")
 	implementation("androidx.compose.material:material:1.4.3")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-	ksp("androidx.room:room-compiler:2.5.2")
 	implementation("androidx.datastore:datastore-preferences:1.0.0")
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.47")
@@ -76,6 +79,11 @@ dependencies {
 	implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 	implementation("com.squareup.okhttp3:okhttp:4.11.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+	// Room
+	implementation("androidx.room:room-runtime:2.5.2")
+	implementation("androidx.room:room-ktx:2.5.2")
+	annotationProcessor("androidx.room:room-compiler:2.5.2")
+	ksp("androidx.room:room-compiler:2.5.2")
 	// Test
 	testImplementation("junit:junit:4.13.2")
 	androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -84,4 +92,19 @@ dependencies {
 	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
 	debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
 	debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
+}
+
+class RoomSchemaArgProvider(
+	@get:InputDirectory
+	@get:PathSensitive(PathSensitivity.RELATIVE)
+	val schemaDir: File
+) : CommandLineArgumentProvider {
+	
+	override fun asArguments(): Iterable<String> {
+		 return listOf("room.schemaLocation=${schemaDir.path}")
+	}
+}
+
+ksp {
+	arg(RoomSchemaArgProvider(File(projectDir, "schemas")))
 }
