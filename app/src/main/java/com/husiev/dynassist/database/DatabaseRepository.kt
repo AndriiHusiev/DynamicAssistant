@@ -1,7 +1,7 @@
 package com.husiev.dynassist.database
 
-import com.husiev.dynassist.components.utils.StartAccountInfo
-import com.husiev.dynassist.components.utils.asEntity
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.asEntity
 import com.husiev.dynassist.database.entity.PlayersEntity
 import com.husiev.dynassist.database.entity.asExternalModel
 import kotlinx.coroutines.flow.Flow

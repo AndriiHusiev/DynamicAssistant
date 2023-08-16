@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row

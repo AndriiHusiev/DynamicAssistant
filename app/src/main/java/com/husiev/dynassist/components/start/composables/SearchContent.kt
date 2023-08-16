@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.network.AccountInfo
 import com.husiev.dynassist.network.ErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState

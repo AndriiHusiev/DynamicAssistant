@@ -1,6 +1,6 @@
 package com.husiev.dynassist.network
 
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Date

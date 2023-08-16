@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -38,8 +38,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.utils.StartAccountInfo
-import com.husiev.dynassist.components.utils.asDateTime
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.asDateTime
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import java.util.Date
 
@@ -48,7 +48,7 @@ fun AccountListItem(
 	account: StartAccountInfo,
 	modifier: Modifier = Modifier,
 	clanEmblem: Painter = painterResource(id = R.drawable.no_clan),
-	onClick: (Int) -> Unit = {},
+	onClick: (StartAccountInfo) -> Unit = {},
 	onDelete: (StartAccountInfo) -> Unit = {},
 ) {
 	var showMenu by remember { mutableStateOf(false) }
@@ -60,7 +60,7 @@ fun AccountListItem(
 				vertical = dimensionResource(R.dimen.padding_extra_small)
 			)
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
-			.clickable(onClick = { onClick(account.id) }),
+			.clickable(onClick = { onClick(account) }),
 		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
@@ -138,7 +138,7 @@ fun AccountListItem(
 					DropdownMenuItem(
 						text = { Text(stringResource(R.string.open_text)) },
 						onClick = {
-							onClick(account.id)
+							onClick(account)
 							showMenu = false
 						},
 						leadingIcon = {

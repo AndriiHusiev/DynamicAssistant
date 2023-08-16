@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components
+package com.husiev.dynassist.components.start
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,8 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.husiev.dynassist.components.composables.StartScreen
-import com.husiev.dynassist.components.composables.ThemeConfig
+import com.husiev.dynassist.components.start.composables.StartScreen
+import com.husiev.dynassist.components.start.composables.ThemeConfig
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import dagger.hilt.android.AndroidEntryPoint
 

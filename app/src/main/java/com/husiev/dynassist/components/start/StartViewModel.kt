@@ -1,9 +1,9 @@
-package com.husiev.dynassist.components
+package com.husiev.dynassist.components.start
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.SearchResultUiState
@@ -47,7 +47,6 @@ class StartViewModel @Inject constructor(
 	var searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 	
 	var searchResult = MutableStateFlow<SearchResultUiState>(SearchResultUiState.EmptyQuery)
-		private set
 	
 	fun onSearchTriggered(query: String) {
 		viewModelScope.launch(Dispatchers.IO) {

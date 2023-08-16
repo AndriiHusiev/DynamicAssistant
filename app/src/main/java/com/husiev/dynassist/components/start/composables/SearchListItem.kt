@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import java.util.Date
 

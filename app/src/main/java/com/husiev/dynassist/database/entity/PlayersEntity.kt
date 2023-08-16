@@ -3,7 +3,7 @@ package com.husiev.dynassist.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 
 @Entity(tableName = "players")
 data class PlayersEntity (

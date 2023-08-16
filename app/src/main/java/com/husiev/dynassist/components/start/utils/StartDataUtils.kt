@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.utils
+package com.husiev.dynassist.components.start.utils
 
 import android.util.Log
 import com.husiev.dynassist.database.entity.PlayersEntity

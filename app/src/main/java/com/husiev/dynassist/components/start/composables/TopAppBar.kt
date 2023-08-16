@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -15,39 +15,50 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DATopAppBar(
 	title: String,
-	navigationIcon: ImageVector,
-	navigationIconContentDescription: String?,
-	actionIcon: ImageVector,
-	actionIconContentDescription: String?,
 	modifier: Modifier = Modifier,
+	navigationIcon: ImageVector? = null,
+	actionIcon: ImageVector? = null,
+	navigationIconContentDescription: String? = null,
+	actionIconContentDescription: String? = null,
 	colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
 	onNavigationClick: () -> Unit = {},
 	onActionClick: () -> Unit = {},
 ) {
 	CenterAlignedTopAppBar(
-		title = { Text(text = title) },
+		title = {
+			Text(
+				text = title,
+				overflow = TextOverflow.Ellipsis,
+				maxLines = 1,
+			)
+		},
 		navigationIcon = {
-			IconButton(onClick = onNavigationClick) {
-				Icon(
-					imageVector = navigationIcon,
-					contentDescription = navigationIconContentDescription,
-					tint = MaterialTheme.colorScheme.onSurface,
-				)
+			if (navigationIcon != null) {
+				IconButton(onClick = onNavigationClick) {
+					Icon(
+						imageVector = navigationIcon,
+						contentDescription = navigationIconContentDescription,
+						tint = MaterialTheme.colorScheme.onSurface,
+					)
+				}
 			}
 		},
 		actions = {
-			IconButton(onClick = onActionClick) {
-				Icon(
-					imageVector = actionIcon,
-					contentDescription = actionIconContentDescription,
-					tint = MaterialTheme.colorScheme.onSurface,
-				)
+			if (actionIcon != null) {
+				IconButton(onClick = onActionClick) {
+					Icon(
+						imageVector = actionIcon,
+						contentDescription = actionIconContentDescription,
+						tint = MaterialTheme.colorScheme.onSurface,
+					)
+				}
 			}
 		},
 		colors = colors,

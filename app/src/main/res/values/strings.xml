@@ -15,6 +15,9 @@
     <string name="open_text">Open"</string>
     <string name="delete_text">Delete"</string>
 
+    <!-- Main Activity -->
+    <string name="title_activity_main">nickname</string>
+
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
     <string name="description_clear_search_text">Clear search text</string>

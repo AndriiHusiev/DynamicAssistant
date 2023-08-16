@@ -2,7 +2,7 @@ package com.husiev.dynassist.network
 
 import android.content.Context
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.utils.logDebugOut
+import com.husiev.dynassist.components.start.utils.logDebugOut
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.flow
 import java.io.IOException

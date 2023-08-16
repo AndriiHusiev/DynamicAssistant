@@ -1,8 +1,8 @@
-package com.husiev.dynassist.components
+package com.husiev.dynassist.components.start
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.husiev.dynassist.components.composables.ThemeConfig
+import com.husiev.dynassist.components.start.composables.ThemeConfig
 import com.husiev.dynassist.datastore.PreferencesRepository
 import com.husiev.dynassist.datastore.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel

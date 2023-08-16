@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.composables
+package com.husiev.dynassist.components.start.composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.utils.StartAccountInfo
+import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import java.util.Date
 
@@ -35,7 +35,7 @@ fun StartContent(
 	theme: ThemeConfig = ThemeConfig.FOLLOW_SYSTEM,
 	onChangeTheme: (themeConfig: ThemeConfig) -> Unit = {},
 	onChangeContent: () -> Unit = {},
-	onSelectPlayer: (Int) -> Unit = {},
+	onSelectPlayer: (StartAccountInfo) -> Unit = {},
 	onDeletePlayer: (StartAccountInfo) -> Unit = {},
 ) {
 	val state = rememberLazyListState()

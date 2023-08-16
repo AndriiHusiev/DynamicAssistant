@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.husiev.dynassist.components.composables.ThemeConfig
-import com.husiev.dynassist.components.utils.logDebugOut
+import com.husiev.dynassist.components.start.composables.ThemeConfig
+import com.husiev.dynassist.components.start.utils.logDebugOut
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
