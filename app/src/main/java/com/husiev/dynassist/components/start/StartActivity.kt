@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StartActivity : ComponentActivity() {
-	private val viewModel: StartPrefViewModel by viewModels()
+	private val viewModel: PrefViewModel by viewModels()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)

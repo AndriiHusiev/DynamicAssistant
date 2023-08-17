@@ -54,7 +54,7 @@ fun StartContent(
 		contentColor = MaterialTheme.colorScheme.onBackground,
 	) { innerPadding ->
 		Column {
-			DATopAppBar(
+			DaTopAppBar(
 				title = stringResource(R.string.app_name),
 				navigationIcon = Icons.Filled.Search,
 				navigationIconContentDescription = stringResource(R.string.description_search_text),

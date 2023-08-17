@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DATopAppBar(
+fun DaTopAppBar(
 	title: String,
 	modifier: Modifier = Modifier,
 	navigationIcon: ImageVector? = null,
@@ -70,7 +70,7 @@ fun DATopAppBar(
 @Preview("Top App Bar")
 @Composable
 private fun DATopAppBarPreview() {
-	DATopAppBar(
+	DaTopAppBar(
 		title = stringResource(android.R.string.untitled),
 		navigationIcon = Icons.Filled.Search,
 		navigationIconContentDescription = "Navigation icon",

@@ -17,6 +17,9 @@
 
     <!-- Main Activity -->
     <string name="title_activity_main">nickname</string>
+    <string name="navigation_item_summary_text">Summary</string>
+    <string name="navigation_item_technics_text">Technics</string>
+    <string name="navigation_item_sessions_text">Sessions</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>

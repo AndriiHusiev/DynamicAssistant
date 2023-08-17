@@ -9,23 +9,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StartPrefViewModel @Inject constructor(
+class PrefViewModel @Inject constructor(
 	private val preferencesRepository: PreferencesRepository
 ): ViewModel() {
 	
-	val uiState: StateFlow<UserPreferences> = preferencesRepository.userData.map {
-		it
-	}.stateIn(
-		scope = viewModelScope,
-		initialValue = UserPreferences(ThemeConfig.FOLLOW_SYSTEM),
-		started = SharingStarted.WhileSubscribed(5_000),
-	)
+	val uiState: StateFlow<UserPreferences> = preferencesRepository.userData
+		.stateIn(
+			scope = viewModelScope,
+			initialValue = UserPreferences(ThemeConfig.FOLLOW_SYSTEM),
+			started = SharingStarted.WhileSubscribed(5_000),
+		)
 	
 	fun setTheme(theme: ThemeConfig) {
 		viewModelScope.launch(Dispatchers.IO) {
