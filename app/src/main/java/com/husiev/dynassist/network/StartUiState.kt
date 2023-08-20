@@ -14,7 +14,7 @@ sealed interface SearchResultUiState {
 	object LoadFailed : SearchResultUiState
 	
 	data class Success(
-		val accounts: StartSearchInfo,
+		val accounts: NetworkStartSearchInfo,
 	) : SearchResultUiState {
 		fun isEmpty(): Boolean = accounts.data?.isEmpty() ?: false
 	}

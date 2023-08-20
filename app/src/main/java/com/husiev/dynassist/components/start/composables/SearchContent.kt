@@ -35,10 +35,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
-import com.husiev.dynassist.network.AccountInfo
-import com.husiev.dynassist.network.ErrorInfo
+import com.husiev.dynassist.network.NetworkAccountInfo
+import com.husiev.dynassist.network.NetworkErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState
-import com.husiev.dynassist.network.StartSearchInfo
+import com.husiev.dynassist.network.NetworkStartSearchInfo
 import com.husiev.dynassist.network.asExternalModel
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
@@ -178,7 +178,7 @@ fun FailScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun ErrorScreen(
-	errorInfo: StartSearchInfo,
+	errorInfo: NetworkStartSearchInfo,
 	modifier: Modifier = Modifier
 ) {
 	Column(
@@ -225,13 +225,13 @@ fun ErrorScreen(
 fun SearchContentPreview() {
 	DynamicAssistantTheme {
 		SearchContent(searchState = SearchResultUiState.Success(
-			StartSearchInfo(
+			NetworkStartSearchInfo(
 				status = "ok",
 				data = listOf(
-					AccountInfo(1, "qwe"),
-					AccountInfo(1, "rty"),
-					AccountInfo(1, "asd"),
-					AccountInfo(1, "fgh"),
+					NetworkAccountInfo(1, "qwe"),
+					NetworkAccountInfo(1, "rty"),
+					NetworkAccountInfo(1, "asd"),
+					NetworkAccountInfo(1, "fgh"),
 				)
 			)
 		))
@@ -267,9 +267,9 @@ fun FailScreenScreenPreview() {
 fun ErrorScreenPreview() {
 	DynamicAssistantTheme {
 		ErrorScreen(
-			StartSearchInfo(
+			NetworkStartSearchInfo(
 				status = "error",
-				error = ErrorInfo(
+				error = NetworkErrorInfo(
 					field = "search",
 					message = "NOT_ENOUGH_BEER",
 					code = 407,

@@ -31,4 +31,15 @@ class NetworkRepository @Inject constructor(
 			emit(SearchResultUiState.LoadFailed)
 		}
 	}
+	
+	suspend fun getAccountAllData(accountId: Int) = flow {
+		emit(MainNetworkState.Loading)
+		try {
+			val response = networkService.getPersonalData(appId, accountId)
+			emit(MainNetworkState.Success(response))
+		} catch (exception: IOException) {
+			logDebugOut("NetworkRepository", "Failed to get player personal data", exception)
+			emit(MainNetworkState.LoadFailed)
+		}
+	}
 }

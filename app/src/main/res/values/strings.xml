@@ -21,6 +21,48 @@
     <string name="navigation_item_technics_text">Technics</string>
     <string name="navigation_item_sessions_text">Sessions</string>
 
+    <!-- tab No. 1 - Summary -->
+    <string-array name="summary_headers_array">
+        <item>Overall results</item>
+        <item>Battle Performance</item>
+        <item>Record Score</item>
+        <item>Average Score per Battle</item>
+    </string-array>
+
+    <string-array name="overall_array">
+        <item>Battles</item>
+        <item>Victories</item>
+        <item>Defeats</item>
+        <item>Draws</item>
+        <item>Frags</item>
+        <item>Experience</item>
+        <item>Battles survived</item>
+    </string-array>
+
+    <string-array name="performance_array">
+        <item>Enemy vehicles spotted</item>
+        <item>Base capture points</item>
+        <item>Base defense points</item>
+        <item>Damage Dealt</item>
+        <item>Damage Received</item>
+    </string-array>
+
+    <string-array name="record_array">
+        <item>Maximum experience</item>
+        <item>Max. exp. achieved at</item>
+        <item>Maximum damage</item>
+        <item>Max. dmg. achieved at</item>
+        <item>Maximum frags</item>
+        <item>Max. frags achieved at</item>
+    </string-array>
+
+    <string-array name="average_array">
+        <item>Blocked damage</item>
+        <item>Assisted damage</item>
+        <item>Assisted track damage</item>
+        <item>Assisted track radio</item>
+    </string-array>
+
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
     <string name="description_clear_search_text">Clear search text</string>

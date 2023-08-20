@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1fb6eb3cfcb76257516cab1db9b62936",
+    "identityHash": "85f07b4ec3844bb4dd75bdbce6d5f6e1",
     "entities": [
       {
         "tableName": "players",
@@ -41,12 +41,326 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "personal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`account_id` INTEGER NOT NULL, `nickname` TEXT NOT NULL, `last_battle_time` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `logout_at` INTEGER NOT NULL, `clan_id` INTEGER, `global_rating` INTEGER NOT NULL, PRIMARY KEY(`account_id`), FOREIGN KEY(`account_id`) REFERENCES `players`(`account_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "accountId",
+            "columnName": "account_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nickname",
+            "columnName": "nickname",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastBattleTime",
+            "columnName": "last_battle_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logoutAt",
+            "columnName": "logout_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clanId",
+            "columnName": "clan_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "globalRating",
+            "columnName": "global_rating",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "account_id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "players",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "account_id"
+            ],
+            "referencedColumns": [
+              "account_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "statistics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `battles` INTEGER NOT NULL, `wins` INTEGER NOT NULL, `losses` INTEGER NOT NULL, `draws` INTEGER NOT NULL, `frags` INTEGER NOT NULL, `xp` INTEGER NOT NULL, `survived_battles` INTEGER NOT NULL, `spotted` INTEGER NOT NULL, `capture_points` INTEGER NOT NULL, `dropped_capture_points` INTEGER NOT NULL, `damage_dealt` INTEGER NOT NULL, `shots` INTEGER NOT NULL, `hits` INTEGER NOT NULL, `explosion_hits` INTEGER NOT NULL, `piercings` INTEGER NOT NULL, `hits_percents` INTEGER NOT NULL, `damage_received` INTEGER NOT NULL, `direct_hits_received` INTEGER NOT NULL, `explosion_hits_received` INTEGER NOT NULL, `no_damage_direct_hits_received` INTEGER NOT NULL, `piercings_received` INTEGER NOT NULL, `tanking_factor` REAL NOT NULL, `max_xp` INTEGER NOT NULL, `max_xp_tank_id` INTEGER, `max_damage` INTEGER NOT NULL, `max_damage_tank_id` INTEGER, `max_frags` INTEGER NOT NULL, `max_frags_tank_id` INTEGER, `avg_damage_blocked` REAL NOT NULL, `avg_damage_assisted` REAL NOT NULL, `avg_damage_assisted_track` REAL NOT NULL, `avg_damage_assisted_radio` REAL NOT NULL, FOREIGN KEY(`account_id`) REFERENCES `players`(`account_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accountId",
+            "columnName": "account_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "battles",
+            "columnName": "battles",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wins",
+            "columnName": "wins",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "losses",
+            "columnName": "losses",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "draws",
+            "columnName": "draws",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frags",
+            "columnName": "frags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xp",
+            "columnName": "xp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "survivedBattles",
+            "columnName": "survived_battles",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spotted",
+            "columnName": "spotted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "capturePoints",
+            "columnName": "capture_points",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "droppedCapturePoints",
+            "columnName": "dropped_capture_points",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "damageDealt",
+            "columnName": "damage_dealt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shots",
+            "columnName": "shots",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hits",
+            "columnName": "hits",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explosionHits",
+            "columnName": "explosion_hits",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "piercings",
+            "columnName": "piercings",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hitsPercents",
+            "columnName": "hits_percents",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "damageReceived",
+            "columnName": "damage_received",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "directHitsReceived",
+            "columnName": "direct_hits_received",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explosionHitsReceived",
+            "columnName": "explosion_hits_received",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noDamageDirectHitsReceived",
+            "columnName": "no_damage_direct_hits_received",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "piercingsReceived",
+            "columnName": "piercings_received",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tankingFactor",
+            "columnName": "tanking_factor",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxXp",
+            "columnName": "max_xp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxXpTankId",
+            "columnName": "max_xp_tank_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxDamage",
+            "columnName": "max_damage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxDamageTankId",
+            "columnName": "max_damage_tank_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxFrags",
+            "columnName": "max_frags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxFragsTankId",
+            "columnName": "max_frags_tank_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "avgDamageBlocked",
+            "columnName": "avg_damage_blocked",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avgDamageAssisted",
+            "columnName": "avg_damage_assisted",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avgDamageAssistedTrack",
+            "columnName": "avg_damage_assisted_track",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avgDamageAssistedRadio",
+            "columnName": "avg_damage_assisted_radio",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_statistics_account_id",
+            "unique": false,
+            "columnNames": [
+              "account_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_statistics_account_id` ON `${TABLE_NAME}` (`account_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "players",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "account_id"
+            ],
+            "referencedColumns": [
+              "account_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1fb6eb3cfcb76257516cab1db9b62936')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '85f07b4ec3844bb4dd75bdbce6d5f6e1')"
     ]
   }
 }

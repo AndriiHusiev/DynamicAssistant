@@ -14,18 +14,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.components.main.composables.MainScreen
 import com.husiev.dynassist.components.start.PrefViewModel
 import com.husiev.dynassist.components.start.composables.ThemeConfig
-import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-	private lateinit var accountInfo: StartAccountInfo
 	private val viewModel: PrefViewModel by viewModels()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		getIntentData()
 		setContent {
 			val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 			
@@ -41,17 +38,9 @@ class MainActivity : ComponentActivity() {
 					modifier = Modifier.fillMaxSize(),
 					color = MaterialTheme.colorScheme.background
 				) {
-					MainScreen(account = accountInfo)
+					MainScreen()
 				}
 			}
 		}
-	}
-	
-	private fun getIntentData() {
-		accountInfo = StartAccountInfo(
-			id = intent.getIntExtra("account_id", 0),
-			nickname = intent.getStringExtra("nickname") ?: "",
-			updateTime = ""
-		)
 	}
 }

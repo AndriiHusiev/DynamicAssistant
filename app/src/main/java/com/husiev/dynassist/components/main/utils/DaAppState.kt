@@ -39,6 +39,9 @@ class DaAppState(
 	val shouldShowBottomBar: Boolean
 		get() = true
 	
+	val shouldShowNavRail: Boolean
+		get() = !shouldShowBottomBar
+	
 	val currentDestination: NavDestination?
 		@Composable get() = navController.currentBackStackEntryAsState().value?.destination
 	

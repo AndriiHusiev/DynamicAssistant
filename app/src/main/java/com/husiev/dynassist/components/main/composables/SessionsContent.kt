@@ -38,6 +38,6 @@ fun SessionsContent(
 @Composable
 fun SessionsContentPreview() {
 	DynamicAssistantTheme {
-		SummaryContent()
+		SessionsContent()
 	}
 }

@@ -3,6 +3,7 @@ package com.husiev.dynassist.components.start
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.network.NetworkRepository
@@ -35,6 +36,10 @@ class StartViewModel @Inject constructor(
 	fun addAccount(account: StartAccountInfo) {
 		viewModelScope.launch(Dispatchers.IO) {
 			databaseRepository.addPlayer(account)
+			databaseRepository.addPersonalData(AccountPersonalData(
+				accountId = account.id,
+				nickname = account.nickname,
+			))
 		}
 	}
 	

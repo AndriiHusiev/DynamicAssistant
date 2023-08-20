@@ -20,5 +20,23 @@ interface NetworkApiService {
 		@Query("application_id") appId: String,
 		@Query("search") search: String,
 		@Query("type") type: String = "startswith",
-	): StartSearchInfo
+	): NetworkStartSearchInfo
+	
+	/**
+	 * Returns player details.
+	 * @param appId Application ID
+	 * @param accountId Player account ID
+	 * @param fields Response field. The fields are separated with commas. Embedded fields are
+	 * separated with dots. To exclude a field, use “-” in front of its name. In case the parameter
+	 * is not defined, the method returns all fields. Maximum limit: 100.
+	 */
+	@GET("account/info/")
+	suspend fun getPersonalData(
+		@Query("application_id") appId: String,
+		@Query("account_id") accountId: Int,
+		@Query("fields") fields: String = "-client_language,-private,-statistics.clan," +
+				"-statistics.stronghold_skirmish,-statistics.regular_team," +
+				"-statistics.company,-statistics.stronghold_defense,-statistics.historical," +
+				"-statistics.team,-statistics.frags,-statistics.trees_cut"
+	): NetworkAccountAllData
 }

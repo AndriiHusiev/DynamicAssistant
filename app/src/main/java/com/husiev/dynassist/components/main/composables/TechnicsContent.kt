@@ -38,6 +38,6 @@ fun TechnicsContent(
 @Composable
 fun TechnicsContentPreview() {
 	DynamicAssistantTheme {
-		SummaryContent()
+		TechnicsContent()
 	}
 }
