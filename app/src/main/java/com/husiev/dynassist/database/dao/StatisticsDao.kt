@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StatisticsDao: BaseDao<StatisticsEntity> {
 	@Query("SELECT * FROM statistics where account_id = :accountId")
-	fun loadStatisticsData(accountId: Int): Flow<StatisticsEntity?>
+	fun loadStatisticsData(accountId: Int): Flow<List<StatisticsEntity>>
 }

@@ -22,13 +22,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.ConvertedStatData
+import com.husiev.dynassist.components.main.utils.convert
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun MainCard(
 	title: String,
-	items: List<String>,
-	data: List<Int>,
+	items: Map<String, Any?>,
+	divider: Float,
 	modifier: Modifier = Modifier,
 	onClick: (String) -> Unit = {},
 ) {
@@ -45,15 +47,15 @@ fun MainCard(
 			style = MaterialTheme.typography.headlineSmall
 		)
 		
-		items.forEachIndexed { index, str ->
+		for((text, value) in items) {
 			Divider(
 				modifier = Modifier
 					.fillMaxWidth()
 					.padding(horizontal = dimensionResource(R.dimen.padding_small))
 			)
 			MainItem(
-				text = str,
-				data = data[index],
+				text = text,
+				data = value.convert(divider),
 				onClick = onClick
 			)
 		}
@@ -63,7 +65,7 @@ fun MainCard(
 @Composable
 fun MainItem(
 	text: String,
-	data: Int,
+	data: ConvertedStatData,
 	modifier: Modifier = Modifier,
 	onClick: (String) -> Unit = {},
 ) {
@@ -79,31 +81,55 @@ fun MainItem(
 			modifier = Modifier
 				.padding(
 					horizontal = dimensionResource(R.dimen.padding_medium),
-					vertical = dimensionResource(R.dimen.padding_extra_small),
+					vertical = dimensionResource(R.dimen.padding_big),
 				),
 			style = MaterialTheme.typography.bodyLarge
 		)
+		
 		Row(
-			modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small)),
-			verticalAlignment = Alignment.CenterVertically
+			modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
+			verticalAlignment = Alignment.CenterVertically,
 		) {
-			Column(
-				modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small)),
-				horizontalAlignment = Alignment.End
-			) {
+			if (data.diffValue == null) {
 				Text(
-					text = data.toString(),
-					modifier = Modifier
-						.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
-					style = MaterialTheme.typography.bodySmall
+					text = data.currentValue,
+					modifier = Modifier.padding(
+						horizontal = dimensionResource(R.dimen.padding_medium),
+						vertical = dimensionResource(R.dimen.padding_extra_small)
+					),
+					style = MaterialTheme.typography.bodyMedium
 				)
-				Text(
-					text = (data/10).toString(),
-					modifier = Modifier
-						.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
-					style = MaterialTheme.typography.bodySmall
+			} else {
+				Icon(
+					imageVector = data.imageVector,
+					contentDescription = null,
+					tint = data.color
 				)
+				
+				Column(
+					modifier = Modifier
+						.padding(vertical = dimensionResource(R.dimen.padding_extra_small)),
+					horizontalAlignment = Alignment.End
+				) {
+					Text(
+						text = data.currentValue,
+						modifier = Modifier.padding(
+							horizontal = dimensionResource(R.dimen.padding_medium),
+							vertical = dimensionResource(R.dimen.padding_extra_small)
+						),
+						style = MaterialTheme.typography.bodyMedium
+					)
+					Text(
+						text = data.diffValue,
+						modifier = Modifier.padding(
+							horizontal = dimensionResource(R.dimen.padding_medium),
+							vertical = dimensionResource(R.dimen.padding_extra_small)
+						),
+						style = MaterialTheme.typography.bodyMedium
+					)
+				}
 			}
+			
 			Icon(
 				imageVector = Icons.Filled.ChevronRight,
 				contentDescription = null
@@ -118,8 +144,15 @@ fun MainCardPreview() {
 	DynamicAssistantTheme {
 		MainCard(
 			title = "Overall results",
-			items = listOf("Battles", "Victories", "Defeats", "Draws"),
-			data = listOf(11785, 6781, 4944, 60),
+			items = mapOf<String, Any?>(
+				"Battles" to 11785,
+				"Victories" to 6781,
+				"Defeats" to 4944,
+				"Draws" to 60,
+				"Float" to 5.2f,
+				"Nullable" to null
+			),
+			divider = 11785f
 		)
 	}
 }

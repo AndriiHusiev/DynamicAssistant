@@ -6,7 +6,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.husiev.dynassist.components.main.composables.SummaryContent
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
-import com.husiev.dynassist.components.main.utils.MainRoutesData
 
 const val summaryNavigationRoute = "summary_route"
 
@@ -15,15 +14,13 @@ fun NavController.navigateToSummary(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.summaryScreen(
-	summaryHeaders: MainRoutesData,
-	summaryData: AccountStatisticsData?,
+	summaryData: List<AccountStatisticsData>,
 	onClick: (String) -> Unit
 ) {
 	composable(
 		route = summaryNavigationRoute,
 	) {
 		SummaryContent(
-			summaryHeaders = summaryHeaders,
 			summaryData = summaryData,
 			onClick = onClick
 		)

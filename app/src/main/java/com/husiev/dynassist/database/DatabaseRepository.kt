@@ -21,13 +21,14 @@ class DatabaseRepository @Inject constructor(
 	val listOfPlayers: Flow<List<StartAccountInfo>> = database.playersDao().loadPlayersList()
 		.map { it.map(PlayersEntity::asExternalModel) }
 	
-	suspend fun addPlayer(player: StartAccountInfo) {
+	suspend fun addPlayer(player: StartAccountInfo) =
 		database.playersDao().insert(player.asEntity())
-	}
 	
-	suspend fun deletePlayer(player: StartAccountInfo) {
+	suspend fun deletePlayer(player: StartAccountInfo) =
 		database.playersDao().delete(player.asEntity())
-	}
+	
+	suspend fun updateTime(updateTime: String, accountId: Int) =
+		database.playersDao().updateTime(updateTime, accountId)
 	
 	suspend fun addPersonalData(accountPersonalData: AccountPersonalData) =
 		database.personalDataDao().insert(accountPersonalData.asEntity())
@@ -43,5 +44,4 @@ class DatabaseRepository @Inject constructor(
 		database.statisticsDao().insert(stat.asEntity(accountId))
 	
 	fun getStatisticData(accountId: Int) = database.statisticsDao().loadStatisticsData(accountId)
-		.map { it?.asExternalModel() }
 }

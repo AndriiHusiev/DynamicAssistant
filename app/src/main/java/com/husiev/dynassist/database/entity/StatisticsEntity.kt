@@ -6,6 +6,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.MainRoutesData
+import kotlin.reflect.full.memberProperties
 
 @Entity(
 	tableName = "statistics",
@@ -87,37 +89,29 @@ data class StatisticsEntity(
 	val avgDamageAssistedRadio: Float,
 )
 
-fun StatisticsEntity.asExternalModel() = AccountStatisticsData(
-	battles = battles,
-	wins = wins,
-	losses = losses,
-	draws = draws,
-	frags = frags,
-	xp = xp,
-	survivedBattles = survivedBattles,
-	spotted = spotted,
-	capturePoints = capturePoints,
-	droppedCapturePoints = droppedCapturePoints,
-	damageDealt = damageDealt,
-	shots = shots,
-	hits = hits,
-	explosionHits = explosionHits,
-	piercings = piercings,
-	hitsPercents = hitsPercents,
-	damageReceived = damageReceived,
-	directHitsReceived = directHitsReceived,
-	explosionHitsReceived = explosionHitsReceived,
-	noDamageDirectHitsReceived = noDamageDirectHitsReceived,
-	piercingsReceived = piercingsReceived,
-	tankingFactor = tankingFactor,
-	maxXp = maxXp,
-	maxXpTankId = maxXpTankId,
-	maxDamage = maxDamage,
-	maxDamageTankId = maxDamageTankId,
-	maxFrags = maxFrags,
-	maxFragsTankId = maxFragsTankId,
-	avgDamageBlocked = avgDamageBlocked,
-	avgDamageAssisted = avgDamageAssisted,
-	avgDamageAssistedTrack = avgDamageAssistedTrack,
-	avgDamageAssistedRadio = avgDamageAssistedRadio,
-)
+fun StatisticsEntity.asExternalModel(mrd: MainRoutesData): AccountStatisticsData {
+	val items = mutableListOf<Map<String, Any?>>()
+
+	val allMembers = mutableMapOf<String, Any?>()
+	for (prop in StatisticsEntity::class.memberProperties)
+		allMembers[prop.name] = prop.get(this)
+
+	mrd.items.forEach { list ->
+		val map = mutableMapOf<String, Any?>()
+
+		list.forEach { item ->
+			val (key, value) = item.split(":")
+			map[value] = allMembers[key]
+		}
+
+//		for((key, value) in map)
+//			logDebugOut("StatisticsEntity", "asExternalModel", "$key = $value")
+		items.add(map)
+	}
+
+	return AccountStatisticsData(
+		headers = mrd.headers,
+		items = items,
+		divider = allMembers["battles"].toString().toFloatOrNull() ?: 1f
+	)
+}

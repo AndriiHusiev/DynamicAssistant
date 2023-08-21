@@ -25,45 +25,19 @@ fun AccountPersonalData.asEntity() = PersonalEntity(
 )
 
 data class AccountStatisticsData(
-	// Overall results
-	val battles: Int,
-	val wins: Int,
-	val losses: Int,
-	val draws: Int,
-	val frags: Int,
-	val xp: Int,
-	val survivedBattles: Int,
-	
-	// Battle Performance
-	val spotted: Int,
-	val capturePoints: Int,
-	val droppedCapturePoints: Int,
-	// Damage Dealt subsection
-	val damageDealt: Int,
-	val shots: Int,
-	val hits: Int,
-	val explosionHits: Int,
-	val piercings: Int,
-	val hitsPercents: Int,
-	// Damage Received subsection
-	val damageReceived: Int,
-	val directHitsReceived: Int,
-	val explosionHitsReceived: Int,
-	val noDamageDirectHitsReceived: Int,
-	val piercingsReceived: Int,
-	val tankingFactor: Float,
-	
-	// Record Score
-	val maxXp: Int,
-	val maxXpTankId: Int? = null,
-	val maxDamage: Int,
-	val maxDamageTankId: Int? = null,
-	val maxFrags: Int,
-	val maxFragsTankId: Int? = null,
-	
-	// Average Score per Battle
-	val avgDamageBlocked: Float,
-	val avgDamageAssisted: Float,
-	val avgDamageAssistedTrack: Float,
-	val avgDamageAssistedRadio: Float,
+	val headers: List<String>,
+	val items: List<Map<String, Any?>>,
+	val divider: Float,
+)
+
+fun asInitial(headers: List<String>) = listOf(
+	AccountStatisticsData(
+		headers = headers,
+		items = listOf(
+			mapOf("--" to "--"),
+			mapOf("--" to "--"),
+			mapOf("--" to "--"),
+			mapOf("--" to "--")),
+		divider = 1f
+	)
 )

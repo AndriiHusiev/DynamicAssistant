@@ -64,7 +64,6 @@ fun MainScreen(
 				
 				DaNavHost(
 					navController = appState.navController,
-					mainRoutesData = mainViewModel.mainRoutesData,
 					personalData = personalData,
 					accountStatisticsData = statisticData,
 				)

@@ -30,37 +30,37 @@
     </string-array>
 
     <string-array name="overall_array">
-        <item>Battles</item>
-        <item>Victories</item>
-        <item>Defeats</item>
-        <item>Draws</item>
-        <item>Frags</item>
-        <item>Experience</item>
-        <item>Battles survived</item>
+        <item>battles:Battles</item>
+        <item>wins:Victories</item>
+        <item>losses:Defeats</item>
+        <item>draws:Draws</item>
+        <item>frags:Frags</item>
+        <item>xp:Experience</item>
+        <item>survivedBattles:Battles survived</item>
     </string-array>
 
     <string-array name="performance_array">
-        <item>Enemy vehicles spotted</item>
-        <item>Base capture points</item>
-        <item>Base defense points</item>
-        <item>Damage Dealt</item>
-        <item>Damage Received</item>
+        <item>spotted:Enemy vehicles spotted</item>
+        <item>capturePoints:Base capture points</item>
+        <item>droppedCapturePoints:Base defense points</item>
+        <item>damageDealt:Damage Dealt</item>
+        <item>damageReceived:Damage Received</item>
     </string-array>
 
     <string-array name="record_array">
-        <item>Maximum experience</item>
-        <item>Max. exp. achieved at</item>
-        <item>Maximum damage</item>
-        <item>Max. dmg. achieved at</item>
-        <item>Maximum frags</item>
-        <item>Max. frags achieved at</item>
+        <item>maxXp:Maximum experience</item>
+        <item>maxXpTankId:Max. exp. achieved at</item>
+        <item>maxDamage:Maximum damage</item>
+        <item>maxDamageTankId:Max. dmg. achieved at</item>
+        <item>maxFrags:Maximum frags</item>
+        <item>maxFragsTankId:Max. frags achieved at</item>
     </string-array>
 
     <string-array name="average_array">
-        <item>Blocked damage</item>
-        <item>Assisted damage</item>
-        <item>Assisted track damage</item>
-        <item>Assisted track radio</item>
+        <item>avgDamageBlocked:Blocked damage</item>
+        <item>avgDamageAssisted:Assisted damage</item>
+        <item>avgDamageAssistedTrack:Assisted track damage</item>
+        <item>avgDamageAssistedRadio:Assisted track radio</item>
     </string-array>
 
     <!-- Content Description -->

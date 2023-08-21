@@ -12,4 +12,7 @@ interface PlayersDao: BaseDao<PlayersEntity> {
 	
 	@Query("SELECT * FROM players where account_id = :accountId")
 	fun loadPlayer(accountId: String): Flow<PlayersEntity>
+	
+	@Query("UPDATE players SET update_time = :updateTime WHERE account_id = :accountId")
+	fun updateTime(updateTime: String, accountId: Int)
 }
