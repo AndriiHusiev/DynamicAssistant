@@ -7,9 +7,10 @@ import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.MainRoutesData
 import com.husiev.dynassist.components.main.utils.Result
-import com.husiev.dynassist.components.main.utils.asInitial
+import com.husiev.dynassist.components.main.utils.asExternalModel
+import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.DatabaseRepository
-import com.husiev.dynassist.database.entity.asExternalModel
+import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.network.MainNetworkState
 import com.husiev.dynassist.network.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,13 +54,11 @@ class MainViewModel @Inject constructor(
 	
 	val statisticData: StateFlow<List<AccountStatisticsData>> =
 		databaseRepository.getStatisticData(accountId)
-			.map { list ->
-				list.map { it.asExternalModel(mrd) }
-			}
+			.map { it.asExternalModel(mrd) }
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = asInitial(mrd.headers)
+				initialValue = emptyList<StatisticsEntity>().asExternalModel(mrd)
 			)
 	
 	private fun getAccountAllData(accountId: Int) {

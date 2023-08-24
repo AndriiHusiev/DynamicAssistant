@@ -42,7 +42,7 @@ fun String.asDateTime(): String = Calendar.getInstance().let { calendar ->
 		}
 		val pattern = if (neededTime.after(calendar)) {
 			"HH:mm"
-		} else if (neededTime.before(calendar.add(DAY_OF_YEAR, -7))) {
+		} else if (neededTime.before(calendar.apply { add(DAY_OF_YEAR, -6) })) {
 			"dd.MM.yyyy"
 		} else {
 			"EEE"

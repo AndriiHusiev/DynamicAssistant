@@ -20,6 +20,10 @@
     <string name="navigation_item_summary_text">Summary</string>
     <string name="navigation_item_technics_text">Technics</string>
     <string name="navigation_item_sessions_text">Sessions</string>
+    <string name="summary_header_overall">Overall results</string>
+    <string name="summary_header_performance">Battle Performance</string>
+    <string name="summary_header_record">Record Score</string>
+    <string name="summary_header_average">Average Score per Battle</string>
 
     <!-- tab No. 1 - Summary -->
     <string-array name="summary_headers_array">
@@ -57,6 +61,34 @@
     </string-array>
 
     <string-array name="average_array">
+        <item>avgDamageBlocked:Blocked damage</item>
+        <item>avgDamageAssisted:Assisted damage</item>
+        <item>avgDamageAssistedTrack:Assisted track damage</item>
+        <item>avgDamageAssistedRadio:Assisted track radio</item>
+    </string-array>
+
+    <string-array name="summary_items_array">
+        <item>battles:Battles</item>
+        <item>wins:Victories</item>
+        <item>losses:Defeats</item>
+        <item>draws:Draws</item>
+        <item>frags:Frags</item>
+        <item>xp:Experience</item>
+        <item>survivedBattles:Battles survived</item>
+
+        <item>spotted:Enemy vehicles spotted</item>
+        <item>capturePoints:Base capture points</item>
+        <item>droppedCapturePoints:Base defense points</item>
+        <item>damageDealt:Damage Dealt</item>
+        <item>damageReceived:Damage Received</item>
+
+        <item>maxXp:Maximum experience</item>
+        <item>maxXpTankId:Max. exp. achieved at</item>
+        <item>maxDamage:Maximum damage</item>
+        <item>maxDamageTankId:Max. dmg. achieved at</item>
+        <item>maxFrags:Maximum frags</item>
+        <item>maxFragsTankId:Max. frags achieved at</item>
+
         <item>avgDamageBlocked:Blocked damage</item>
         <item>avgDamageAssisted:Assisted damage</item>
         <item>avgDamageAssistedTrack:Assisted track damage</item>

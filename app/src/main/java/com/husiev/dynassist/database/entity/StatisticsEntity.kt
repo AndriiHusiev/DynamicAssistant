@@ -5,9 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
-import com.husiev.dynassist.components.main.utils.MainRoutesData
-import kotlin.reflect.full.memberProperties
 
 @Entity(
 	tableName = "statistics",
@@ -88,30 +85,3 @@ data class StatisticsEntity(
 	@ColumnInfo(name = "avg_damage_assisted_radio")
 	val avgDamageAssistedRadio: Float,
 )
-
-fun StatisticsEntity.asExternalModel(mrd: MainRoutesData): AccountStatisticsData {
-	val items = mutableListOf<Map<String, Any?>>()
-
-	val allMembers = mutableMapOf<String, Any?>()
-	for (prop in StatisticsEntity::class.memberProperties)
-		allMembers[prop.name] = prop.get(this)
-
-	mrd.items.forEach { list ->
-		val map = mutableMapOf<String, Any?>()
-
-		list.forEach { item ->
-			val (key, value) = item.split(":")
-			map[value] = allMembers[key]
-		}
-
-//		for((key, value) in map)
-//			logDebugOut("StatisticsEntity", "asExternalModel", "$key = $value")
-		items.add(map)
-	}
-
-	return AccountStatisticsData(
-		headers = mrd.headers,
-		items = items,
-		divider = allMembers["battles"].toString().toFloatOrNull() ?: 1f
-	)
-}
