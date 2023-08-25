@@ -1,6 +1,5 @@
 package com.husiev.dynassist.components.main.composables
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +8,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
-import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SummaryContent(
@@ -34,14 +31,20 @@ fun SummaryContent(
 				onClick = onClick
 			)
 		}
+		
+		item {
+			MainCardPerformance(
+				summaryData = summaryData,
+				onClick = onClick
+			)
+		}
+		
+		item {
+			MainCardRecord(summaryData = summaryData)
+		}
+		
+		item {
+			MainCardAverage(summaryData = summaryData)
+		}
 	}
 }
-
-//@Preview(showBackground = true)
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//fun SummaryContentPreview() {
-//	DynamicAssistantTheme {
-//		SummaryContent(asInitial(listOf("Header 1","Header 2","Header 3","Header 4")))
-//	}
-//}

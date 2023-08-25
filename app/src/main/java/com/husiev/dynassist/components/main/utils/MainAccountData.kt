@@ -82,7 +82,7 @@ data class AccountStatisticsData(
 
 fun getAvg(actualParam: Any?, actualBattles: Float): Float? {
 	return when(actualParam) {
-		is Int -> actualParam.toFloat() / actualBattles
+		is Int -> if (actualParam == 0) 0f else actualParam.toFloat() / actualBattles
 		else -> null
 	}
 }
@@ -137,10 +137,10 @@ fun Float.exp(forceToInt: Boolean): Int {
 	var exp = exponent.toInt()
 	if (forceToInt) exp = 10
 	return when(exp) {
-		in 3..20 -> 0
-		1, 2, -2 -> (exp - 1).absoluteValue
+		in 3..38 -> 0
+		1, 2 -> (exp - 1).absoluteValue
 		-1, 0 -> (exp - 2).absoluteValue
-		else -> exp.absoluteValue
+		else -> 3
 	}
 }
 
