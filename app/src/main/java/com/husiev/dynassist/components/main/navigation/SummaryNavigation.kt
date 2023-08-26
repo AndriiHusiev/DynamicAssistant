@@ -14,7 +14,7 @@ fun NavController.navigateToSummary(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.summaryScreen(
-	summaryData: List<AccountStatisticsData>,
+	summaryData: Map<String, List<AccountStatisticsData>>,
 	onClick: (String) -> Unit
 ) {
 	composable(

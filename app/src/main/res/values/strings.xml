@@ -33,40 +33,6 @@
         <item>Average Score per Battle</item>
     </string-array>
 
-    <string-array name="overall_array">
-        <item>battles:Battles</item>
-        <item>wins:Victories</item>
-        <item>losses:Defeats</item>
-        <item>draws:Draws</item>
-        <item>frags:Frags</item>
-        <item>xp:Experience</item>
-        <item>survivedBattles:Battles survived</item>
-    </string-array>
-
-    <string-array name="performance_array">
-        <item>spotted:Enemy vehicles spotted</item>
-        <item>capturePoints:Base capture points</item>
-        <item>droppedCapturePoints:Base defense points</item>
-        <item>damageDealt:Damage Dealt</item>
-        <item>damageReceived:Damage Received</item>
-    </string-array>
-
-    <string-array name="record_array">
-        <item>maxXp:Maximum experience</item>
-        <item>maxXpTankId:Max. exp. achieved at</item>
-        <item>maxDamage:Maximum damage</item>
-        <item>maxDamageTankId:Max. dmg. achieved at</item>
-        <item>maxFrags:Maximum frags</item>
-        <item>maxFragsTankId:Max. frags achieved at</item>
-    </string-array>
-
-    <string-array name="average_array">
-        <item>avgDamageBlocked:Blocked damage</item>
-        <item>avgDamageAssisted:Assisted damage</item>
-        <item>avgDamageAssistedTrack:Assisted track damage</item>
-        <item>avgDamageAssistedRadio:Assisted track radio</item>
-    </string-array>
-
     <string-array name="summary_items_array">
         <item>battles:Battles</item>
         <item>wins:Victories</item>

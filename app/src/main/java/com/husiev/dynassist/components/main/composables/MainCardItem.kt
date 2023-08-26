@@ -15,36 +15,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.happyColor
-import com.husiev.dynassist.components.main.utils.happyIcon
 import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun MainCardItem(
 	title: String,
-	baseValue: Float?,
-	progressValue: Float?,
-	sessionValue: Float?,
+	mainValue: String,
+	auxValue: String?,
+	absSessionValue: String?,
+	color: Color?,
+	imageVector: ImageVector?,
 	modifier: Modifier = Modifier,
-	revertHappiness: Boolean = false,
-	suffix: String = "",
-	showArrow: Boolean = true,
-	showSecondaryData: Boolean = true,
-	showOnlyProgress: Boolean = false,
-	forceToInt: Boolean = false,
-	multiplier: Float = 100f,
 	onClick: (String) -> Unit = {},
 ) {
-	val secondaryText = progressValue.toScreen(multiplier, suffix, true, forceToInt) +
-			if (showOnlyProgress)
-				""
-			else
-				" / " + sessionValue.toScreen(multiplier, suffix)
-	
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
@@ -71,35 +60,33 @@ fun MainCardItem(
 				horizontalAlignment = Alignment.End
 			) {
 				Text(
-					text = baseValue.toScreen(multiplier, suffix, false, forceToInt),
+					text = mainValue,
 					style = MaterialTheme.typography.bodyLarge
 				)
 				
-				if (showSecondaryData) {
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						if (progressValue != null && sessionValue != null) {
-							Icon(
-								imageVector = progressValue.happyIcon(),
-								contentDescription = null,
-								tint = progressValue.happyColor(revertHappiness)
-							)
-						}
-						
-						Text(
-							text = secondaryText,
-							style = MaterialTheme.typography.bodySmall
+				Row(verticalAlignment = Alignment.CenterVertically) {
+					if (auxValue != null && imageVector != null && color != null) {
+						Icon(
+							imageVector = imageVector,
+							contentDescription = null,
+							tint = color
 						)
-						
 					}
+					
+					Text(
+						text = auxValue ?: (absSessionValue ?: "--"),
+						style = MaterialTheme.typography.bodySmall
+					)
+					
 				}
 			}
 			
-			if (showArrow) {
+//			auxValue?.let {
 				Icon(
 					imageVector = Icons.Filled.ChevronRight,
 					contentDescription = null
 				)
-			}
+//			}
 		}
 	}
 }
@@ -168,6 +155,22 @@ fun MainCardVehicle(
 
 @Preview(showBackground = true)
 @Composable
+fun MainCardItemPreview() {
+	DynamicAssistantTheme {
+		MainDivider()
+		MainCardItem(
+			title = "Battles",
+			mainValue = "254",
+			auxValue = null,
+			absSessionValue = "+5",
+			color = null,
+			imageVector = null,
+		)
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
 fun MainCardVehiclePreview() {
 	DynamicAssistantTheme {
 		MainCardVehicle(
@@ -176,74 +179,5 @@ fun MainCardVehiclePreview() {
 			auxTitle = "Max. exp. achieved at",
 			vehicleId = 251f,
 		)
-	}
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainCardPreview() {
-	DynamicAssistantTheme {
-		Column {
-			MainCardItem(
-				title = "Battles",
-				baseValue = 251f,
-				progressValue = 3f,
-				sessionValue = null,
-				multiplier = 1f,
-				forceToInt = true,
-				showOnlyProgress = true,
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Victories",
-				baseValue = 0.467f,
-				progressValue = 0.000548f,
-				sessionValue = 0.5216f,
-				suffix = "%",
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Defeats",
-				baseValue = 0.467f,
-				progressValue = 0.000548f,
-				sessionValue = 0.5216f,
-				revertHappiness = true,
-				suffix = "%",
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Experience",
-				baseValue = 789.798f,
-				progressValue = -0.00548345f,
-				sessionValue = 0.6258f,
-				multiplier = 1f,
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Frags",
-				baseValue = 1.738f,
-				progressValue = null,
-				sessionValue = null,
-				multiplier = 1f,
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Battles survived",
-				baseValue = null,
-				progressValue = null,
-				sessionValue = null,
-				suffix = "%",
-			)
-			MainDivider()
-			MainCardItem(
-				title = "Blocked damage",
-				baseValue = 288.75f,
-				progressValue = null,
-				sessionValue = null,
-				showArrow = false,
-				showSecondaryData = false,
-				multiplier = 1f,
-			)
-		}
 	}
 }

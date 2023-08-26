@@ -11,7 +11,7 @@ import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 fun DaNavHost(
 	navController: NavHostController,
 	personalData: AccountPersonalData?,
-	accountStatisticsData: List<AccountStatisticsData>,
+	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,
 ) {

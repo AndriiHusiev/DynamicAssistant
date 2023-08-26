@@ -34,10 +34,18 @@ fun AccountPersonalData.asEntity() = PersonalEntity(
 	globalRating = globalRating,
 )
 
-fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): List<AccountStatisticsData> {
-	val summaryItems = mutableListOf<AccountStatisticsData>()
+data class AccountStatisticsData(
+	val title: String,
+	val mainValue: String,
+	val auxValue: String?,
+	val absValue: String?,
+	val absSessionValue: String?,
+	val color: Color?,
+	val imageVector: ImageVector?
+)
+
+fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<AccountStatisticsData>> {
 	val allMembers = mutableListOf<Map<String, Any?>>()
-	val battles = mutableListOf<Float>()
 	
 	repeat(2) { index ->
 		val map = mutableMapOf<String, Any?>()
@@ -48,73 +56,154 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): List<AccountSta
 				null
 		}
 		allMembers.add(map)
-		battles.add(map["battles"].toString().toFloatOrNull() ?: 1f)
 	}
 	
-	mrd.item.forEach { item ->
-		val (variable, caption) = item.split(":")
-		val actParam = allMembers[0][variable]
-		val prevParam = allMembers[1][variable]
-		
-		summaryItems.add(AccountStatisticsData(
-			tag = variable,
-			title = caption,
-			avgValue = getAvg(actParam, battles[0]),
-			avgSessionValue = getAvgDiff(actParam, prevParam, battles[0], battles[1]),
-			avgSessionProgress = getAvgDiffProgress(actParam, prevParam, battles[0], battles[1]),
-			absValue = getAbs(actParam),
-			absSessionValue = getAbsDiff(actParam, prevParam),
-		))
-	}
+	val map = mutableMapOf<String, List<AccountStatisticsData>>()
 	
-	return summaryItems
+	map[mrd.headers[0]] = listOf(
+		reducedStatItem("battles", mrd.items, allMembers),
+		fullStatItem("wins", mrd.items, allMembers),
+		fullStatItem("losses", mrd.items, allMembers, revertHappiness = true),
+		fullStatItem("draws", mrd.items, allMembers, revertHappiness = true),
+		fullStatItem("frags", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("xp", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("survivedBattles", mrd.items, allMembers),
+	)
+	
+	map[mrd.headers[1]] = listOf(
+		fullStatItem("spotted", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("capturePoints", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("droppedCapturePoints", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("damageDealt", mrd.items, allMembers, multiplier = 1f),
+		fullStatItem("damageReceived", mrd.items, allMembers, multiplier = 1f, revertHappiness = true),
+	)
+	
+	map[mrd.headers[2]] = listOf(
+		reducedStatItem("maxXp", mrd.items, allMembers),
+		reducedStatItem("maxDamage", mrd.items, allMembers),
+		reducedStatItem("maxFrags", mrd.items, allMembers),
+	)
+	
+	map[mrd.headers[3]] = listOf(
+		reducedStatItem("avgDamageBlocked", mrd.items, allMembers),
+		reducedStatItem("avgDamageAssisted", mrd.items, allMembers),
+		reducedStatItem("avgDamageAssistedTrack", mrd.items, allMembers),
+		reducedStatItem("avgDamageAssistedRadio", mrd.items, allMembers),
+	)
+	
+	return map
 }
 
-data class AccountStatisticsData(
-	val tag: String,
-	val title: String,
-	val avgValue: Float?,
-	val avgSessionValue: Float?,
-	val avgSessionProgress: Float?,
-	val absValue: Float?,
-	val absSessionValue: Float?,
-)
+private fun reducedStatItem(
+	tag: String,
+	items: Map<String, String>,
+	allMembers: List<Map<String, Any?>>,
+): AccountStatisticsData {
+	val mainValue = getAbsValue(allMembers[0][tag])
+	
+	return AccountStatisticsData(
+		title = items[tag] ?: "",
+		mainValue = mainValue,
+		auxValue = null,
+		absValue = mainValue,
+		absSessionValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		color = null,
+		imageVector = null,
+	)
+}
 
-fun getAvg(actualParam: Any?, actualBattles: Float): Float? {
-	return when(actualParam) {
-		is Int -> if (actualParam == 0) 0f else actualParam.toFloat() / actualBattles
+private fun fullStatItem(
+	tag: String,
+	items: Map<String, String>,
+	allMembers: List<Map<String, Any?>>,
+	multiplier: Float = 100f,
+	revertHappiness: Boolean = false,
+): AccountStatisticsData {
+	val mainValue = getMainAvg(
+		allMembers[0][tag],
+		allMembers[0]["battles"],
+	).toScreen(
+		multiplier = multiplier,
+		suffix = if (multiplier == 100f) "%" else "",
+	)
+	
+	val auxProgressValue = getAuxProgress(
+		allMembers[0][tag],
+		allMembers[1][tag],
+		allMembers[0]["battles"],
+		allMembers[1]["battles"],
+	)
+	val auxValue = auxProgressValue.toScreen(
+		multiplier = multiplier,
+		suffix = if (multiplier == 100f) "%" else "",
+		showPlus = true
+	) + " / " + getAvgSession(
+		allMembers[0][tag],
+		allMembers[1][tag],
+		allMembers[0]["battles"],
+		allMembers[1]["battles"],
+	).toScreen(
+		multiplier = multiplier,
+		suffix = if (multiplier == 100f) "%" else "",
+	)
+	
+	return AccountStatisticsData(
+		title = items[tag] ?: "",
+		mainValue = mainValue,
+		auxValue = auxValue,
+		absValue = getAbsValue(allMembers[0][tag]),
+		absSessionValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		color = auxProgressValue.happyColor(revertHappiness),
+		imageVector = auxProgressValue.happyIcon(),
+	)
+}
+
+fun getMainAvg(actualParam: Any?, actualBattles: Any?): Float? {
+	val param = actualParam.toString().toFloatOrNull() ?: 1f
+	return when(val battles = actualBattles.toString().toFloatOrNull()) {
+		is Float -> if (battles == 0f) 0f else param / battles
 		else -> null
 	}
 }
 
-fun getAvgDiff(actualParam: Any?, prevParam: Any?, actualBattles: Float, prevBattles: Float): Float? {
+fun getAuxProgress(actualParam: Any?, prevParam: Any?, actualBattles: Any?, prevBattles: Any?): Float? {
 	return if (actualParam is Int && prevParam is Int) {
-		val part1 = actualParam - prevParam
-		val part2 = actualBattles - prevBattles
-		part1.toFloat() / part2
-	} else null
-}
-
-fun getAvgDiffProgress(actualParam: Any?, prevParam: Any?, actualBattles: Float, prevBattles: Float): Float? {
-	return if (actualParam is Int && prevParam is Int) {
-		val part1 = actualParam.toFloat() / actualBattles
-		val part2 = prevParam.toFloat() / prevBattles
+		val part1 = actualParam.toFloat() / (actualBattles.toString().toFloatOrNull() ?: 1f)
+		val part2 = prevParam.toFloat() / (prevBattles.toString().toFloatOrNull() ?: 1f)
 		part1 - part2
 	} else null
 }
 
-fun getAbs(param: Any?): Float? {
+fun getAvgSession(actualParam: Any?, prevParam: Any?, actualBattles: Any?, prevBattles: Any?): Float? {
+	return if (actualParam is Int && prevParam is Int) {
+		val part1 = actualParam - prevParam
+		val part2 = (actualBattles.toString().toFloatOrNull() ?: 2f) -
+				(prevBattles.toString().toFloatOrNull() ?: 1f)
+		part1.toFloat() / part2
+	} else null
+}
+
+fun getAbsValue(param: Any?): String {
 	return when(param) {
-		is Int -> param.toFloat()
-		is Float -> param
-		else -> null
+		null -> NO_DATA
+		else -> param.toString()
 	}
 }
 
-fun getAbsDiff(actualParam: Any?, prevParam: Any?): Float? {
+fun getAbsSessionDiff(actualParam: Any?, prevParam: Any?): String {
 	return if (actualParam is Int && prevParam is Int) {
-		(actualParam - prevParam).toFloat()
-	} else null
+		val calc = (actualParam - prevParam).toFloat()
+		calc.toScreen(
+			multiplier = 1f,
+			showPlus = true,
+			forceToInt = true
+		)
+	} else if (actualParam is Float && prevParam is Float) {
+		(actualParam - prevParam).toScreen(
+			multiplier = 1f,
+			showPlus = true
+		)
+	} else NO_DATA
 }
 
 fun Float?.toScreen(
@@ -133,19 +222,21 @@ fun Float?.toScreen(
 fun Float.format(forceToInt: Boolean): String = "%.${this.exp(forceToInt)}f"
 
 fun Float.exp(forceToInt: Boolean): Int {
-	val (mantissa, exponent) = String.format(null, "%e", this).split("e")
+	val (_, exponent) = String.format(null, "%e", this).split("e")
 	var exp = exponent.toInt()
 	if (forceToInt) exp = 10
 	return when(exp) {
 		in 3..38 -> 0
-		1, 2 -> (exp - 1).absoluteValue
+		1, 2 -> 1//(exp - 1).absoluteValue
 		-1, 0 -> (exp - 2).absoluteValue
 		else -> 3
 	}
 }
 
-fun Float?.happyIcon(): ImageVector {
-	return if (this == null || this == 0f)
+fun Float?.happyIcon(): ImageVector? {
+	return if (this == null)
+		null
+	else if (this == 0f)
 		Icons.Filled.DragHandle
 	else if (this < 0)
 		Icons.Filled.ArrowDropDown
@@ -153,14 +244,15 @@ fun Float?.happyIcon(): ImageVector {
 		Icons.Filled.ArrowDropUp
 }
 
-fun Float?.happyColor(revert: Boolean): Color {
-	return if (this == null || this == 0f)
+fun Float?.happyColor(revert: Boolean): Color? {
+	return if (this == null)
+		null
+	else if (this == 0f)
 		Color.Gray
 	else if ((this < 0) == revert)
 		Color(0xFF009688)
 	else
 		Color(0xFFE91E63)
 }
-
 
 private const val NO_DATA = "--"

@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
 				initialValue = null
 			)
 	
-	val statisticData: StateFlow<List<AccountStatisticsData>> =
+	val statisticData: StateFlow<Map<String, List<AccountStatisticsData>>> =
 		databaseRepository.getStatisticData(accountId)
 			.map { it.asExternalModel(mrd) }
 			.stateIn(

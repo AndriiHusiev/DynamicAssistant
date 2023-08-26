@@ -15,7 +15,21 @@ import javax.inject.Inject
 class MainRoutesData @Inject constructor(
 	@ApplicationContext private val context: Context,
 ) {
-	val item = context.resources.getStringArray(R.array.summary_items_array).toList()
+	val headers = context.resources.getStringArray(R.array.summary_headers_array).toList()
+	val items = converterToMap(
+		context.resources.getStringArray(R.array.summary_items_array).toList()
+	)
+}
+
+private fun converterToMap(items: List<String>): Map<String, String> {
+	val map = mutableMapOf<String, String>()
+	
+	items.forEach {
+		val (variable, caption) = it.split(":")
+		map[variable] = caption
+	}
+	
+	return map
 }
 
 //@InstallIn(ActivityComponent::class)

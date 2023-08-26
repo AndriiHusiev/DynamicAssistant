@@ -13,7 +13,7 @@ import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 
 @Composable
 fun SummaryContent(
-	summaryData: List<AccountStatisticsData>,
+	summaryData: Map<String, List<AccountStatisticsData>>,
 	modifier: Modifier = Modifier,
 	onClick: (String) -> Unit = {}
 ) {
@@ -25,26 +25,14 @@ fun SummaryContent(
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
-		item {
-			MainCardOverall(
-				summaryData = summaryData,
-				onClick = onClick
-			)
-		}
-		
-		item {
-			MainCardPerformance(
-				summaryData = summaryData,
-				onClick = onClick
-			)
-		}
-		
-		item {
-			MainCardRecord(summaryData = summaryData)
-		}
-		
-		item {
-			MainCardAverage(summaryData = summaryData)
+		summaryData.forEach { item ->
+			item {
+				MainSummaryCard(
+					header = item.key,
+					summaryData = item.value,
+					onClick = onClick
+				)
+			}
 		}
 	}
 }
