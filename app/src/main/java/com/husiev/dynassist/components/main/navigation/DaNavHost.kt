@@ -28,5 +28,9 @@ fun DaNavHost(
 		technicsScreen(onClick = {})
 		
 		sessionsScreen(onClick = {})
+		
+		detailsScreen(
+			detailsData = personalData,
+		)
 	}
 }

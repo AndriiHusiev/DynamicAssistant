@@ -6,16 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.MainRoutesData
-import com.husiev.dynassist.components.main.utils.Result
 import com.husiev.dynassist.components.main.utils.asExternalModel
-import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.network.MainNetworkState
 import com.husiev.dynassist.network.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -39,10 +36,8 @@ class MainViewModel @Inject constructor(
 	val nickname: String = savedStateHandle.get<String>(NICKNAME) ?: ""
 	
 	init {
-		getAccountAllData(accountId)
+		getAccountAllData()
 	}
-	
-	var queryResult = MutableStateFlow<Result<String>>(Result.Loading)
 	
 	val personalData: StateFlow<AccountPersonalData?> =
 		databaseRepository.getPersonalData(accountId)
@@ -61,12 +56,12 @@ class MainViewModel @Inject constructor(
 				initialValue = emptyList<StatisticsEntity>().asExternalModel(mrd)
 			)
 	
-	private fun getAccountAllData(accountId: Int) {
+	fun getAccountAllData() {
 		viewModelScope.launch(Dispatchers.IO) {
 			networkRepository.getAccountAllData(accountId).collect {
-				queryResult.value = when(it) {
-					is MainNetworkState.Loading -> Result.Loading
-					is MainNetworkState.LoadFailed -> Result.Error()
+				when(it) {
+					is MainNetworkState.Loading,
+					is MainNetworkState.LoadFailed -> Unit
 					
 					is MainNetworkState.Success -> {
 						it.all.data?.get(accountId.toString())?.let { networkData ->
@@ -78,7 +73,6 @@ class MainViewModel @Inject constructor(
 								databaseRepository.updateTime(Date().time.toString(), accountId)
 							}
 						}
-						Result.Success(it.all.status)
 					}
 				}
 			}

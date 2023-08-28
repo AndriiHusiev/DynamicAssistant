@@ -2,8 +2,10 @@ package com.husiev.dynassist.network
 
 import android.content.Context
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.Result
 import com.husiev.dynassist.components.start.utils.logDebugOut
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
@@ -34,12 +36,17 @@ class NetworkRepository @Inject constructor(
 	
 	suspend fun getAccountAllData(accountId: Int) = flow {
 		emit(MainNetworkState.Loading)
+		noConnection.emit(Result.Loading)
 		try {
 			val response = networkService.getPersonalData(appId, accountId)
+			noConnection.emit(Result.Success(response.status))
 			emit(MainNetworkState.Success(response))
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get player personal data", exception)
 			emit(MainNetworkState.LoadFailed)
+			noConnection.emit(Result.Error(exception))
 		}
 	}
+	
+	val noConnection = MutableStateFlow<Result<String>>(Result.StandBy)
 }

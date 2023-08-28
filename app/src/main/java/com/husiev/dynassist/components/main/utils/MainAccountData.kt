@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity
+import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.reflect.full.memberProperties
@@ -15,10 +16,10 @@ import kotlin.reflect.full.memberProperties
 data class AccountPersonalData(
 	val accountId: Int,
 	val nickname: String,
-	val lastBattleTime: Int = 0,
-	val createdAt: Int = 0,
-	val updatedAt: Int = 0,
-	val logoutAt: Int = 0,
+	val lastBattleTime: String = NO_DATA,
+	val createdAt: String = NO_DATA,
+	val updatedAt: String = NO_DATA,
+	val logoutAt: String = NO_DATA,
 	val clanId: Int? = null,
 	val globalRating: Int = 0,
 )
@@ -26,13 +27,22 @@ data class AccountPersonalData(
 fun AccountPersonalData.asEntity() = PersonalEntity(
 	accountId = accountId,
 	nickname = nickname,
-	lastBattleTime = lastBattleTime,
-	createdAt = createdAt,
-	updatedAt = updatedAt,
-	logoutAt = logoutAt,
+	lastBattleTime = lastBattleTime.asInt(),
+	createdAt = createdAt.asInt(),
+	updatedAt = updatedAt.asInt(),
+	logoutAt = logoutAt.asInt(),
 	clanId = clanId,
 	globalRating = globalRating,
 )
+
+fun String.asInt(): Int {
+	if (this == NO_DATA) return 0
+	val formatter = SimpleDateFormat(DETAILS_PATTERN, Locale.getDefault())
+	val date = formatter.parse(this)
+	return (date?.time?.div(1000))?.toInt() ?: 0
+}
+
+const val DETAILS_PATTERN = "EEE, dd MMM yyy, HH:mm:ss"
 
 data class AccountStatisticsData(
 	val title: String,
@@ -255,4 +265,4 @@ fun Float?.happyColor(revert: Boolean): Color? {
 		Color(0xFFE91E63)
 }
 
-private const val NO_DATA = "--"
+const val NO_DATA = "--"

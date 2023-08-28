@@ -1,5 +1,6 @@
 package com.husiev.dynassist.components.main.composables
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,10 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -154,18 +157,33 @@ fun MainCardVehicle(
 }
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MainCardItemPreview() {
 	DynamicAssistantTheme {
-		MainDivider()
-		MainCardItem(
-			title = "Battles",
-			mainValue = "254",
-			auxValue = null,
-			absSessionValue = "+5",
-			color = null,
-			imageVector = null,
-		)
+		Surface(
+			color = MaterialTheme.colorScheme.background
+		) {
+			Column {
+				MainCardItem(
+					title = "Battles",
+					mainValue = "254",
+					auxValue = null,
+					absSessionValue = "+5",
+					color = null,
+					imageVector = null,
+				)
+				MainDivider()
+				MainCardItem(
+					title = "Battles",
+					mainValue = "56.3%",
+					auxValue = "+0.024% / 58.2%",
+					absSessionValue = "+5",
+					color = Color.Green,
+					imageVector = Icons.Filled.ArrowDropUp,
+				)
+			}
+		}
 	}
 }
 

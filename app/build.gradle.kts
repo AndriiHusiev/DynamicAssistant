@@ -14,8 +14,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 34
-		versionCode = 14
-		versionName = "0.2.6"
+		versionCode = 15
+		versionName = "0.3.0"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -66,6 +66,7 @@ dependencies {
 	implementation("androidx.compose.ui:ui:1.5.0")
 	implementation("androidx.compose.ui:ui-graphics:1.5.0")
 	implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
+	implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
 	implementation("androidx.compose.material3:material3:1.1.1")
 	implementation("androidx.compose.material:material:1.5.0")
 	implementation("androidx.compose.material:material-icons-core:1.5.0")
@@ -74,8 +75,8 @@ dependencies {
 	implementation("androidx.compose.material:material-icons-extended:1.5.0")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	implementation("androidx.datastore:datastore-preferences:1.0.0")
-	implementation("androidx.navigation:navigation-compose:2.7.0")
-	implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+	implementation("androidx.navigation:navigation-compose:2.7.1")
+	implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.47")
 	implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
@@ -86,7 +87,7 @@ dependencies {
 	implementation("com.squareup.retrofit2:retrofit:2.9.0")
 	implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 	implementation("com.squareup.okhttp3:okhttp:4.11.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 	// Room
 	implementation("androidx.room:room-runtime:2.5.2")
 	implementation("androidx.room:room-ktx:2.5.2")

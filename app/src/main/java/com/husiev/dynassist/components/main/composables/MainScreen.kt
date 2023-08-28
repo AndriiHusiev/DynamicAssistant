@@ -1,39 +1,73 @@
 package com.husiev.dynassist.components.main.composables
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.MainViewModel
 import com.husiev.dynassist.components.main.navigation.DaNavHost
 import com.husiev.dynassist.components.main.utils.DaAppState
+import com.husiev.dynassist.components.main.utils.Result
 import com.husiev.dynassist.components.main.utils.rememberDaAppState
-import com.husiev.dynassist.components.start.composables.DaTopAppBar
+import com.husiev.dynassist.network.NetworkRepository
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+	windowSizeClass: WindowSizeClass,
+	networkRepository: NetworkRepository,
 	modifier: Modifier = Modifier,
 	mainViewModel: MainViewModel = hiltViewModel(),
-	appState: DaAppState = rememberDaAppState(),
+	appState: DaAppState = rememberDaAppState(
+		windowSizeClass = windowSizeClass,
+		networkRepository = networkRepository,
+	),
 ) {
 	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
-	val queryResult by mainViewModel.queryResult.collectAsStateWithLifecycle()
+	val queryResult by appState.noConnection.collectAsStateWithLifecycle()
+	val snackbarHostState = remember { SnackbarHostState() }
+	
+	val noConnectionMessage = stringResource(R.string.no_connection)
+	val retryLabel = stringResource(R.string.retry)
+	LaunchedEffect(queryResult) {
+		if (queryResult is Result.Error) {
+			if (snackbarHostState.showSnackbar(
+					message = noConnectionMessage,
+					actionLabel = retryLabel,
+					withDismissAction = true,
+					duration = SnackbarDuration.Indefinite
+			) == SnackbarResult.ActionPerformed) {
+				mainViewModel.getAccountAllData()
+			}
+			appState.closeSnackbar()
+		}
+	}
 	
 	Scaffold(
 		modifier = modifier,
 		containerColor = Color.Transparent,
 		contentColor = MaterialTheme.colorScheme.onBackground,
+		snackbarHost = { SnackbarHost(snackbarHostState) },
 		bottomBar = {
 			if (appState.shouldShowBottomBar) {
 				MainBottomBar(
@@ -45,9 +79,7 @@ fun MainScreen(
 		},
 	) { innerPadding ->
 		Row(
-			Modifier
-				.fillMaxSize()
-				.padding(innerPadding),
+			Modifier.padding(innerPadding),
 		) {
 			if (appState.shouldShowNavRail) {
 				MainNavigationRail(
@@ -58,15 +90,22 @@ fun MainScreen(
 			}
 			
 			Column(Modifier.fillMaxSize()) {
-				DaTopAppBar(
-					title = mainViewModel.nickname,
+				MainTopBar(
+					mainViewModel = mainViewModel,
+					appState = appState,
 				)
 				
-				DaNavHost(
-					navController = appState.navController,
-					personalData = personalData,
-					accountStatisticsData = statisticData,
-				)
+				Box {
+					DaNavHost(
+						navController = appState.navController,
+						personalData = personalData,
+						accountStatisticsData = statisticData,
+					)
+					
+					if (queryResult is Result.Loading) {
+						LinearProgressIndicator(modifier = modifier.fillMaxWidth())
+					}
+				}
 			}
 		}
 	}

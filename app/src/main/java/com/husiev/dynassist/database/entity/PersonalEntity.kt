@@ -5,6 +5,10 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
+import com.husiev.dynassist.components.main.utils.DETAILS_PATTERN
+import com.husiev.dynassist.components.main.utils.NO_DATA
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Entity(
 	tableName = "personal",
@@ -36,10 +40,16 @@ data class PersonalEntity(
 fun PersonalEntity.asExternalModel() = AccountPersonalData(
 	accountId = accountId,
 	nickname = nickname,
-	lastBattleTime = lastBattleTime,
-	createdAt = createdAt,
-	updatedAt = updatedAt,
-	logoutAt = logoutAt,
+	lastBattleTime = lastBattleTime.asStringDate(),
+	createdAt = createdAt.asStringDate(),
+	updatedAt = updatedAt.asStringDate(),
+	logoutAt = logoutAt.asStringDate(),
 	clanId = clanId,
 	globalRating = globalRating,
 )
+
+fun Int.asStringDate(): String {
+	if (this == 0) return NO_DATA
+	val formatter = SimpleDateFormat(DETAILS_PATTERN, Locale.getDefault())
+	return formatter.format(this * 1000L)
+}

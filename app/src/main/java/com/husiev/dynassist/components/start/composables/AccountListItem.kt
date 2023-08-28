@@ -21,6 +21,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -168,9 +169,18 @@ fun AccountListItem(
 @Composable
 fun AccountListItemPreview() {
 	DynamicAssistantTheme {
-		val dateTime = Date().time.toString()
-		AccountListItem(
-			StartAccountInfo(1, "eater","KFC", dateTime),
-		)
+		Surface(
+			color = MaterialTheme.colorScheme.background
+		) {
+			Column {
+				val dateTime = Date().time.toString()
+				AccountListItem(
+					StartAccountInfo(1, "eater", "KFC", dateTime),
+				)
+				AccountListItem(
+					StartAccountInfo(1, "player", "NPE", dateTime),
+				)
+			}
+		}
 	}
 }

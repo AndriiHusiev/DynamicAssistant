@@ -24,6 +24,8 @@
     <string name="summary_header_performance">Battle Performance</string>
     <string name="summary_header_record">Record Score</string>
     <string name="summary_header_average">Average Score per Battle</string>
+    <string name="no_connection">Can’t load data from server</string>
+    <string name="retry">Retry</string>
 
     <!-- tab No. 1 - Summary -->
     <string-array name="summary_headers_array">
@@ -61,6 +63,13 @@
         <item>avgDamageAssistedRadio:Assisted track radio</item>
     </string-array>
 
+    <!-- tab No. 4 - Details -->
+    <string name="title_details">Details</string>
+    <string name="last_battle_time">Last battle time</string>
+    <string name="created_at">Created at</string>
+    <string name="updated_at">Updated at</string>
+    <string name="logout_at">Logout at</string>
+
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
     <string name="description_clear_search_text">Clear search text</string>
@@ -70,4 +79,6 @@
     <string name="description_search_text">Search</string>
     <string name="description_settings_text">Settings</string>
     <string name="description_start_menu_text">Show player options</string>
+    <string name="description_account_details">Account Details</string>
+    <string name="description_refresh">Refresh</string>
 </resources>
