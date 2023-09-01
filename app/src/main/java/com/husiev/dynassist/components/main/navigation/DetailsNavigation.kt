@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.husiev.dynassist.components.main.composables.DetailsContent
+import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 
 const val detailsNavigationRoute = "details_route"
@@ -15,12 +16,14 @@ fun NavController.navigateToDetails(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.detailsScreen(
 	detailsData: AccountPersonalData?,
+	clanData: AccountClanInfo?,
 ) {
 	composable(
 		route = detailsNavigationRoute,
 	) {
 		DetailsContent(
 			detailsData = detailsData,
+			clanData = clanData,
 		)
 	}
 }

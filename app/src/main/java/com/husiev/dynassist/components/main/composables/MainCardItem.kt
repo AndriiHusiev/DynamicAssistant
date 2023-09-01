@@ -99,7 +99,8 @@ fun MainDivider() {
 	Divider(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(horizontal = dimensionResource(R.dimen.padding_small))
+			.padding(horizontal = dimensionResource(R.dimen.padding_small)),
+		color = MaterialTheme.colorScheme.outline
 	)
 }
 
@@ -175,7 +176,7 @@ fun MainCardItemPreview() {
 				)
 				MainDivider()
 				MainCardItem(
-					title = "Battles",
+					title = "Victories",
 					mainValue = "56.3%",
 					auxValue = "+0.024% / 58.2%",
 					absSessionValue = "+5",

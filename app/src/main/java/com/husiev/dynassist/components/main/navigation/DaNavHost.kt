@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 
@@ -12,6 +13,7 @@ fun DaNavHost(
 	navController: NavHostController,
 	personalData: AccountPersonalData?,
 	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
+	clanData: AccountClanInfo?,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,
 ) {
@@ -31,6 +33,7 @@ fun DaNavHost(
 		
 		detailsScreen(
 			detailsData = personalData,
+			clanData = clanData,
 		)
 	}
 }

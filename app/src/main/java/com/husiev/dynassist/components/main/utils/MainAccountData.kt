@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.absoluteValue
@@ -42,7 +43,16 @@ fun String.asInt(): Int {
 	return (date?.time?.div(1000))?.toInt() ?: 0
 }
 
+fun Int?.bigToString(): String {
+	return this?.let {
+		DecimalFormat.getIntegerInstance(Locale.getDefault())
+			.apply { isGroupingUsed = true }
+			.format(this)
+	} ?: NO_DATA
+}
+
 const val DETAILS_PATTERN = "EEE, dd MMM yyy, HH:mm:ss"
+const val SHORT_PATTERN = "dd MMM yyy"
 
 data class AccountStatisticsData(
 	val title: String,

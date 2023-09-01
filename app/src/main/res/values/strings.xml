@@ -65,10 +65,21 @@
 
     <!-- tab No. 4 - Details -->
     <string name="title_details">Details</string>
+    <string name="global_rating">Global Rating</string>
+    <string name="better_than">"You better than %.1f%% players"</string>
+    <string name="events_time">Events time</string>
     <string name="last_battle_time">Last battle time</string>
     <string name="created_at">Created at</string>
     <string name="updated_at">Updated at</string>
     <string name="logout_at">Logout at</string>
+    <string name="clan_info">Clan Info</string>
+    <string name="clan_no_data">Sorry, but there is no clan data</string>
+    <string name="clan_no_clan">Sorry, but first you need to join a clan</string>
+    <string name="no_clan">You are not in a clan</string>
+    <string name="clan_name">Clan name</string>
+    <string name="clan_tag">Clan tag</string>
+    <string name="joined_at">Joined to the clan at</string>
+    <string name="role">Role in the clan</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>

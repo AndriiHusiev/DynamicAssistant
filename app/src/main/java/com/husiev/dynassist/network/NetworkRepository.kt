@@ -34,19 +34,26 @@ class NetworkRepository @Inject constructor(
 		}
 	}
 	
-	suspend fun getAccountAllData(accountId: Int) = flow {
-		emit(MainNetworkState.Loading)
-		noConnection.emit(Result.Loading)
+	suspend fun getAccountAllData(accountId: Int) =
 		try {
-			val response = networkService.getPersonalData(appId, accountId)
-			noConnection.emit(Result.Success(response.status))
-			emit(MainNetworkState.Success(response))
+			noConnection.emit(Result.Loading)
+			networkService.getPersonalData(appId, accountId)
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get player personal data", exception)
-			emit(MainNetworkState.LoadFailed)
 			noConnection.emit(Result.Error(exception))
+			null
 		}
-	}
+	
+	suspend fun getClanShortInfo(accountId: Int) =
+		try {
+			val response = networkService.getClanMemberInfo(appId, accountId)
+			noConnection.emit(Result.Success(response.status))
+			response
+		} catch (exception: IOException) {
+			logDebugOut("NetworkRepository", "Failed to get player clan data", exception)
+			noConnection.emit(Result.Error(exception))
+			null
+		}
 	
 	val noConnection = MutableStateFlow<Result<String>>(Result.StandBy)
 }

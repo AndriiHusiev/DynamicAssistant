@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.database.DatabaseRepository
+import com.husiev.dynassist.database.entity.ClanEntity
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,7 @@ class StartViewModel @Inject constructor(
 	fun addAccount(account: StartAccountInfo) {
 		viewModelScope.launch(Dispatchers.IO) {
 			databaseRepository.addPlayer(account)
+			databaseRepository.addPlayerClanInfo(ClanEntity(account.id))
 			databaseRepository.addPersonalData(AccountPersonalData(
 				accountId = account.id,
 				nickname = account.nickname,

@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.DETAILS_PATTERN
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import com.husiev.dynassist.components.main.utils.SHORT_PATTERN
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -48,8 +49,12 @@ fun PersonalEntity.asExternalModel() = AccountPersonalData(
 	globalRating = globalRating,
 )
 
-fun Int.asStringDate(): String {
+fun Int.asStringDate(type: String = "full"): String {
 	if (this == 0) return NO_DATA
-	val formatter = SimpleDateFormat(DETAILS_PATTERN, Locale.getDefault())
+	val pattern = when(type) {
+		"full" -> DETAILS_PATTERN
+		else -> SHORT_PATTERN
+	}
+	val formatter = SimpleDateFormat(pattern, Locale.getDefault())
 	return formatter.format(this * 1000L)
 }

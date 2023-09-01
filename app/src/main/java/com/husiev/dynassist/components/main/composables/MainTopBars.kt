@@ -25,7 +25,6 @@ fun MainTopBar(
 	appState: DaAppState,
 	modifier: Modifier = Modifier,
 ) {
-	var title = ""
 	var navigationIconContentDescription: String? = null
 	var actionIconContentDescription: String? = null
 	var navigationIcon: ImageVector? = null
@@ -38,7 +37,6 @@ fun MainTopBar(
 			summaryNavigationRoute,
 			sessionsNavigationRoute,
 			technicsNavigationRoute -> {
-				title = mainViewModel.nickname
 				navigationIcon = Icons.Outlined.Info
 				actionIcon = Icons.Filled.Refresh
 				navigationIconContentDescription = stringResource(R.string.description_account_details)
@@ -53,7 +51,6 @@ fun MainTopBar(
 			}
 			
 			detailsNavigationRoute -> {
-				title = stringResource(R.string.title_details)
 				navigationIcon = Icons.Filled.ArrowBack
 				navigationIconContentDescription = stringResource(R.string.description_account_details)
 				onNavigationClick = { appState.navController.popBackStack() }
@@ -64,7 +61,7 @@ fun MainTopBar(
 	}
 	
 	DaTopAppBar(
-		title = title,
+		title = mainViewModel.nickname,
 		modifier = modifier,
 		navigationIcon = navigationIcon,
 		navigationIconContentDescription = navigationIconContentDescription,

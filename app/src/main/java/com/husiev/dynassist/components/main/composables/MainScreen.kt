@@ -44,6 +44,7 @@ fun MainScreen(
 ) {
 	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
+	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
 	val queryResult by appState.noConnection.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
 	
@@ -100,6 +101,7 @@ fun MainScreen(
 						navController = appState.navController,
 						personalData = personalData,
 						accountStatisticsData = statisticData,
+						clanData = clanData,
 					)
 					
 					if (queryResult is Result.Loading) {
