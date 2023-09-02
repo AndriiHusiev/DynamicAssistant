@@ -1,6 +1,5 @@
 package com.husiev.dynassist.components.main.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
+import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.database.entity.asStringDate
@@ -52,8 +52,10 @@ fun DetailsClanCard(
 		MainDivider()
 		if (clanData != null) {
 			if (clanData.clanId != null) {
-				Image(
-					painter = painterResource(id = R.drawable.no_clan),
+				AsyncImage(
+					model = clanData.emblem,
+					error = painterResource(R.drawable.ic_connection_error),
+					placeholder = painterResource(R.drawable.no_clan),
 					contentDescription = null,
 					modifier = Modifier
 						.fillMaxWidth()
@@ -129,20 +131,20 @@ fun DetailsClanCard(
 fun DetailsClanPreview() {
 	DynamicAssistantTheme {
 		DetailsClanCard(
-//			null
-			AccountClanInfo(
-				accountId = 1,
-				joinedAt = 1691693119,
-				roleLocalized = "Private",
-				clanId = 502345049, // null,
-				createdAt = 1422654206,
-				membersCount = 42,
-				name = "We are newbies",
-				tag = "NOOB",
-				color = "#6D12A0",
-				emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
-						"cl_042/502345049/emblem_195x195.png",
-			)
+			null
+//			AccountClanInfo(
+//				accountId = 1,
+//				joinedAt = 1691693119,
+//				roleLocalized = "Private",
+//				clanId = 502345049, // null,
+//				createdAt = 1422654206,
+//				membersCount = 42,
+//				name = "We are newbies",
+//				tag = "NOOB",
+//				color = "#6D12A0",
+//				emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
+//						"cl_042/502345049/emblem_195x195.png",
+//			)
 		)
 	}
 }

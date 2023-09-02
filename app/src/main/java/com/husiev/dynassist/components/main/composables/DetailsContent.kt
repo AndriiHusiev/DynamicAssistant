@@ -57,19 +57,20 @@ fun DetailsContentPreview() {
 					clanId = null,
 					globalRating = 10563
 				),
-				clanData = AccountClanInfo(
-					accountId = 1,
-					joinedAt = 1691693119,
-					roleLocalized = "Private",
-					clanId = 502345049,
-					createdAt = 1422654206,
-					membersCount = 42,
-					name = "We are newbies",
-					tag = "NOOB",
-					color = "#6D12A0",
-					emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
-							"cl_042/502345049/emblem_195x195.png",
-				)
+				clanData = null
+//				AccountClanInfo(
+//					accountId = 1,
+//					joinedAt = 1691693119,
+//					roleLocalized = "Private",
+//					clanId = 502345049,
+//					createdAt = 1422654206,
+//					membersCount = 42,
+//					name = "We are newbies",
+//					tag = "NOOB",
+//					color = "#6D12A0",
+//					emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
+//							"cl_042/502345049/emblem_195x195.png",
+//				)
 			)
 		}
 	}
