@@ -15,4 +15,7 @@ interface PlayersDao: BaseDao<PlayersEntity> {
 	
 	@Query("UPDATE players SET update_time = :updateTime WHERE account_id = :accountId")
 	fun updateTime(updateTime: String, accountId: Int)
+	
+	@Query("UPDATE players SET clan = :clan, emblem = :emblem WHERE account_id = :accountId")
+	fun updateClan(clan: String?, emblem: String?, accountId: Int)
 }

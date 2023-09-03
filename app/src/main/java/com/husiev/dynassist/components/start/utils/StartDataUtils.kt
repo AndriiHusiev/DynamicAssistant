@@ -15,6 +15,7 @@ data class StartAccountInfo(
 	val id: Int,
 	val nickname: String,
 	val clan: String? = null,
+	val emblem: String? = null,
 	val updateTime: String,
 )
 
@@ -22,6 +23,7 @@ fun StartAccountInfo.asEntity() = PlayersEntity(
 	accountId = id,
 	nickname = nickname,
 	clan = clan,
+	emblem = emblem,
 	updateTime = updateTime,
 )
 

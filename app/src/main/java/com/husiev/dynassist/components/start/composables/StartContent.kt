@@ -90,10 +90,10 @@ fun StartContentPreview() {
 	DynamicAssistantTheme {
 		val dateTime = Date().time.toString()
 		StartContent(listOf(
-			StartAccountInfo(1, "load","DTS", dateTime),
+			StartAccountInfo(1, "load","DTS", null, dateTime),
 			StartAccountInfo(1, "vector", updateTime = dateTime),
 			StartAccountInfo(1, "asset", updateTime = dateTime),
-			StartAccountInfo(1, "format","KFC", dateTime),
+			StartAccountInfo(1, "format","KFC", null, dateTime),
 			StartAccountInfo(
 				id = 1,
 				nickname = "MaterialThemeColorSchemeOnSecondaryContainer",

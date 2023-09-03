@@ -98,13 +98,13 @@ fun DetailsClanCard(
 				MainDivider()
 				
 				DetailsCardItem(
-					title = stringResource(R.string.joined_at),
-					text = clanData.joinedAt.asStringDate()
+					title = stringResource(R.string.role),
+					text = clanData.roleLocalized
 				)
 				
 				DetailsCardItem(
-					title = stringResource(R.string.role),
-					text = clanData.roleLocalized
+					title = stringResource(R.string.joined_days),
+					text = clanData.joinedDays.toString()
 				)
 			} else
 				sorryText = stringResource(R.string.clan_no_clan)
@@ -131,20 +131,21 @@ fun DetailsClanCard(
 fun DetailsClanPreview() {
 	DynamicAssistantTheme {
 		DetailsClanCard(
-			null
-//			AccountClanInfo(
-//				accountId = 1,
-//				joinedAt = 1691693119,
-//				roleLocalized = "Private",
-//				clanId = 502345049, // null,
-//				createdAt = 1422654206,
-//				membersCount = 42,
-//				name = "We are newbies",
-//				tag = "NOOB",
-//				color = "#6D12A0",
-//				emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
-//						"cl_042/502345049/emblem_195x195.png",
-//			)
+//			null
+			AccountClanInfo(
+				accountId = 1,
+				joinedAt = 1691693119,
+				joinedDays = 22,
+				roleLocalized = "Private",
+				clanId = 502345049, // null,
+				createdAt = 1422654206,
+				membersCount = 42,
+				name = "We are newbies",
+				tag = "NOOB",
+				color = "#6D12A0",
+				emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
+						"cl_042/502345049/emblem_195x195.png",
+			)
 		)
 	}
 }

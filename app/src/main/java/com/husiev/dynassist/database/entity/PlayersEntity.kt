@@ -11,6 +11,7 @@ data class PlayersEntity (
 	@PrimaryKey val accountId: Int,
 	val nickname: String,
 	val clan: String? = null,
+	val emblem: String? = null,
 	@ColumnInfo(name = "update_time")
 	val updateTime: String
 )
@@ -19,5 +20,6 @@ fun PlayersEntity.asExternalModel() = StartAccountInfo(
 	id = accountId,
 	nickname = nickname,
 	clan = clan,
+	emblem = emblem,
 	updateTime = updateTime,
 )

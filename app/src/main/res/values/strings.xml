@@ -78,7 +78,7 @@
     <string name="no_clan">You are not in a clan</string>
     <string name="clan_name">Clan name</string>
     <string name="clan_tag">Clan tag</string>
-    <string name="joined_at">Joined to the clan at</string>
+    <string name="joined_days">Days in clan</string>
     <string name="role">Role in the clan</string>
 
     <!-- Content Description -->

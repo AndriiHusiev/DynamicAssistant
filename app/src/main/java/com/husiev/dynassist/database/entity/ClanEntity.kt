@@ -8,6 +8,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import java.util.Date
 
 @Entity(
 	tableName = "clan",
@@ -42,6 +43,7 @@ fun ClanEntity.asExternalModel() = AccountClanInfo(
 	clanId = clanId,
 	createdAt = createdAt,
 	joinedAt = joinedAt,
+	joinedDays = getDateDiff(joinedAt),
 	membersCount = membersCount,
 	roleLocalized = roleLocalized,
 	name = name,
@@ -49,3 +51,11 @@ fun ClanEntity.asExternalModel() = AccountClanInfo(
 	color = color,
 	emblem = emblem,
 )
+
+fun getDateDiff(date: Int): Long {
+	val diff = Date().time - Date(date * 1000L).time
+	val seconds = diff / 1000
+	val minutes = seconds / 60
+	val hours = minutes / 60
+	return hours / 24
+}

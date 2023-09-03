@@ -1,7 +1,6 @@
 package com.husiev.dynassist.components.start.composables
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -31,13 +31,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.components.start.utils.asDateTime
@@ -48,7 +48,6 @@ import java.util.Date
 fun AccountListItem(
 	account: StartAccountInfo,
 	modifier: Modifier = Modifier,
-	clanEmblem: Painter = painterResource(id = R.drawable.no_clan),
 	onClick: (StartAccountInfo) -> Unit = {},
 	onDelete: (StartAccountInfo) -> Unit = {},
 ) {
@@ -77,13 +76,20 @@ fun AccountListItem(
 				modifier = Modifier.weight(1f, false),
 				verticalAlignment = Alignment.CenterVertically,
 			) {
-				Image(
-					painter = clanEmblem,
+				AsyncImage(
+					model = account.emblem,
+					error = painterResource(R.drawable.no_clan),
+					placeholder = painterResource(R.drawable.no_clan),
 					contentDescription = null,
-					modifier = Modifier.padding(
-						horizontal = dimensionResource(R.dimen.padding_small),
-						vertical = dimensionResource(R.dimen.padding_medium)
-					)
+					modifier = Modifier
+						.padding(
+							horizontal = dimensionResource(R.dimen.padding_small),
+							vertical = dimensionResource(R.dimen.padding_medium)
+						)
+						.sizeIn(
+							maxWidth = 48.dp,
+							maxHeight = 48.dp,
+						)
 				)
 				Column {
 					Row(
@@ -175,10 +181,10 @@ fun AccountListItemPreview() {
 			Column {
 				val dateTime = Date().time.toString()
 				AccountListItem(
-					StartAccountInfo(1, "eater", "KFC", dateTime),
+					StartAccountInfo(1, "eater", "KFC", null, dateTime),
 				)
 				AccountListItem(
-					StartAccountInfo(1, "player", "NPE", dateTime),
+					StartAccountInfo(1, "player", "NPE", null, dateTime),
 				)
 			}
 		}

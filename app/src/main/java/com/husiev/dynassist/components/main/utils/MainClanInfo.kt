@@ -6,6 +6,7 @@ data class AccountClanInfo(
 	val createdAt: Int,
 	val roleLocalized: String,
 	val joinedAt: Int,
+	val joinedDays: Long,
 	val membersCount: Int,
 	val name: String,
 	val tag: String,
