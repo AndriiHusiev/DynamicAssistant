@@ -22,6 +22,7 @@ import com.husiev.dynassist.components.main.navigation.navigateToTechnics
 import com.husiev.dynassist.network.NetworkRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
 fun rememberDaAppState(
@@ -57,9 +58,9 @@ class DaAppState(
 	val currentDestination: NavDestination?
 		@Composable get() = navController.currentBackStackEntryAsState().value?.destination
 	
-	var noConnection: StateFlow<Result<String>> = networkRepository.noConnection
+	val queryStatus: StateFlow<Result<String>> = networkRepository.queryStatus.asStateFlow()
 	
-	fun closeSnackbar() = networkRepository.noConnection.tryEmit(Result.StandBy)
+	fun closeSnackbar() = networkRepository.setStatus(Result.StandBy)
 	
 	/**
 	 * Map of top level destinations to be used in the TopBar, BottomBar and NavRail. The key is the

@@ -27,7 +27,7 @@ fun SummaryContent(
 	) {
 		summaryData.forEach { item ->
 			item {
-				MainSummaryCard(
+				SummaryCard(
 					header = item.key,
 					summaryData = item.value,
 					onClick = onClick

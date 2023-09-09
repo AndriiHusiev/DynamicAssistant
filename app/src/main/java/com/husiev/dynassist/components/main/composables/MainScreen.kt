@@ -45,22 +45,24 @@ fun MainScreen(
 	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
 	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
-	val queryResult by appState.noConnection.collectAsStateWithLifecycle()
+	val shortData by mainViewModel.shortData.collectAsStateWithLifecycle()
+	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
 	
 	val noConnectionMessage = stringResource(R.string.no_connection)
 	val retryLabel = stringResource(R.string.retry)
 	LaunchedEffect(queryResult) {
 		if (queryResult is Result.Error) {
-			if (snackbarHostState.showSnackbar(
-					message = noConnectionMessage,
-					actionLabel = retryLabel,
-					withDismissAction = true,
-					duration = SnackbarDuration.Indefinite
-			) == SnackbarResult.ActionPerformed) {
-				mainViewModel.getAccountAllData()
+			val result = snackbarHostState.showSnackbar(
+				message = noConnectionMessage,
+				actionLabel = retryLabel,
+				withDismissAction = true,
+				duration = SnackbarDuration.Indefinite
+			)
+			when(result) {
+				SnackbarResult.ActionPerformed -> mainViewModel.getAccountAllData()
+				SnackbarResult.Dismissed -> appState.closeSnackbar()
 			}
-			appState.closeSnackbar()
 		}
 	}
 	
@@ -102,6 +104,7 @@ fun MainScreen(
 						personalData = personalData,
 						accountStatisticsData = statisticData,
 						clanData = clanData,
+						shortData = shortData,
 					)
 					
 					if (queryResult is Result.Loading) {

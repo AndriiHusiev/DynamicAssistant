@@ -1,5 +1,7 @@
 package com.husiev.dynassist.network
 
+import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
+
 sealed interface SearchResultUiState {
 	
 	object Loading : SearchResultUiState

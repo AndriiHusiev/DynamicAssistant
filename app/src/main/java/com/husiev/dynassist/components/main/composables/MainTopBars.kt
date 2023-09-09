@@ -46,7 +46,6 @@ fun MainTopBar(
 				}
 				onActionClick = {
 					mainViewModel.getAccountAllData()
-					appState.closeSnackbar()
 				}
 			}
 			

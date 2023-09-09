@@ -1,4 +1,4 @@
-package com.husiev.dynassist.network
+package com.husiev.dynassist.network.dataclasses
 
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import kotlinx.serialization.SerialName
@@ -23,6 +23,11 @@ data class NetworkAccountInfo (
 @Serializable
 data class NetworkMetaInfo (
 	val count: Int,
+	@SerialName(value = "page_total")
+	val pageTotal: Int? = null,
+	val total: Int? = null,
+	val limit: Int? = null,
+	val page: Int? = null,
 )
 
 @Serializable

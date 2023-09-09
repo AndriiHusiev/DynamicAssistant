@@ -35,11 +35,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
-import com.husiev.dynassist.network.NetworkAccountInfo
-import com.husiev.dynassist.network.NetworkErrorInfo
+import com.husiev.dynassist.network.dataclasses.NetworkAccountInfo
+import com.husiev.dynassist.network.dataclasses.NetworkErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState
-import com.husiev.dynassist.network.NetworkStartSearchInfo
-import com.husiev.dynassist.network.asExternalModel
+import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
+import com.husiev.dynassist.network.dataclasses.asExternalModel
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable

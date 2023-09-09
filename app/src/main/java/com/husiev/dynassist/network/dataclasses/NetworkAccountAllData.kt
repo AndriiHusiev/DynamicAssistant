@@ -1,4 +1,4 @@
-package com.husiev.dynassist.network
+package com.husiev.dynassist.network.dataclasses
 
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity

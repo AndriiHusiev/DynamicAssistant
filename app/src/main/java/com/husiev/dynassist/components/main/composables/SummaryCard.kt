@@ -14,7 +14,7 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 
 @Composable
-fun MainSummaryCard(
+fun SummaryCard(
 	header: String,
 	summaryData: List<AccountStatisticsData>,
 	modifier: Modifier = Modifier,
@@ -35,7 +35,7 @@ fun MainSummaryCard(
 		
 		summaryData.forEach {  item ->
 			MainDivider()
-			MainCardItem(
+			SummaryCardItem(
 				title = item.title,
 				mainValue = item.mainValue,
 				auxValue = item.auxValue,

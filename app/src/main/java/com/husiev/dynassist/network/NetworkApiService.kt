@@ -1,5 +1,10 @@
 package com.husiev.dynassist.network
 
+import com.husiev.dynassist.network.dataclasses.NetworkAccountAllData
+import com.husiev.dynassist.network.dataclasses.NetworkClanMemberInfo
+import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
+import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfo
+import com.husiev.dynassist.network.dataclasses.NetworkVehicleShortData
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -55,4 +60,39 @@ interface NetworkApiService {
 		@Query("fields") fields: String = ""
 	): NetworkClanMemberInfo
 	
+	/**
+	 * Returns details on player's vehicles.
+	 * @param appId Application ID
+	 * @param accountId Player account ID
+	 * @param fields Response field. The fields are separated with commas. Embedded fields are
+	 * separated with dots. To exclude a field, use “-” in front of its name. In case the parameter
+	 * is not defined, the method returns all fields. Maximum limit: 100.
+	 * @param tankId Player's vehicle ID. Maximum limit: 100.
+	 */
+	@GET("account/tanks/")
+	suspend fun getVehicleShortData(
+		@Query("application_id") appId: String,
+		@Query("account_id") accountId: Int,
+		@Query("fields") fields: String = "",
+		@Query("tank_id") tankId: String = ""
+	): NetworkVehicleShortData
+	
+	/**
+	 * Returns list of available vehicles.
+	 * @param appId Application ID
+	 * @param tankId Vehicle ID. Maximum limit: 100.
+	 * @param fields Response field. The fields are separated with commas. Embedded fields are
+	 * separated with dots. To exclude a field, use “-” in front of its name. In case the parameter
+	 * is not defined, the method returns all fields. Maximum limit: 100.
+	 * @param language Localization language
+	 */
+	@GET("encyclopedia/vehicles/")
+	suspend fun getVehicleInfo(
+		@Query("application_id") appId: String,
+		@Query("tank_id") tankId: String = "",
+		@Query("language") language: String = "",
+		@Query("fields") fields: String = "-radios,-suspensions,-engines,-crew,-guns," +
+				"-provisions,-is_premium_igr,-next_tanks,-modules_tree,-prices_xp," +
+				"-default_profile,-turrets,-multination",
+	): NetworkVehicleInfo
 }

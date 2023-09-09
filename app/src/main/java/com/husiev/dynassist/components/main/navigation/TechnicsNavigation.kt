@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.husiev.dynassist.components.main.composables.TechnicsContent
+import com.husiev.dynassist.components.main.utils.VehicleShortData
 
 const val technicsNavigationRoute = "technics_route"
 
@@ -12,10 +13,16 @@ fun NavController.navigateToTechnics(navOptions: NavOptions? = null) {
 	this.navigate(technicsNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.technicsScreen(onClick: (String) -> Unit) {
+fun NavGraphBuilder.technicsScreen(
+	shortData: List<VehicleShortData>,
+	onClick: (VehicleShortData) -> Unit
+) {
 	composable(
 		route = technicsNavigationRoute,
 	) {
-		TechnicsContent(onClick = onClick)
+		TechnicsContent(
+			shortData = shortData,
+			onClick = onClick
+		)
 	}
 }

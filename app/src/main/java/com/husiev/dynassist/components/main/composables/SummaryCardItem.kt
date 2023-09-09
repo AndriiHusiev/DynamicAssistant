@@ -27,7 +27,7 @@ import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
-fun MainCardItem(
+fun SummaryCardItem(
 	title: String,
 	mainValue: String,
 	auxValue: String?,
@@ -166,7 +166,7 @@ fun MainCardItemPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			Column {
-				MainCardItem(
+				SummaryCardItem(
 					title = "Battles",
 					mainValue = "254",
 					auxValue = null,
@@ -175,7 +175,7 @@ fun MainCardItemPreview() {
 					imageVector = null,
 				)
 				MainDivider()
-				MainCardItem(
+				SummaryCardItem(
 					title = "Victories",
 					mainValue = "56.3%",
 					auxValue = "+0.024% / 58.2%",

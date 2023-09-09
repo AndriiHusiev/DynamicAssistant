@@ -6,11 +6,12 @@ import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.components.start.utils.asEntity
 import com.husiev.dynassist.database.entity.ClanEntity
 import com.husiev.dynassist.database.entity.PlayersEntity
+import com.husiev.dynassist.database.entity.VehicleShortDataEntity
 import com.husiev.dynassist.database.entity.asExternalModel
-import com.husiev.dynassist.network.NetworkAccountClanData
-import com.husiev.dynassist.network.NetworkAccountPersonalData
-import com.husiev.dynassist.network.NetworkAccountPersonalStatistics
-import com.husiev.dynassist.network.asEntity
+import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
+import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
+import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalStatistics
+import com.husiev.dynassist.network.dataclasses.asEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -61,4 +62,13 @@ class DatabaseRepository @Inject constructor(
 	
 	fun getPlayerClanInfo(accountId: Int) =
 		database.clanDataDao().loadClanData(accountId)
+	
+	suspend fun addVehiclesShortData(data: List<VehicleShortDataEntity>) =
+		database.vehicleShortDao().insertOrReplace(data)
+	
+	fun getVehiclesShortData(accountId: Int) =
+		database.vehicleShortDao().loadVehicleShortData(accountId)
+	
+	fun getVehicleStatData(accountId: Int) =
+		database.vehicleStatDao().loadVehicleStatData(accountId)
 }

@@ -9,6 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -44,4 +47,9 @@ object NetworkModule {
 		}
 		.respectCacheHeaders(false)
 		.build()
+	
+	@Singleton
+	@Provides
+	fun providesCoroutineScope(): CoroutineScope =
+		CoroutineScope(SupervisorJob() + Dispatchers.IO)
 }

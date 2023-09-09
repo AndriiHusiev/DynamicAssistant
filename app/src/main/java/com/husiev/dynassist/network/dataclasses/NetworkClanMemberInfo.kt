@@ -1,4 +1,4 @@
-package com.husiev.dynassist.network
+package com.husiev.dynassist.network.dataclasses
 
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.database.entity.ClanEntity
