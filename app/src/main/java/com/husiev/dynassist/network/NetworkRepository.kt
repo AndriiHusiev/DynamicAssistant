@@ -73,7 +73,7 @@ class NetworkRepository @Inject constructor(
 	suspend fun getVehicleInfo(tankId: String) =
 		try {
 			val response = networkService.getVehicleInfo(appId, tankId)
-			_queryStatus.emit(Result.Success("general info"))
+			_queryStatus.emit(Result.Success("general info $_queryCounter"))
 			response
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get list of available vehicles", exception)
@@ -84,18 +84,20 @@ class NetworkRepository @Inject constructor(
 	private var _queryCounter = 0
 	private val _queryStatus = MutableStateFlow<Result<String>>(Result.StandBy)
 	val queryStatus = MutableStateFlow<Result<String>>(Result.StandBy)
+	var queriesAmount = QUERIES_AMOUNT
 	
 	init {
 		coroutineScope.launch {
 			_queryStatus.collect {
-				logDebugOut("NetworkRepository", ".queryStatus", it)
+				logDebugOut("NetworkRepository", "queryStatus", it)
 				when(it) {
 					is Result.Success -> {
 						_queryCounter++
-						if (_queryCounter < QUERIES_AMOUNT)
+						if (_queryCounter < queriesAmount) {
 							queryStatus.emit(Result.Loading)
-						else {
+						} else {
 							_queryCounter = 0
+							queriesAmount = QUERIES_AMOUNT
 							queryStatus.emit(Result.Success("ok"))
 						}
 					}
@@ -109,4 +111,4 @@ class NetworkRepository @Inject constructor(
 	fun setStatus(status: Result<String>) = _queryStatus.tryEmit(status)
 }
 
-private const val QUERIES_AMOUNT = 4
+private const val QUERIES_AMOUNT = 2

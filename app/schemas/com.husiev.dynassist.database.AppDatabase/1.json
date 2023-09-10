@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "641f58874dd708e0324abe25f9e7517d",
+    "identityHash": "e71beacc52a453c34f9eec2cf3381404",
     "entities": [
       {
         "tableName": "players",
@@ -450,7 +450,7 @@
       },
       {
         "tableName": "vehicle_short_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`account_id` INTEGER NOT NULL, `tank_id` INTEGER NOT NULL, `mark_of_mastery` INTEGER NOT NULL, `url_small_icon` TEXT, `url_big_icon` TEXT, `price_gold` INTEGER, `price_credit` INTEGER, `is_wheeled` INTEGER, `is_premium` INTEGER, `is_gift` INTEGER, `battles` INTEGER NOT NULL, `wins` INTEGER NOT NULL, `name` TEXT, `type` TEXT, `description` TEXT, `nation` TEXT, `tier` INTEGER, PRIMARY KEY(`account_id`, `tank_id`), FOREIGN KEY(`account_id`) REFERENCES `players`(`account_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`account_id` INTEGER NOT NULL, `tank_id` INTEGER NOT NULL, `lastBattleTime` INTEGER, `mark_of_mastery` INTEGER NOT NULL, `url_small_icon` TEXT, `url_big_icon` TEXT, `price_gold` INTEGER, `price_credit` INTEGER, `is_wheeled` INTEGER, `is_premium` INTEGER, `is_gift` INTEGER, `battles` INTEGER NOT NULL, `wins` INTEGER NOT NULL, `name` TEXT, `type` TEXT, `description` TEXT, `nation` TEXT, `tier` INTEGER, PRIMARY KEY(`account_id`, `tank_id`), FOREIGN KEY(`account_id`) REFERENCES `players`(`account_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "accountId",
@@ -463,6 +463,12 @@
             "columnName": "tank_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastBattleTime",
+            "columnName": "lastBattleTime",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "markOfMastery",
@@ -662,7 +668,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '641f58874dd708e0324abe25f9e7517d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e71beacc52a453c34f9eec2cf3381404')"
     ]
   }
 }

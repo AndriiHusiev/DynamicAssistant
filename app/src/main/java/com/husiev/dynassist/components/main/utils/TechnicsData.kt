@@ -7,6 +7,8 @@ data class VehicleShortData(
 	val markOfMastery: Int,
 	val battles: Int,
 	val wins: Int,
+	val winRate: String,
+	val lastBattleTime: String,
 	val name: String? = null,
 	val type: String? = null,
 	val description: String? = null,
@@ -21,7 +23,7 @@ data class VehicleShortData(
 	val isWheeled: Boolean? = null,
 )
 
-fun Int.masteryToResId() = when(this) {
+fun masteryToResId(markOfMastery: Int) = when(markOfMastery) {
 	1 -> R.drawable.ic_step_mark_3
 	2 -> R.drawable.ic_step_mark_2
 	3 -> R.drawable.ic_step_mark_1

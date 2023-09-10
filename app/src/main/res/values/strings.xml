@@ -63,6 +63,9 @@
         <item>avgDamageAssistedRadio:Assisted track radio</item>
     </string-array>
 
+    <!-- tab No. 2 - Technics -->
+    <string name="battles">battles</string>
+
     <!-- tab No. 4 - Details -->
     <string name="title_details">Details</string>
     <string name="global_rating">Global Rating</string>

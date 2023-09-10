@@ -3,8 +3,11 @@ package com.husiev.dynassist.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleShortData
-import com.husiev.dynassist.components.main.utils.masteryToResId
+import com.husiev.dynassist.components.main.utils.getMainAvg
+import com.husiev.dynassist.components.main.utils.toScreen
+import kotlinx.serialization.SerialName
 
 @Entity(
 	tableName = "vehicle_short_data",
@@ -21,6 +24,8 @@ data class VehicleShortDataEntity(
 	val accountId: Int,
 	@ColumnInfo(name = "tank_id")
 	val tankId: Int,
+	@SerialName(value = "last_battle_time")
+	var lastBattleTime: Int? = null,
 	@ColumnInfo(name = "mark_of_mastery")
 	val markOfMastery: Int,
 	@ColumnInfo(name = "url_small_icon")
@@ -50,9 +55,11 @@ fun List<VehicleShortDataEntity>.asExternalModel(): List<VehicleShortData> {
 	return this.map {
 		VehicleShortData(
 			tankId = it.tankId,
-			markOfMastery = it.markOfMastery.masteryToResId(),
+			markOfMastery = it.markOfMastery,
 			battles = it.battles,
 			wins = it.wins,
+			winRate = getMainAvg(it.wins, it.battles).toScreen(100f, "%"),
+			lastBattleTime = it.lastBattleTime?.asStringDate("short") ?: NO_DATA,
 			name = it.name,
 			type = it.type,
 			description = it.description,

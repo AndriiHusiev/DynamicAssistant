@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -26,16 +25,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleShortData
 import com.husiev.dynassist.components.main.utils.flagToResId
+import com.husiev.dynassist.components.main.utils.getMainAvg
 import com.husiev.dynassist.components.main.utils.masteryToResId
 import com.husiev.dynassist.components.main.utils.roleToResId
 import com.husiev.dynassist.components.main.utils.symbolToResId
 import com.husiev.dynassist.components.main.utils.tierToResId
+import com.husiev.dynassist.components.main.utils.toScreen
+import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -55,97 +59,88 @@ fun TechnicsCard(
 		)
 	) {
 		Box(modifier = Modifier) {
-				Column(modifier = Modifier.fillMaxWidth()) {
-					Row(
-						modifier = Modifier
-							.background(Color(0x66000000))
-							.fillMaxWidth(),
-						verticalAlignment = Alignment.CenterVertically,
-						horizontalArrangement = Arrangement.SpaceBetween
-					) {
-						Row(verticalAlignment = Alignment.CenterVertically) {
-							Image(
-								painter = painterResource(symbolToResId(shortData.nation)),
-//								painter = painterResource(symbolToResId("ussr")),
-								contentDescription = null,
-								modifier = Modifier
-									.size(32.dp, 32.dp)
-									.padding(
-										horizontal = dimensionResource(R.dimen.padding_small),
-										vertical = dimensionResource(R.dimen.padding_extra_small)
-									)
-							)
-							Image(
-								painter = painterResource(roleToResId(shortData.type)),
-								contentDescription = null,
-								modifier = Modifier.size(15.dp, 30.dp),
-							)
-							Image(
-								painter = painterResource(tierToResId(shortData.tier)),
-								contentDescription = null,
-								modifier = Modifier
-									.padding(horizontal = dimensionResource(R.dimen.padding_small))
-									.size(22.dp, 22.dp),
-							)
-						}
-						Text(
-							text = "last_battle_date",
-							modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_extra_large)),
-							style = MaterialTheme.typography.bodySmall
-						)
-					}
-					
-					
-					Row(
-						modifier = Modifier
-							.align(Alignment.End)
-							.padding(
-								end = dimensionResource(R.dimen.padding_extra_small),
-								top = dimensionResource(R.dimen.padding_medium)
-							),
-						verticalAlignment = Alignment.CenterVertically,
-					) {
-						Column(
-							modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_extra_small)),
-							horizontalAlignment = Alignment.End
-						) {
-							Text(
-								text = (100f * shortData.wins / shortData.battles).toString() + "%",
-								style = MaterialTheme.typography.bodyLarge
-							)
-							
-							Row(verticalAlignment = Alignment.CenterVertically) {
-	//							if (auxValue != null && imageVector != null && color != null) {
-								Icon(
-									imageVector = Icons.Filled.ArrowDropUp,
-									contentDescription = null,
-									tint = Color.Green
-								)
-	//							}
-								
-								Text(
-									text = shortData.battles.toString(),//"auxValue",
-									style = MaterialTheme.typography.bodySmall
-								)
-								
-							}
-						}
-						
-						Icon(
-							imageVector = Icons.Filled.ChevronRight,
-							contentDescription = null
-						)
-					}
-				}
-			
 			Image(
 				painter = painterResource(flagToResId(shortData.nation)),
 				contentDescription = null,
 				modifier = Modifier.size(251.dp, 92.dp)
 			)
 			
-			Image(
-				painter = painterResource(R.drawable.ic_tank_empty),
+			Column(modifier = Modifier.fillMaxWidth()) {
+				Row(
+					modifier = Modifier
+						.background(Color(0x66000000))
+						.fillMaxWidth(),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceBetween
+				) {
+					Row(verticalAlignment = Alignment.CenterVertically) {
+						Image(
+							painter = painterResource(symbolToResId(shortData.nation)),
+							contentDescription = null,
+							modifier = Modifier
+								.size(32.dp, 32.dp)
+								.padding(
+									horizontal = dimensionResource(R.dimen.padding_small),
+									vertical = dimensionResource(R.dimen.padding_extra_small)
+								)
+						)
+						Image(
+							painter = painterResource(roleToResId(shortData.type)),
+							contentDescription = null,
+							modifier = Modifier.size(15.dp, 30.dp),
+						)
+						Image(
+							painter = painterResource(tierToResId(shortData.tier)),
+							contentDescription = null,
+							modifier = Modifier
+								.padding(horizontal = dimensionResource(R.dimen.padding_small))
+								.size(22.dp, 22.dp),
+						)
+					}
+					Text(
+						text = shortData.lastBattleTime,
+						modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_extra_large)),
+						style = MaterialTheme.typography.bodySmall
+					)
+				}
+				
+				
+				Row(
+					modifier = Modifier
+						.align(Alignment.End)
+						.padding(
+							end = dimensionResource(R.dimen.padding_extra_small),
+							top = dimensionResource(R.dimen.padding_medium)
+						),
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					Column(
+						modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_extra_small)),
+						horizontalAlignment = Alignment.End
+					) {
+						Text(
+							text = shortData.winRate,
+							style = MaterialTheme.typography.bodyLarge
+						)
+						
+						Text(
+							text = "${shortData.battles} " + stringResource(R.string.battles),
+							modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_extra_small)),
+							style = MaterialTheme.typography.bodySmall
+						)
+					}
+					
+					Icon(
+						imageVector = Icons.Filled.ChevronRight,
+						contentDescription = null
+					)
+				}
+			}
+			
+			AsyncImage(
+				model = shortData.urlBigIcon,
+				error = painterResource(R.drawable.ic_tank_empty),
+				placeholder = painterResource(R.drawable.ic_tank_empty),
 				contentDescription = null,
 				modifier = Modifier
 					.padding(horizontal = dimensionResource(R.dimen.padding_extra_large))
@@ -158,7 +153,7 @@ fun TechnicsCard(
 			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Image(
-				painter = painterResource(shortData.markOfMastery),
+				painter = painterResource(masteryToResId(shortData.markOfMastery)),
 				contentDescription = null,
 				modifier = Modifier
 					.padding(horizontal = dimensionResource(R.dimen.padding_small))
@@ -183,9 +178,12 @@ fun TechnicsContentPreview() {
 		TechnicsCard(
 			shortData = VehicleShortData(
 				tankId = 1,
-				markOfMastery = 4.masteryToResId(),
+				markOfMastery = 4,
 				battles = 996,
 				wins = 598,
+				lastBattleTime = 1692967640.asStringDate("short"),
+				winRate = getMainAvg(598, 996)
+					.toScreen(100f, "%"),
 				name = "T-34",
 				type = "mediumTank",
 				description = "desc",
