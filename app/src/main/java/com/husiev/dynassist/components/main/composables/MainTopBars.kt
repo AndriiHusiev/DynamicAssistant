@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.MainViewModel
-import com.husiev.dynassist.components.main.navigation.detailsNavigationRoute
 import com.husiev.dynassist.components.main.navigation.sessionsNavigationRoute
 import com.husiev.dynassist.components.main.navigation.summaryNavigationRoute
 import com.husiev.dynassist.components.main.navigation.technicsNavigationRoute
@@ -25,6 +24,7 @@ fun MainTopBar(
 	appState: DaAppState,
 	modifier: Modifier = Modifier,
 ) {
+	var title = mainViewModel.nickname
 	var navigationIconContentDescription: String? = null
 	var actionIconContentDescription: String? = null
 	var navigationIcon: ImageVector? = null
@@ -49,18 +49,20 @@ fun MainTopBar(
 				}
 			}
 			
-			detailsNavigationRoute -> {
+			else -> {
+				val argKeys = it.arguments.keys
+				if (argKeys.isNotEmpty()) {
+					appState.getDestinationArg(argKeys.first())?.let { item -> title = item }
+				}
 				navigationIcon = Icons.Filled.ArrowBack
-				navigationIconContentDescription = stringResource(R.string.description_account_details)
+				navigationIconContentDescription = stringResource(R.string.description_back)
 				onNavigationClick = { appState.navController.popBackStack() }
 			}
-			
-			else -> {}
 		}
 	}
 	
 	DaTopAppBar(
-		title = mainViewModel.nickname,
+		title = title,
 		modifier = modifier,
 		navigationIcon = navigationIcon,
 		navigationIconContentDescription = navigationIconContentDescription,

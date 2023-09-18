@@ -63,6 +63,13 @@
         <item>avgDamageAssistedRadio:Assisted track radio</item>
     </string-array>
 
+    <!-- tab No. 1.1 - Single Summary -->
+    <string name="total_amount">Total amount</string>
+    <string name="average_value">Average value</string>
+    <string name="total_amount_per_session">Total amount per session</string>
+    <string name="average_value_per_session">Average value per session</string>
+    <string name="session_impact">Session impact</string>
+
     <!-- tab No. 2 - Technics -->
     <string name="battles">battles</string>
 
@@ -95,4 +102,5 @@
     <string name="description_start_menu_text">Show player options</string>
     <string name="description_account_details">Account Details</string>
     <string name="description_refresh">Refresh</string>
+    <string name="description_back">Back</string>
 </resources>

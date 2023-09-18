@@ -39,7 +39,7 @@ fun SummaryCard(
 				title = item.title,
 				mainValue = item.mainValue,
 				auxValue = item.auxValue,
-				absSessionValue = item.absSessionValue,
+				absSessionValue = item.sessionAbsValue,
 				color = item.color,
 				imageVector = item.imageVector,
 				onClick = onClick

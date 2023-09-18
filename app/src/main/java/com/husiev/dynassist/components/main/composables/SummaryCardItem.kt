@@ -40,7 +40,7 @@ fun SummaryCardItem(
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
-			.clickable { onClick("") },
+			.clickable { onClick(title) },
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {

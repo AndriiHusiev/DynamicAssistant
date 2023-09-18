@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import java.text.DecimalFormat
@@ -59,13 +60,17 @@ data class AccountStatisticsData(
 	val mainValue: String,
 	val auxValue: String?,
 	val absValue: String?,
-	val absSessionValue: String?,
+	val sessionAbsValue: String?,
+	val sessionAvgValue: String?,
+	val sessionImpactValue: String?,
 	val color: Color?,
-	val imageVector: ImageVector?
+	val imageVector: ImageVector?,
+	val values: List<Float>?,
 )
 
 fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<AccountStatisticsData>> {
 	val allMembers = mutableListOf<Map<String, Any?>>()
+	val allValues = mutableMapOf<String, List<Float>>()
 	
 	repeat(2) { index ->
 		val map = mutableMapOf<String, Any?>()
@@ -78,37 +83,45 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 		allMembers.add(map)
 	}
 	
+	for (prop in StatisticsEntity::class.memberProperties) {
+		val values = mutableListOf<Float>()
+		for (i in this.indices) {
+			values.add(prop.get(this[i]).toString().toFloat())
+		}
+		allValues[prop.name] = values
+	}
+	
 	val map = mutableMapOf<String, List<AccountStatisticsData>>()
 	
 	map[mrd.headers[0]] = listOf(
-		reducedStatItem("battles", mrd.items, allMembers),
-		fullStatItem("wins", mrd.items, allMembers),
-		fullStatItem("losses", mrd.items, allMembers, revertHappiness = true),
-		fullStatItem("draws", mrd.items, allMembers, revertHappiness = true),
-		fullStatItem("frags", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("xp", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("survivedBattles", mrd.items, allMembers),
+		reducedStatItem("battles", mrd.items, allMembers, allValues["battles"]),
+		fullStatItem("wins", mrd.items, allMembers, allValues["wins"]),
+		fullStatItem("losses", mrd.items, allMembers, allValues["losses"], revertHappiness = true),
+		fullStatItem("draws", mrd.items, allMembers, allValues["draws"], revertHappiness = true),
+		fullStatItem("frags", mrd.items, allMembers, allValues["frags"], multiplier = 1f),
+		fullStatItem("xp", mrd.items, allMembers, allValues["xp"], multiplier = 1f),
+		fullStatItem("survivedBattles", mrd.items, allMembers, allValues["survivedBattles"]),
 	)
 	
 	map[mrd.headers[1]] = listOf(
-		fullStatItem("spotted", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("capturePoints", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("droppedCapturePoints", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("damageDealt", mrd.items, allMembers, multiplier = 1f),
-		fullStatItem("damageReceived", mrd.items, allMembers, multiplier = 1f, revertHappiness = true),
+		fullStatItem("spotted", mrd.items, allMembers, allValues["spotted"], multiplier = 1f),
+		fullStatItem("capturePoints", mrd.items, allMembers, allValues["capturePoints"], multiplier = 1f),
+		fullStatItem("droppedCapturePoints", mrd.items, allMembers, allValues["droppedCapturePoints"], multiplier = 1f),
+		fullStatItem("damageDealt", mrd.items, allMembers, allValues["damageDealt"], multiplier = 1f),
+		fullStatItem("damageReceived", mrd.items, allMembers, allValues["damageReceived"], multiplier = 1f, revertHappiness = true),
 	)
 	
 	map[mrd.headers[2]] = listOf(
-		reducedStatItem("maxXp", mrd.items, allMembers),
-		reducedStatItem("maxDamage", mrd.items, allMembers),
-		reducedStatItem("maxFrags", mrd.items, allMembers),
+		reducedStatItem("maxXp", mrd.items, allMembers, allValues["maxXp"]),
+		reducedStatItem("maxDamage", mrd.items, allMembers, allValues["maxDamage"]),
+		reducedStatItem("maxFrags", mrd.items, allMembers, allValues["maxFrags"]),
 	)
 	
 	map[mrd.headers[3]] = listOf(
-		reducedStatItem("avgDamageBlocked", mrd.items, allMembers),
-		reducedStatItem("avgDamageAssisted", mrd.items, allMembers),
-		reducedStatItem("avgDamageAssistedTrack", mrd.items, allMembers),
-		reducedStatItem("avgDamageAssistedRadio", mrd.items, allMembers),
+		reducedStatItem("avgDamageBlocked", mrd.items, allMembers, allValues["avgDamageBlocked"]),
+		reducedStatItem("avgDamageAssisted", mrd.items, allMembers, allValues["avgDamageAssisted"]),
+		reducedStatItem("avgDamageAssistedTrack", mrd.items, allMembers, allValues["avgDamageAssistedTrack"]),
+		reducedStatItem("avgDamageAssistedRadio", mrd.items, allMembers, allValues["avgDamageAssistedRadio"]),
 	)
 	
 	return map
@@ -118,6 +131,7 @@ private fun reducedStatItem(
 	tag: String,
 	items: Map<String, String>,
 	allMembers: List<Map<String, Any?>>,
+	values: List<Float>?,
 ): AccountStatisticsData {
 	val mainValue = getAbsValue(allMembers[0][tag])
 	
@@ -126,9 +140,12 @@ private fun reducedStatItem(
 		mainValue = mainValue,
 		auxValue = null,
 		absValue = mainValue,
-		absSessionValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		sessionAbsValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		sessionAvgValue = null,
+		sessionImpactValue = null,
 		color = null,
 		imageVector = null,
+		values = values
 	)
 }
 
@@ -136,16 +153,16 @@ private fun fullStatItem(
 	tag: String,
 	items: Map<String, String>,
 	allMembers: List<Map<String, Any?>>,
+	values: List<Float>?,
 	multiplier: Float = 100f,
 	revertHappiness: Boolean = false,
 ): AccountStatisticsData {
+	val suffix = if (multiplier == 100f) "%" else ""
+	
 	val mainValue = getMainAvg(
 		allMembers[0][tag],
 		allMembers[0]["battles"],
-	).toScreen(
-		multiplier = multiplier,
-		suffix = if (multiplier == 100f) "%" else "",
-	)
+	).toScreen(multiplier, suffix)
 	
 	val auxProgressValue = getAuxProgress(
 		allMembers[0][tag],
@@ -153,28 +170,32 @@ private fun fullStatItem(
 		allMembers[0]["battles"],
 		allMembers[1]["battles"],
 	)
-	val auxValue = auxProgressValue.toScreen(
+	
+	val sessionImpactValue = auxProgressValue.toScreen(
 		multiplier = multiplier,
-		suffix = if (multiplier == 100f) "%" else "",
-		showPlus = true
-	) + " / " + getAvgSession(
+		suffix = suffix,
+		showPlus = true,
+		forceToAll = true
+	)
+	
+	val sessionAvgValue = getAvgSession(
 		allMembers[0][tag],
 		allMembers[1][tag],
 		allMembers[0]["battles"],
 		allMembers[1]["battles"],
-	).toScreen(
-		multiplier = multiplier,
-		suffix = if (multiplier == 100f) "%" else "",
-	)
+	).toScreen(multiplier, suffix)
 	
 	return AccountStatisticsData(
 		title = items[tag] ?: "",
 		mainValue = mainValue,
-		auxValue = auxValue,
+		auxValue = auxProgressValue.toScreen(multiplier, suffix) + " / " + sessionAvgValue,
 		absValue = getAbsValue(allMembers[0][tag]),
-		absSessionValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		sessionAbsValue = getAbsSessionDiff(allMembers[0][tag], allMembers[1][tag]),
+		sessionAvgValue = sessionAvgValue,
+		sessionImpactValue = sessionImpactValue,
 		color = auxProgressValue.happyColor(revertHappiness),
 		imageVector = auxProgressValue.happyIcon(),
+		values = values
 	)
 }
 
@@ -206,7 +227,7 @@ fun getAvgSession(actualParam: Any?, prevParam: Any?, actualBattles: Any?, prevB
 fun getAbsValue(param: Any?): String {
 	return when(param) {
 		null -> NO_DATA
-		else -> param.toString()
+		else -> param.toString().toFloat().toScreen(1f, forceToInt = param is Int)
 	}
 }
 
@@ -230,20 +251,24 @@ fun Float?.toScreen(
 	multiplier: Float,
 	suffix: String = "",
 	showPlus: Boolean = false,
-	forceToInt: Boolean = false
+	forceToInt: Boolean = false,
+	forceToAll: Boolean = false,
 ): String {
 	val calc = this?.let { multiplier * it }
 	return calc?.let {
 		val prefix = if (showPlus && it > 0) "+" else ""
-		prefix + String.format(Locale.getDefault(), calc.format(forceToInt), calc) + suffix
+		prefix + String.format(Locale.getDefault(), calc.format(forceToInt, forceToAll), calc) + suffix
 	} ?: NO_DATA
 }
 
-fun Float.format(forceToInt: Boolean): String = "%.${this.exp(forceToInt)}f"
+fun Float.format(forceToInt: Boolean, forceToAll: Boolean = false): String =
+	"%,.${this.exp(forceToInt, forceToAll)}f"
 
-fun Float.exp(forceToInt: Boolean): Int {
+fun Float.exp(forceToInt: Boolean, forceToAll: Boolean = false): Int {
 	val (_, exponent) = String.format(null, "%e", this).split("e")
 	var exp = exponent.toInt()
+	logDebugOut("exp", "exponent", exp)
+	if (forceToAll) return (exp - 2).absoluteValue
 	if (forceToInt) exp = 10
 	return when(exp) {
 		in 3..38 -> 0

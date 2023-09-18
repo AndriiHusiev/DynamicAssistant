@@ -105,6 +105,7 @@ fun MainScreen(
 						accountStatisticsData = statisticData,
 						clanData = clanData,
 						shortData = shortData,
+						onSummaryClick = appState::navigateToSummarySingle
 					)
 					
 					if (queryResult is Result.Loading) {
