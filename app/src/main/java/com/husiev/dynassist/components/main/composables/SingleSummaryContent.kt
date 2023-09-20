@@ -53,6 +53,8 @@ fun SingleSummaryContent(
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		singleItem?.let { item ->
+			item { SmoothLineGraph(item.values) }
+			
 			item {
 				SingleSummaryCard(item = item)
 			}

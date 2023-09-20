@@ -95,20 +95,20 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 	
 	map[mrd.headers[0]] = listOf(
 		reducedStatItem("battles", mrd.items, allMembers, allValues["battles"]),
-		fullStatItem("wins", mrd.items, allMembers, allValues["wins"]),
-		fullStatItem("losses", mrd.items, allMembers, allValues["losses"], revertHappiness = true),
-		fullStatItem("draws", mrd.items, allMembers, allValues["draws"], revertHappiness = true),
-		fullStatItem("frags", mrd.items, allMembers, allValues["frags"], multiplier = 1f),
-		fullStatItem("xp", mrd.items, allMembers, allValues["xp"], multiplier = 1f),
-		fullStatItem("survivedBattles", mrd.items, allMembers, allValues["survivedBattles"]),
+		fullStatItem("wins", mrd.items, allMembers, calcFloatList(allValues["wins"], allValues["battles"])),
+		fullStatItem("losses", mrd.items, allMembers, calcFloatList(allValues["losses"], allValues["battles"]), revertHappiness = true),
+		fullStatItem("draws", mrd.items, allMembers, calcFloatList(allValues["draws"], allValues["battles"]), revertHappiness = true),
+		fullStatItem("frags", mrd.items, allMembers, calcFloatList(allValues["frags"], allValues["battles"]), multiplier = 1f),
+		fullStatItem("xp", mrd.items, allMembers, calcFloatList(allValues["xp"], allValues["battles"], 1f), multiplier = 1f),
+		fullStatItem("survivedBattles", mrd.items, allMembers, calcFloatList(allValues["survivedBattles"], allValues["battles"])),
 	)
 	
 	map[mrd.headers[1]] = listOf(
-		fullStatItem("spotted", mrd.items, allMembers, allValues["spotted"], multiplier = 1f),
-		fullStatItem("capturePoints", mrd.items, allMembers, allValues["capturePoints"], multiplier = 1f),
-		fullStatItem("droppedCapturePoints", mrd.items, allMembers, allValues["droppedCapturePoints"], multiplier = 1f),
-		fullStatItem("damageDealt", mrd.items, allMembers, allValues["damageDealt"], multiplier = 1f),
-		fullStatItem("damageReceived", mrd.items, allMembers, allValues["damageReceived"], multiplier = 1f, revertHappiness = true),
+		fullStatItem("spotted", mrd.items, allMembers, calcFloatList(allValues["spotted"], allValues["battles"], 1f), multiplier = 1f),
+		fullStatItem("capturePoints", mrd.items, allMembers, calcFloatList(allValues["capturePoints"], allValues["battles"], 1f), multiplier = 1f),
+		fullStatItem("droppedCapturePoints", mrd.items, allMembers, calcFloatList(allValues["droppedCapturePoints"], allValues["battles"], 1f), multiplier = 1f),
+		fullStatItem("damageDealt", mrd.items, allMembers, calcFloatList(allValues["damageDealt"], allValues["battles"], 1f), multiplier = 1f),
+		fullStatItem("damageReceived", mrd.items, allMembers, calcFloatList(allValues["damageReceived"], allValues["battles"], 1f), multiplier = 1f, revertHappiness = true),
 	)
 	
 	map[mrd.headers[2]] = listOf(
@@ -245,6 +245,16 @@ fun getAbsSessionDiff(actualParam: Any?, prevParam: Any?): String {
 			showPlus = true
 		)
 	} else NO_DATA
+}
+
+fun calcFloatList(param: List<Float>?, battles: List<Float>?, multiplier: Float = 100f): List<Float> {
+	val list = mutableListOf<Float>()
+	if (param != null && battles != null) {
+		param.forEachIndexed { index, fl ->
+			list.add(multiplier * fl / battles[index])
+		}
+	}
+	return list
 }
 
 fun Float?.toScreen(
