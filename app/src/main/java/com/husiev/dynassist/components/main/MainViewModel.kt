@@ -22,6 +22,7 @@ import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.database.entity.VehicleShortDataEntity
 import com.husiev.dynassist.database.entity.asExternalModel
+import com.husiev.dynassist.database.entity.fillMaxFields
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.dataclasses.asEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -65,6 +67,10 @@ class MainViewModel @Inject constructor(
 	
 	val statisticData: StateFlow<Map<String, List<AccountStatisticsData>>> =
 		databaseRepository.getStatisticData(accountId)
+			.combine(databaseRepository.getVehiclesShortData(accountId)) { stat, veh ->
+				stat.lastOrNull()?.fillMaxFields(veh)
+				stat
+			}
 			.map { it.asExternalModel(mrd) }
 			.stateIn(
 				scope = viewModelScope,

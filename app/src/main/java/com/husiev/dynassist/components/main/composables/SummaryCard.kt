@@ -35,15 +35,23 @@ fun SummaryCard(
 		
 		summaryData.forEach {  item ->
 			MainDivider()
-			SummaryCardItem(
-				title = item.title,
-				mainValue = item.mainValue,
-				auxValue = item.auxValue,
-				absSessionValue = item.sessionAbsValue,
-				color = item.color,
-				imageVector = item.imageVector,
-				onClick = onClick
-			)
+			if (item.comment == null) {
+				SummaryCardItem(
+					title = item.title,
+					mainValue = item.mainValue,
+					auxValue = item.auxValue,
+					absSessionValue = item.sessionAbsValue,
+					color = item.color,
+					imageVector = item.imageVector,
+					onClick = onClick
+				)
+			} else {
+				MainCardVehicle(
+					title = item.title,
+					value = item.mainValue,
+					vehicleName = item.comment,
+				)
+			}
 		}
 	}
 }

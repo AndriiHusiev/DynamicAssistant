@@ -65,6 +65,7 @@ data class AccountStatisticsData(
 	val color: Color?,
 	val imageVector: ImageVector?,
 	val values: List<Float>?,
+	val comment: String? = null,
 )
 
 fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<AccountStatisticsData>> {
@@ -111,9 +112,9 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 	)
 	
 	map[mrd.headers[2]] = listOf(
-		reducedStatItem("maxXp", mrd.items, allMembers, allValues["maxXp"]),
-		reducedStatItem("maxDamage", mrd.items, allMembers, allValues["maxDamage"]),
-		reducedStatItem("maxFrags", mrd.items, allMembers, allValues["maxFrags"]),
+		reducedStatItem("maxXp", mrd.items, allMembers, allValues["maxXp"], "maxXpTank"),
+		reducedStatItem("maxDamage", mrd.items, allMembers, allValues["maxDamage"], "maxDamageTank"),
+		reducedStatItem("maxFrags", mrd.items, allMembers, allValues["maxFrags"], "maxFragsTank"),
 	)
 	
 	map[mrd.headers[3]] = listOf(
@@ -131,6 +132,7 @@ private fun reducedStatItem(
 	items: Map<String, String>,
 	allMembers: List<Map<String, Any?>>,
 	values: List<Float>?,
+	comment: String? = null,
 ): AccountStatisticsData {
 	val mainValue = getAbsValue(allMembers[0][tag])
 	
@@ -144,7 +146,8 @@ private fun reducedStatItem(
 		sessionImpactValue = null,
 		color = null,
 		imageVector = null,
-		values = values
+		values = values,
+		comment = comment?.let { allMembers[0][it].toString() },
 	)
 }
 

@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -107,9 +107,8 @@ fun MainDivider() {
 @Composable
 fun MainCardVehicle(
 	title: String,
-	value: Float?,
-	auxTitle: String,
-	vehicleId: Float?,
+	value: String,
+	vehicleName: String,
 	modifier: Modifier = Modifier,
 ) {
 	Column(
@@ -132,7 +131,7 @@ fun MainCardVehicle(
 			)
 			
 			Text(
-				text = value.toScreen(1f, forceToInt = true),
+				text = value,
 				style = MaterialTheme.typography.bodyLarge
 			)
 		}
@@ -145,13 +144,14 @@ fun MainCardVehicle(
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			Text(
-				text = auxTitle,
-				style = MaterialTheme.typography.bodyLarge
+				text = stringResource(R.string.achieved_at),
+				modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small)),
+				style = MaterialTheme.typography.bodyMedium
 			)
 			
 			Text(
-				text = vehicleId.toScreen(1f, forceToInt = true),
-				style = MaterialTheme.typography.bodyLarge
+				text = vehicleName,
+				style = MaterialTheme.typography.bodyMedium
 			)
 		}
 	}
@@ -194,9 +194,8 @@ fun MainCardVehiclePreview() {
 	DynamicAssistantTheme {
 		MainCardVehicle(
 			title = "Maximum experience",
-			value = 2708f,
-			auxTitle = "Max. exp. achieved at",
-			vehicleId = 251f,
+			value = "2708",
+			vehicleName = "T-34",
 		)
 	}
 }

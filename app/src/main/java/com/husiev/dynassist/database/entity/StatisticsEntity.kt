@@ -3,8 +3,10 @@ package com.husiev.dynassist.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.husiev.dynassist.components.main.utils.NO_DATA
 
 @Entity(
 	tableName = "statistics",
@@ -84,4 +86,45 @@ data class StatisticsEntity(
 	val avgDamageAssistedTrack: Float,
 	@ColumnInfo(name = "avg_damage_assisted_radio")
 	val avgDamageAssistedRadio: Float,
-)
+	
+	@Ignore var maxXpTank: String,
+	@Ignore var maxDamageTank: String,
+	@Ignore var maxFragsTank: String,
+) {
+	constructor(id: Int = 0, accountId: Int, battles: Int, wins: Int, losses: Int, draws: Int,
+	            frags: Int, xp: Int, survivedBattles: Int, spotted: Int, capturePoints: Int,
+	            droppedCapturePoints: Int, damageDealt: Int, shots: Int, hits: Int,
+	            explosionHits: Int, piercings: Int, hitsPercents: Int, damageReceived: Int,
+	            directHitsReceived: Int, explosionHitsReceived: Int, noDamageDirectHitsReceived: Int,
+	            piercingsReceived: Int, tankingFactor: Float, maxXp: Int, maxXpTankId: Int? = null,
+	            maxDamage: Int, maxDamageTankId: Int? = null, maxFrags: Int,
+	            maxFragsTankId: Int? = null, avgDamageBlocked: Float, avgDamageAssisted: Float,
+	            avgDamageAssistedTrack: Float, avgDamageAssistedRadio: Float
+	) : this (id, accountId, battles, wins, losses, draws, frags, xp, survivedBattles, spotted,
+		capturePoints, droppedCapturePoints, damageDealt, shots, hits, explosionHits, piercings,
+		hitsPercents, damageReceived, directHitsReceived, explosionHitsReceived,
+		noDamageDirectHitsReceived, piercingsReceived, tankingFactor, maxXp, maxXpTankId,
+		maxDamage, maxDamageTankId, maxFrags, maxFragsTankId, avgDamageBlocked, avgDamageAssisted,
+		avgDamageAssistedTrack, avgDamageAssistedRadio, NO_DATA, NO_DATA, NO_DATA
+	)
+}
+
+fun StatisticsEntity.fillMaxFields(vehicleData: List<VehicleShortDataEntity>) {
+	vehicleData.singleOrNull {
+		this.maxXpTankId == it.tankId
+	}?.let {
+		this.maxXpTank = it.name ?: NO_DATA
+	}
+	
+	vehicleData.singleOrNull {
+		this.maxFragsTankId == it.tankId
+	}?.let {
+		this.maxFragsTank = it.name ?: NO_DATA
+	}
+	
+	vehicleData.singleOrNull {
+		this.maxDamageTankId == it.tankId
+	}?.let {
+		this.maxDamageTank = it.name ?: NO_DATA
+	}
+}

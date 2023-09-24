@@ -28,6 +28,7 @@
     <string name="retry">Retry</string>
 
     <!-- tab No. 1 - Summary -->
+    <string name="achieved_at">achieved at</string>
     <string-array name="summary_headers_array">
         <item>Overall results</item>
         <item>Battle Performance</item>
