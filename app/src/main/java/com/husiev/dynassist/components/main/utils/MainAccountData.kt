@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import java.text.DecimalFormat
@@ -86,7 +85,7 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 	for (prop in StatisticsEntity::class.memberProperties) {
 		val values = mutableListOf<Float>()
 		for (i in this.indices) {
-			values.add(prop.get(this[i]).toString().toFloat())
+			values.add(prop.get(this[i]).toString().toFloatOrNull() ?: 0f)
 		}
 		allValues[prop.name] = values
 	}
@@ -277,7 +276,6 @@ fun Float.format(forceToInt: Boolean, forceToAll: Boolean = false): String =
 fun Float.exp(forceToInt: Boolean, forceToAll: Boolean = false): Int {
 	val (_, exponent) = String.format(null, "%e", this).split("e")
 	var exp = exponent.toInt()
-	logDebugOut("exp", "exponent", exp)
 	if (forceToAll) return (exp - 2).absoluteValue
 	if (forceToInt) exp = 10
 	return when(exp) {

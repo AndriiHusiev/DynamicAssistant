@@ -203,15 +203,15 @@ private suspend fun retrieveVehicleInfo(
 					map.forEach { (key, item) ->
 						val vehicle = vehicles.singleOrNull { it.tankId.toString() == key }
 						if (vehicle != null && item != null) {
-							preloadImage(context, item.images.bigIcon)
+							preloadImage(context, item.images.bigIcon.secure())
 							vehicle.apply {
 								lastBattleTime = lastBattleTimeAccount
 								name = item.name
 								type = item.type
 								description = item.description
 								nation = item.nation
-								urlSmallIcon = item.images.smallIcon
-								urlBigIcon = item.images.bigIcon
+								urlSmallIcon = item.images.smallIcon.secure()
+								urlBigIcon = item.images.bigIcon.secure()
 								tier = item.tier
 								priceGold = item.priceGold
 								priceCredit = item.priceCredit
@@ -241,3 +241,5 @@ fun preloadImage(context: Context, imageUrl: String?) =
 			}
 			.build()
 		)
+
+fun String.secure() = this.replace("http:", "https:")
