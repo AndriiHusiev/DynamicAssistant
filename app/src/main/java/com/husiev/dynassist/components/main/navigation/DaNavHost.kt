@@ -17,6 +17,7 @@ fun DaNavHost(
 	clanData: AccountClanInfo?,
 	shortData: List<VehicleShortData>,
 	onSummaryClick: (String) -> Unit,
+	onTechnicsClick: (Int) -> Unit,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,
 ) {
@@ -32,7 +33,7 @@ fun DaNavHost(
 		
 		technicsScreen(
 			shortData = shortData,
-			onClick = {}
+			onClick = onTechnicsClick
 		)
 		
 		sessionsScreen(onClick = {})
@@ -44,6 +45,10 @@ fun DaNavHost(
 		
 		summarySingleScreen(
 			summaryData = accountStatisticsData,
+		)
+		
+		technicsSingleScreen(
+			shortData = shortData,
 		)
 	}
 }

@@ -46,13 +46,13 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 fun TechnicsCard(
 	shortData: VehicleShortData,
 	modifier: Modifier = Modifier,
-	onClick: (VehicleShortData) -> Unit = {}
+	onClick: (Int) -> Unit = {}
 ) {
 	ElevatedCard(
 		modifier = modifier
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_small)))
 			.fillMaxWidth()
-			.clickable { onClick(shortData) },
+			.clickable { onClick(shortData.tankId) },
 		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)

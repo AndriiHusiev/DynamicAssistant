@@ -52,7 +52,16 @@ fun MainTopBar(
 			else -> {
 				val argKeys = it.arguments.keys
 				if (argKeys.isNotEmpty()) {
-					appState.getDestinationArg(argKeys.first())?.let { item -> title = item }
+					when(val arg = argKeys.first()) {
+						"single_title" -> appState.getStringDestArg(arg)?.let { param ->
+							title = param
+						}
+						"single_id" -> appState.getIntDestArg(arg)?.let { id ->
+							title = mainViewModel.shortData.value.singleOrNull { vehicle ->
+								vehicle.tankId == id
+							}?.name ?: ""
+						}
+					}
 				}
 				navigationIcon = Icons.Filled.ArrowBack
 				navigationIconContentDescription = stringResource(R.string.description_back)

@@ -15,7 +15,7 @@ fun NavController.navigateToTechnics(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.technicsScreen(
 	shortData: List<VehicleShortData>,
-	onClick: (VehicleShortData) -> Unit
+	onClick: (Int) -> Unit
 ) {
 	composable(
 		route = technicsNavigationRoute,

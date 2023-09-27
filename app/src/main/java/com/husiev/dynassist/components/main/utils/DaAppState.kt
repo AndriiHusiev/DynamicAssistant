@@ -20,6 +20,7 @@ import com.husiev.dynassist.components.main.navigation.navigateToSessions
 import com.husiev.dynassist.components.main.navigation.navigateToSummary
 import com.husiev.dynassist.components.main.navigation.navigateToSummarySingle
 import com.husiev.dynassist.components.main.navigation.navigateToTechnics
+import com.husiev.dynassist.components.main.navigation.navigateToTechnicsSingle
 import com.husiev.dynassist.network.NetworkRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -108,7 +109,16 @@ class DaAppState(
 		navController.navigateToSummarySingle(singleArg, navOptions)
 	}
 	
+	fun navigateToTechnicsSingle(singleArg: Int) {
+		val navOptions = navOptions { launchSingleTop = true }
+		navController.navigateToTechnicsSingle(singleArg, navOptions)
+	}
+	
 	@Composable
-	fun getDestinationArg(key: String): String? =
+	fun getStringDestArg(key: String): String? =
 		 navController.currentBackStackEntryAsState().value?.arguments?.getString(key)
+	
+	@Composable
+	fun getIntDestArg(key: String): Int? =
+		 navController.currentBackStackEntryAsState().value?.arguments?.getInt(key)
 }

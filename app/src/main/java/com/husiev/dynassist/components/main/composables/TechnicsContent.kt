@@ -15,7 +15,7 @@ import com.husiev.dynassist.components.main.utils.VehicleShortData
 fun TechnicsContent(
 	shortData: List<VehicleShortData>,
 	modifier: Modifier = Modifier,
-	onClick: (VehicleShortData) -> Unit = {}
+	onClick: (Int) -> Unit = {}
 ) {
 	val state = rememberLazyListState()
 	

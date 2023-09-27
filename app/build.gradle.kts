@@ -14,8 +14,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 34
-		versionCode = 24
-		versionName = "0.5.2"
+		versionCode = 25
+		versionName = "0.6.0"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -66,8 +66,8 @@ dependencies {
 	implementation("androidx.compose.ui:ui:1.5.1")
 	implementation("androidx.compose.ui:ui-graphics:1.5.1")
 	implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-	implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
-	implementation("androidx.compose.material3:material3:1.1.1")
+	implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
+	implementation("androidx.compose.material3:material3:1.1.2")
 	implementation("androidx.compose.material:material:1.5.1")
 	implementation("androidx.compose.material:material-icons-core:1.5.1")
 	implementation("androidx.compose.material:material-icons-core-android:1.5.1")
@@ -75,7 +75,7 @@ dependencies {
 	implementation("androidx.compose.material:material-icons-extended:1.5.1")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 	implementation("androidx.datastore:datastore-preferences:1.0.0")
-	implementation("androidx.navigation:navigation-compose:2.7.2")
+	implementation("androidx.navigation:navigation-compose:2.7.3")
 	implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.48")
