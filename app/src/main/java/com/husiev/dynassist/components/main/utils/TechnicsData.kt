@@ -83,3 +83,12 @@ fun tierToResId(tier: Int?) = when(tier) {
 	10 -> R.drawable.level_10
 	else -> R.drawable.level_none
 }
+
+fun String?.roleResId() = when(this) {
+	"lightTank" -> R.string.vehicle_role_light
+	"mediumTank" -> R.string.vehicle_role_medium
+	"heavyTank" -> R.string.vehicle_role_heavy
+	"AT-SPG" -> R.string.vehicle_role_atspg
+	"SPG" -> R.string.vehicle_role_spg
+	else -> R.string.no_data
+}

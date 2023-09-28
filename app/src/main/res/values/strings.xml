@@ -75,6 +75,25 @@
     <!-- tab No. 2 - Technics -->
     <string name="battles">battles</string>
 
+    <!-- tab No. 1.1 - Single Technics -->
+    <string name="general_info">General Information</string>
+    <string name="no_data">--</string>
+    <string name="vehicle_role">Role</string>
+    <string name="vehicle_role_light">Light Tank</string>
+    <string name="vehicle_role_medium">Medium Tank</string>
+    <string name="vehicle_role_heavy">Heavy Tank</string>
+    <string name="vehicle_role_spg">SPG</string>
+    <string name="vehicle_role_atspg">AT SPG</string>
+    <string name="vehicle_tier">Tier</string>
+    <string name="vehicle_mastery">Mark Of Mastery</string>
+    <string name="vehicle_price_price">Price</string>
+    <string name="vehicle_price_credits">Credits</string>
+    <string name="vehicle_price_gold">Gold</string>
+    <string name="vehicle_not_for_sale">Currently not for sale</string>
+    <string name="vehicle_battles">Battles</string>
+    <string name="vehicle_victories">Victories</string>
+    <string name="vehicle_win_rate">Win Rate</string>
+
     <!-- tab No. 4 - Details -->
     <string name="title_details">Details</string>
     <string name="global_rating">Global Rating</string>
@@ -105,4 +124,6 @@
     <string name="description_account_details">Account Details</string>
     <string name="description_refresh">Refresh</string>
     <string name="description_back">Back</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
 </resources>
