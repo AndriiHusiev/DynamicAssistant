@@ -50,6 +50,7 @@ fun MainScreen(
 	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
 	val shortData by mainViewModel.shortData.collectAsStateWithLifecycle()
 	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
+	val filterTechnics by mainViewModel.filterTechnics.collectAsStateWithLifecycle()
 	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
 	var showSortDialog by rememberSaveable { mutableStateOf(false) }
@@ -58,6 +59,14 @@ fun MainScreen(
 			sort = sortTechnics,
 			onDismiss = { showSortDialog = false },
 			onChangeSort = mainViewModel::changeSortTechnics
+		)
+	}
+	var showFilterDialog by rememberSaveable { mutableStateOf(false) }
+	if (showFilterDialog) {
+		TechnicsFilterDialog(
+			filter = filterTechnics,
+			onDismiss = { showFilterDialog = false },
+			onChangeFilter = mainViewModel::changeFilterTechnics
 		)
 	}
 	
@@ -108,7 +117,8 @@ fun MainScreen(
 				MainTopBar(
 					mainViewModel = mainViewModel,
 					appState = appState,
-					onSortClick = { showSortDialog = true }
+					onSortClick = { showSortDialog = true },
+					onFilterClick = { showFilterDialog = true },
 				)
 				
 				Box {
@@ -119,6 +129,7 @@ fun MainScreen(
 						clanData = clanData,
 						shortData = shortData,
 						sort = sortTechnics,
+						filter = filterTechnics,
 						onSummaryClick = appState::navigateToSummarySingle,
 						onTechnicsClick = appState::navigateToTechnicsSingle,
 					)

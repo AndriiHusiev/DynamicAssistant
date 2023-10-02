@@ -11,6 +11,7 @@ import coil.decode.Decoder
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
@@ -66,6 +67,14 @@ class MainViewModel @Inject constructor(
 	
 	fun changeSortTechnics(sort: SortTechnics) {
 		_sortTechnics.value = sort
+	}
+	
+	private val _filterTechnics = MutableStateFlow(FilterTechnics.ALL)
+	val filterTechnics: StateFlow<FilterTechnics>
+		get() = _filterTechnics.asStateFlow()
+	
+	fun changeFilterTechnics(filter: FilterTechnics) {
+		_filterTechnics.value = filter
 	}
 	
 	val personalData: StateFlow<AccountPersonalData?> =

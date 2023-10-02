@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ fun MainTopBar(
 	mainViewModel: MainViewModel,
 	appState: DaAppState,
 	onSortClick: () -> Unit,
+	onFilterClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	var title = mainViewModel.nickname
@@ -51,15 +53,15 @@ fun MainTopBar(
 			}
 			
 			technicsNavigationRoute -> {
-				navigationIcon = Icons.Filled.FilterList
-				actionIcon = Icons.Filled.Refresh
-				navigationIconContentDescription = stringResource(R.string.description_filter_list)
-				actionIconContentDescription = stringResource(R.string.description_refresh)
+				navigationIcon = Icons.Filled.Sort
+				actionIcon = Icons.Filled.FilterList
+				navigationIconContentDescription = stringResource(R.string.description_sort_list)
+				actionIconContentDescription = stringResource(R.string.description_filter_list)
 				onNavigationClick = {
 					onSortClick()
 				}
 				onActionClick = {
-					mainViewModel.getAccountAllData()
+					onFilterClick()
 				}
 			}
 			

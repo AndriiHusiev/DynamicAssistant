@@ -81,6 +81,14 @@
     <string name="vehicle_sort_nation">Nation</string>
     <string name="vehicle_sort_winrating">Winrating</string>
     <string name="vehicle_sort_premium">Premium</string>
+    <string name="vehicle_filter_title">Filter vehicles</string>
+    <string name="vehicle_filter_all">Show all</string>
+    <string name="vehicle_filter_last">Last session</string>
+    <string name="vehicle_filter_light">Light tanks</string>
+    <string name="vehicle_filter_medium">Medium tanks</string>
+    <string name="vehicle_filter_heavy">Heavy tanks</string>
+    <string name="vehicle_filter_atspg">AT SPG</string>
+    <string name="vehicle_filter_spg">SPG</string>
 
     <!-- tab No. 1.1 - Single Technics -->
     <string name="general_info">General Information</string>
@@ -133,5 +141,6 @@
     <string name="description_back">Back</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
+    <string name="description_sort_list">Sort List</string>
     <string name="description_filter_list">Filter List</string>
 </resources>
