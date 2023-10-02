@@ -2,6 +2,7 @@ package com.husiev.dynassist.components.main.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +23,7 @@ import com.husiev.dynassist.components.start.composables.DaTopAppBar
 fun MainTopBar(
 	mainViewModel: MainViewModel,
 	appState: DaAppState,
+	onSortClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	var title = mainViewModel.nickname
@@ -35,14 +37,26 @@ fun MainTopBar(
 	appState.currentDestination?.let {
 		when(it.route) {
 			summaryNavigationRoute,
-			sessionsNavigationRoute,
-			technicsNavigationRoute -> {
+			sessionsNavigationRoute -> {
 				navigationIcon = Icons.Outlined.Info
 				actionIcon = Icons.Filled.Refresh
 				navigationIconContentDescription = stringResource(R.string.description_account_details)
 				actionIconContentDescription = stringResource(R.string.description_refresh)
 				onNavigationClick = {
 					appState.navigateToDetails()
+				}
+				onActionClick = {
+					mainViewModel.getAccountAllData()
+				}
+			}
+			
+			technicsNavigationRoute -> {
+				navigationIcon = Icons.Filled.FilterList
+				actionIcon = Icons.Filled.Refresh
+				navigationIconContentDescription = stringResource(R.string.description_filter_list)
+				actionIconContentDescription = stringResource(R.string.description_refresh)
+				onNavigationClick = {
+					onSortClick()
 				}
 				onActionClick = {
 					mainViewModel.getAccountAllData()

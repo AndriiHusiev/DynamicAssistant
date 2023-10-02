@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.composables.TechnicsContent
 import com.husiev.dynassist.components.main.utils.VehicleShortData
 
@@ -15,6 +16,7 @@ fun NavController.navigateToTechnics(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.technicsScreen(
 	shortData: List<VehicleShortData>,
+	sort: SortTechnics,
 	onClick: (Int) -> Unit
 ) {
 	composable(
@@ -22,6 +24,7 @@ fun NavGraphBuilder.technicsScreen(
 	) {
 		TechnicsContent(
 			shortData = shortData,
+			sort = sort,
 			onClick = onClick
 		)
 	}

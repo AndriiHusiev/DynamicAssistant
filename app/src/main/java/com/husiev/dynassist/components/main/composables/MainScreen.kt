@@ -17,7 +17,10 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -46,8 +49,17 @@ fun MainScreen(
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
 	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
 	val shortData by mainViewModel.shortData.collectAsStateWithLifecycle()
+	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
 	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
+	var showSortDialog by rememberSaveable { mutableStateOf(false) }
+	if (showSortDialog) {
+		TechnicsSortDialog(
+			sort = sortTechnics,
+			onDismiss = { showSortDialog = false },
+			onChangeSort = mainViewModel::changeSortTechnics
+		)
+	}
 	
 	val noConnectionMessage = stringResource(R.string.no_connection)
 	val retryLabel = stringResource(R.string.retry)
@@ -96,6 +108,7 @@ fun MainScreen(
 				MainTopBar(
 					mainViewModel = mainViewModel,
 					appState = appState,
+					onSortClick = { showSortDialog = true }
 				)
 				
 				Box {
@@ -105,6 +118,7 @@ fun MainScreen(
 						accountStatisticsData = statisticData,
 						clanData = clanData,
 						shortData = shortData,
+						sort = sortTechnics,
 						onSummaryClick = appState::navigateToSummarySingle,
 						onTechnicsClick = appState::navigateToTechnicsSingle,
 					)

@@ -11,6 +11,7 @@ import coil.decode.Decoder
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
@@ -28,8 +29,10 @@ import com.husiev.dynassist.network.dataclasses.asEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -55,6 +58,14 @@ class MainViewModel @Inject constructor(
 	
 	init {
 		getAccountAllData()
+	}
+	
+	private val _sortTechnics = MutableStateFlow(SortTechnics.BATTLES)
+	val sortTechnics: StateFlow<SortTechnics>
+		get() = _sortTechnics.asStateFlow()
+	
+	fun changeSortTechnics(sort: SortTechnics) {
+		_sortTechnics.value = sort
 	}
 	
 	val personalData: StateFlow<AccountPersonalData?> =
@@ -113,7 +124,7 @@ class MainViewModel @Inject constructor(
 			if (lastBattleTimeAccount != null) {
 				val vehicles = retrieveVehicleShortData(accountId, networkRepository)
 				
-				retrieveVehicleInfo(lastBattleTimeAccount, context, vehicles, networkRepository, databaseRepository)
+				retrieveVehicleInfo(accountId, lastBattleTimeAccount, context, vehicles, networkRepository, databaseRepository)
 			}
 		}
 	}
@@ -185,6 +196,7 @@ private suspend fun retrieveVehicleShortData(
 }
 
 private suspend fun retrieveVehicleInfo(
+	accountId: Int,
 	lastBattleTimeAccount: Int,
 	context: Context,
 	vehicles: List<VehicleShortDataEntity>,
@@ -205,28 +217,35 @@ private suspend fun retrieveVehicleInfo(
 		when(val response = networkRepository.getVehicleInfo(sublist)) {
 			null -> return
 			else -> {
-				response.data?.let {  map ->
-					map.forEach { (key, item) ->
-						val vehicle = vehicles.singleOrNull { it.tankId.toString() == key }
-						if (vehicle != null && item != null) {
-							preloadImage(context, item.images.bigIcon.secure())
-							vehicle.apply {
-								lastBattleTime = lastBattleTimeAccount
-								name = item.name
-								type = item.type
-								description = item.description
-								nation = item.nation
-								urlSmallIcon = item.images.smallIcon.secure()
-								urlBigIcon = item.images.bigIcon.secure()
-								tier = item.tier
-								priceGold = item.priceGold
-								priceCredit = item.priceCredit
-								isPremium = item.isPremium
-								isGift = item.isGift
-								isWheeled = item.isWheeled
+				databaseRepository.getVehiclesShortData(accountId).first { list ->
+					response.data?.let { map ->
+						map.forEach { (key, item) ->
+							val oldVehicleData = list.singleOrNull { it.tankId.toString() == key }
+							val newVehicleData = vehicles.singleOrNull { it.tankId.toString() == key }
+							if (newVehicleData != null && item != null) {
+								preloadImage(context, item.images.bigIcon.secure())
+								newVehicleData.apply {
+									lastBattleTime = if (oldVehicleData == null || oldVehicleData.battles < battles)
+										lastBattleTimeAccount
+									else
+										oldVehicleData.lastBattleTime
+									name = item.name
+									type = item.type
+									description = item.description
+									nation = item.nation
+									urlSmallIcon = item.images.smallIcon.secure()
+									urlBigIcon = item.images.bigIcon.secure()
+									tier = item.tier
+									priceGold = item.priceGold
+									priceCredit = item.priceCredit
+									isPremium = item.isPremium
+									isGift = item.isGift
+									isWheeled = item.isWheeled
+								}
 							}
 						}
 					}
+					true
 				}
 			}
 		}

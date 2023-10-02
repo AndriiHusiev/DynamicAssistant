@@ -21,7 +21,11 @@ data class VehicleShortData(
 	val isPremium: Boolean? = null,
 	val isGift: Boolean? = null,
 	val isWheeled: Boolean? = null,
-)
+) : Comparable<VehicleShortData> {
+	override fun compareTo(other: VehicleShortData): Int {
+		return compareValuesBy(this, other, { it.battles }, { it.type }, { it.tier }, { it.nation }, { it.winRate }, { it.isPremium })
+	}
+}
 
 fun masteryToResId(markOfMastery: Int) = when(markOfMastery) {
 	1 -> R.drawable.ic_step_mark_3

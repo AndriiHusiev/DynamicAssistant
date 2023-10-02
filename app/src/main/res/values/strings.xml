@@ -74,6 +74,13 @@
 
     <!-- tab No. 2 - Technics -->
     <string name="battles">battles</string>
+    <string name="vehicle_sort_title">Sort vehicles</string>
+    <string name="vehicle_sort_battles">Battles</string>
+    <string name="vehicle_sort_type">Type</string>
+    <string name="vehicle_sort_level">Level</string>
+    <string name="vehicle_sort_nation">Nation</string>
+    <string name="vehicle_sort_winrating">Winrating</string>
+    <string name="vehicle_sort_premium">Premium</string>
 
     <!-- tab No. 1.1 - Single Technics -->
     <string name="general_info">General Information</string>
@@ -126,4 +133,5 @@
     <string name="description_back">Back</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
+    <string name="description_filter_list">Filter List</string>
 </resources>

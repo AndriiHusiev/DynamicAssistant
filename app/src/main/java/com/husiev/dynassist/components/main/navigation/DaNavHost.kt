@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
@@ -16,6 +17,7 @@ fun DaNavHost(
 	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
 	clanData: AccountClanInfo?,
 	shortData: List<VehicleShortData>,
+	sort: SortTechnics,
 	onSummaryClick: (String) -> Unit,
 	onTechnicsClick: (Int) -> Unit,
 	modifier: Modifier = Modifier,
@@ -33,6 +35,7 @@ fun DaNavHost(
 		
 		technicsScreen(
 			shortData = shortData,
+			sort = sort,
 			onClick = onTechnicsClick
 		)
 		
