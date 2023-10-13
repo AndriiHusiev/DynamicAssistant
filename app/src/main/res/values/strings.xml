@@ -127,6 +127,11 @@
     <string name="joined_days">Days in clan</string>
     <string name="role">Role in the clan</string>
 
+    <!-- Notifications -->
+    <string name="notification_channel_name">Accounts updates</string>
+    <string name="notification_channel_description">The latest updates on chosen accounts</string>
+    <string name="notification_title">Dynamic Assistant notifies you</string>
+
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
     <string name="description_clear_search_text">Clear search text</string>
