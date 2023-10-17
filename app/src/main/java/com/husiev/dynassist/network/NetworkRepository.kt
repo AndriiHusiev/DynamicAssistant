@@ -37,14 +37,16 @@ class NetworkRepository @Inject constructor(
 		}
 	}
 	
-	suspend fun getAccountAllData(accountId: Int) =
+	suspend fun getAccountAllData(accountId: Int, chained: Boolean = true) =
 		try {
 			val response = networkService.getPersonalData(appId, accountId)
-			_queryStatus.emit(Result.Success("personal"))
+			if (chained)
+				_queryStatus.emit(Result.Success("personal"))
 			response
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get player personal data", exception)
-			_queryStatus.emit(Result.Error(exception))
+			if (chained)
+				_queryStatus.emit(Result.Error(exception))
 			null
 		}
 	

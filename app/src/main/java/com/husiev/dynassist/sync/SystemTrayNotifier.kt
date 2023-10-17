@@ -28,7 +28,7 @@ class SystemTrayNotifier @Inject constructor(
 	@ApplicationContext private val context: Context,
 ) : Notifier {
 	
-	override fun postNewsNotifications(message: String) = with(context) {
+	override fun postNewsNotifications(lines: List<String>) = with(context) {
 		if (ActivityCompat.checkSelfPermission(
 				this,
 				Manifest.permission.POST_NOTIFICATIONS,
@@ -39,12 +39,11 @@ class SystemTrayNotifier @Inject constructor(
 		
 		// Create the notification
 		val notification = createNotification {
-			val title = getString(R.string.notification_title)
-			setContentTitle(title)
-				.setContentText(message)
+			setContentTitle(getString(R.string.notification_title))
+				.setContentText(setNotifyText(lines, getString(R.string.notification_more)))
 				.setSmallIcon(R.drawable.ic_small_notification)
 				// Build info into InboxStyle template.
-				.setStyle(newsNotificationStyle(message, title))
+				.setStyle(setNotificationStyle(lines))
 				.setGroup(UPDATES_NOTIFICATION_GROUP)
 				.setGroupSummary(true)
 				.setAutoCancel(true)
@@ -55,17 +54,30 @@ class SystemTrayNotifier @Inject constructor(
 		NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
 	}
 	
+	private fun setNotifyText(lines: List<String>, postfix: String) =
+		lines[0] + if (lines.size > 1)
+			", ... + ${lines.size - 1} $postfix"
+		else
+			""
+	
 	/**
 	 * Creates an inbox style summary notification for news updates
 	 */
-	private fun newsNotificationStyle(message: String, title: String) = InboxStyle()
-		.addLine(message)
-		.setBigContentTitle(title)
-		.setSummaryText(title)
+	private fun setNotificationStyle(
+		lines: List<String>,
+		title: String? = null,
+		sum: String? = null,
+	) = if (lines.size > 1) {
+		lines.fold(InboxStyle()) { inboxStyle, line ->
+			inboxStyle.addLine(line)
+		}
+			.setBigContentTitle(title)
+			.setSummaryText(sum)
+	} else null
 }
 
 /**
- * Creates a notification for configured for updates
+ * Creates a notification for configured updates
  */
 private fun Context.createNotification(
 	block: NotificationCompat.Builder.() -> Unit,

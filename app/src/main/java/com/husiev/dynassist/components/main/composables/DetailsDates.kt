@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
@@ -28,6 +31,8 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 fun DetailsDateCard(
 	detailsData: AccountPersonalData?,
 	modifier: Modifier = Modifier,
+	notifyState: NotifyEnum = NotifyEnum.UNCHECKED,
+	onNotifyClick: (Boolean) -> Unit = {},
 ) {
 	ElevatedCard(
 		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
@@ -68,6 +73,14 @@ fun DetailsDateCard(
 			title = stringResource(R.string.created_at),
 			text = detailsData?.createdAt ?: NO_DATA
 		)
+		
+		MainDivider()
+		
+		SwitchableItem(
+			text = stringResource(R.string.notification_notify_text),
+			checked = notifyState != NotifyEnum.UNCHECKED,
+			onSwitch = onNotifyClick
+		)
 	}
 }
 
@@ -100,6 +113,34 @@ fun DetailsCardItem(
 					horizontal = dimensionResource(R.dimen.padding_medium),
 				),
 			style = MaterialTheme.typography.bodySmall
+		)
+	}
+}
+
+@Composable
+fun SwitchableItem(
+	text: String,
+	checked: Boolean,
+	modifier: Modifier = Modifier,
+	onSwitch: (Boolean) -> Unit = {}
+) {
+	Row(
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Text(
+			text = text,
+			modifier = Modifier.weight(1f),
+			style = MaterialTheme.typography.bodyMedium
+		)
+		Switch(
+			checked = checked,
+			onCheckedChange = { onSwitch(it) },
+			colors = SwitchDefaults.colors(
+				checkedThumbColor = MaterialTheme.colorScheme.primary
+			)
 		)
 	}
 }

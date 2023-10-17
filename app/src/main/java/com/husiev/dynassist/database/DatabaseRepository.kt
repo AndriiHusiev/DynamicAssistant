@@ -24,6 +24,9 @@ class DatabaseRepository @Inject constructor(
 	val listOfPlayers: Flow<List<StartAccountInfo>> = database.playersDao().loadPlayersList()
 		.map { it.map(PlayersEntity::asExternalModel) }
 	
+	val checkedPlayers: Flow<List<StartAccountInfo>> = database.playersDao().checkedPlayers()
+		.map { it.map(PlayersEntity::asExternalModel) }
+	
 	suspend fun addPlayer(player: StartAccountInfo) =
 		database.playersDao().insert(player.asEntity())
 	
@@ -35,6 +38,12 @@ class DatabaseRepository @Inject constructor(
 	
 	fun updateClan(clan: String?, emblem: String?, accountId: Int) =
 		database.playersDao().updateClan(clan, emblem, accountId)
+	
+	fun loadPlayer(accountId: Int) = database.playersDao().loadPlayer(accountId)
+		.map { it.asExternalModel() }
+	
+	suspend fun updateNotification(notification: Int, accountId: Int) =
+		database.playersDao().updateNotification(notification, accountId)
 	
 	
 	suspend fun addPersonalData(accountPersonalData: AccountPersonalData) =

@@ -3,6 +3,7 @@ package com.husiev.dynassist.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 
 @Entity(tableName = "players")
@@ -13,7 +14,9 @@ data class PlayersEntity (
 	val clan: String? = null,
 	val emblem: String? = null,
 	@ColumnInfo(name = "update_time")
-	val updateTime: String
+	val updateTime: String,
+	@ColumnInfo(defaultValue = "0")
+	val notification: Int,
 )
 
 fun PlayersEntity.asExternalModel() = StartAccountInfo(
@@ -22,4 +25,7 @@ fun PlayersEntity.asExternalModel() = StartAccountInfo(
 	clan = clan,
 	emblem = emblem,
 	updateTime = updateTime,
+	notification = enumValues<NotifyEnum>().firstOrNull {
+		it.ordinal == notification
+	} ?: NotifyEnum.UNCHECKED
 )

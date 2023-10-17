@@ -2,6 +2,7 @@ package com.husiev.dynassist.sync
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 
 object Sync {
@@ -15,6 +16,11 @@ object Sync {
 				ExistingPeriodicWorkPolicy.KEEP,
 				SyncWorker.startUpSyncWork(),
 			)
+//			.enqueueUniqueWork(
+//				SyncWorkName,
+//				ExistingWorkPolicy.KEEP,
+//				SyncWorker.startUpSyncWork(),
+//			)
 	}
 }
 

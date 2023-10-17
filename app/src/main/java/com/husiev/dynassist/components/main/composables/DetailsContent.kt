@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
@@ -23,6 +24,8 @@ fun DetailsContent(
 	detailsData: AccountPersonalData?,
 	clanData: AccountClanInfo?,
 	modifier: Modifier = Modifier,
+	notifyState: NotifyEnum = NotifyEnum.UNCHECKED,
+	onNotifyClick: (Boolean) -> Unit = {},
 ) {
 	val state = rememberLazyListState()
 	
@@ -34,7 +37,11 @@ fun DetailsContent(
 	) {
 		item { DetailsRatingCard(detailsData?.globalRating) }
 		item { DetailsClanCard(clanData) }
-		item { DetailsDateCard(detailsData) }
+		item { DetailsDateCard(
+			detailsData = detailsData,
+			notifyState = notifyState,
+			onNotifyClick = onNotifyClick
+		) }
 	}
 }
 

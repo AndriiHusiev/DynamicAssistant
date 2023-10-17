@@ -20,6 +20,7 @@ import com.husiev.dynassist.components.main.utils.MainRoutesData
 import com.husiev.dynassist.components.main.utils.Result
 import com.husiev.dynassist.components.main.utils.VehicleShortData
 import com.husiev.dynassist.components.main.utils.asExternalModel
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.database.entity.VehicleShortDataEntity
@@ -76,6 +77,21 @@ class MainViewModel @Inject constructor(
 	fun changeFilterTechnics(filter: FilterTechnics) {
 		_filterTechnics.value = filter
 	}
+	
+	fun switchNotification(state: Boolean) {
+		viewModelScope.launch(Dispatchers.IO) {
+			databaseRepository.updateNotification(state.toInt(), accountId)
+		}
+	}
+	
+	val notifyState: StateFlow<NotifyEnum> =
+		databaseRepository.loadPlayer(accountId)
+			.map { it.notification }
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.WhileSubscribed(5_000),
+				initialValue = NotifyEnum.UNCHECKED
+			)
 	
 	val personalData: StateFlow<AccountPersonalData?> =
 		databaseRepository.getPersonalData(accountId)
@@ -277,3 +293,5 @@ fun preloadImage(context: Context, imageUrl: String?) =
 		)
 
 fun String.secure() = this.replace("http:", "https:")
+
+fun Boolean.toInt() = if (this) 1 else 0

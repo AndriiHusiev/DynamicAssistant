@@ -98,7 +98,8 @@ fun StartContentPreview() {
 				id = 1,
 				nickname = "MaterialThemeColorSchemeOnSecondaryContainer",
 				clan = "BTW",
-				updateTime = dateTime),
+				updateTime = dateTime,
+				notification = NotifyEnum.UPDATES_AVAIL),
 			)
 		)
 	}

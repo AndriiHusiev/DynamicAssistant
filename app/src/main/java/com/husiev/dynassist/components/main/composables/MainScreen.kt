@@ -32,6 +32,7 @@ import com.husiev.dynassist.components.main.navigation.DaNavHost
 import com.husiev.dynassist.components.main.utils.DaAppState
 import com.husiev.dynassist.components.main.utils.Result
 import com.husiev.dynassist.components.main.utils.rememberDaAppState
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.network.NetworkRepository
 
 @Composable
@@ -45,6 +46,7 @@ fun MainScreen(
 		networkRepository = networkRepository,
 	),
 ) {
+	val notifyState by mainViewModel.notifyState.collectAsStateWithLifecycle()
 	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
 	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
@@ -68,6 +70,9 @@ fun MainScreen(
 			onDismiss = { showFilterDialog = false },
 			onChangeFilter = mainViewModel::changeFilterTechnics
 		)
+	}
+	if (queryResult is Result.Success) {
+		mainViewModel.switchNotification(notifyState != NotifyEnum.UNCHECKED)
 	}
 	
 	val noConnectionMessage = stringResource(R.string.no_connection)
@@ -124,6 +129,7 @@ fun MainScreen(
 				Box {
 					DaNavHost(
 						navController = appState.navController,
+						notifyState = notifyState,
 						personalData = personalData,
 						accountStatisticsData = statisticData,
 						clanData = clanData,
@@ -132,6 +138,7 @@ fun MainScreen(
 						filter = filterTechnics,
 						onSummaryClick = appState::navigateToSummarySingle,
 						onTechnicsClick = appState::navigateToTechnicsSingle,
+						onNotifyClick = mainViewModel::switchNotification,
 					)
 					
 					if (queryResult is Result.Loading) {

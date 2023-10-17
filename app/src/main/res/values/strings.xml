@@ -130,7 +130,9 @@
     <!-- Notifications -->
     <string name="notification_channel_name">Accounts updates</string>
     <string name="notification_channel_description">The latest updates on chosen accounts</string>
-    <string name="notification_title">Dynamic Assistant notifies you</string>
+    <string name="notification_title">There is new data in the following accounts</string>
+    <string name="notification_notify_text">Notify if there is new data</string>
+    <string name="notification_more">more</string>
 
     <!-- Content Description -->
     <string name="description_start_fab">Add account</string>
@@ -148,4 +150,5 @@
     <string name="show_more">Show more</string>
     <string name="description_sort_list">Sort List</string>
     <string name="description_filter_list">Filter List</string>
+    <string name="description_new_data_dot">Account has new data</string>
 </resources>

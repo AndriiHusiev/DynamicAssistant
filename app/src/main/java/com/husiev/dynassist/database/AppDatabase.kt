@@ -1,5 +1,6 @@
 package com.husiev.dynassist.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.husiev.dynassist.database.dao.ClanDataDao
@@ -24,7 +25,11 @@ import com.husiev.dynassist.database.entity.VehicleShortDataEntity
 		VehicleShortDataEntity::class,
 		VehicleStatDataEntity::class,
 	],
-	version = 1,
+	version = 2,
+	autoMigrations = [
+		AutoMigration(from = 1, to = 2),
+	],
+	exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
 	

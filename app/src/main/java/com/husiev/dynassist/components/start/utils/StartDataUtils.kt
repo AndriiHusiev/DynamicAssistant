@@ -1,6 +1,7 @@
 package com.husiev.dynassist.components.start.utils
 
 import android.util.Log
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.entity.PlayersEntity
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -17,6 +18,7 @@ data class StartAccountInfo(
 	val clan: String? = null,
 	val emblem: String? = null,
 	val updateTime: String,
+	val notification: NotifyEnum = NotifyEnum.UNCHECKED,
 )
 
 fun StartAccountInfo.asEntity() = PlayersEntity(
@@ -25,6 +27,7 @@ fun StartAccountInfo.asEntity() = PlayersEntity(
 	clan = clan,
 	emblem = emblem,
 	updateTime = updateTime,
+	notification = notification.ordinal,
 )
 
 fun logDebugOut(obj: String, message: String, param: Any) {

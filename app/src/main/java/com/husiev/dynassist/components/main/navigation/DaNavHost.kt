@@ -10,10 +10,12 @@ import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.start.composables.NotifyEnum
 
 @Composable
 fun DaNavHost(
 	navController: NavHostController,
+	notifyState: NotifyEnum,
 	personalData: AccountPersonalData?,
 	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
 	clanData: AccountClanInfo?,
@@ -22,6 +24,7 @@ fun DaNavHost(
 	filter: FilterTechnics,
 	onSummaryClick: (String) -> Unit,
 	onTechnicsClick: (Int) -> Unit,
+	onNotifyClick: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,
 ) {
@@ -47,6 +50,8 @@ fun DaNavHost(
 		detailsScreen(
 			detailsData = personalData,
 			clanData = clanData,
+			notifyState = notifyState,
+			onNotifyClick = onNotifyClick,
 		)
 		
 		summarySingleScreen(

@@ -10,12 +10,18 @@ interface PlayersDao: BaseDao<PlayersEntity> {
 	@Query("SELECT * FROM players")
 	fun loadPlayersList(): Flow<List<PlayersEntity>>
 	
-	@Query("SELECT * FROM players where account_id = :accountId")
-	fun loadPlayer(accountId: String): Flow<PlayersEntity>
+	@Query("SELECT * FROM players WHERE account_id = :accountId")
+	fun loadPlayer(accountId: Int): Flow<PlayersEntity>
 	
 	@Query("UPDATE players SET update_time = :updateTime WHERE account_id = :accountId")
 	fun updateTime(updateTime: String, accountId: Int)
 	
 	@Query("UPDATE players SET clan = :clan, emblem = :emblem WHERE account_id = :accountId")
 	fun updateClan(clan: String?, emblem: String?, accountId: Int)
+	
+	@Query("SELECT * FROM players WHERE notification = 1")
+	fun checkedPlayers(): Flow<List<PlayersEntity>>
+	
+	@Query("UPDATE players SET notification = :notification WHERE account_id = :accountId")
+	suspend fun updateNotification(notification: Int, accountId: Int)
 }
