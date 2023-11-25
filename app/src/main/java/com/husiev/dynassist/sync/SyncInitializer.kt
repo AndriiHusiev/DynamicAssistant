@@ -16,13 +16,16 @@ object Sync {
 				ExistingPeriodicWorkPolicy.KEEP,
 				SyncWorker.startUpSyncWork(),
 			)
-//			.enqueueUniqueWork(
-//				SyncWorkName,
-//				ExistingWorkPolicy.KEEP,
-//				SyncWorker.startUpSyncWork(),
-//			)
+		WorkManager
+			.getInstance(context)
+			.enqueueUniqueWork(
+				SyncTestOneWorkName,
+				ExistingWorkPolicy.REPLACE,
+				SyncWorker.startUpSyncTestOneWork(),
+			)
 	}
 }
 
 // This name should not be changed otherwise the app may have concurrent sync requests running
 internal const val SyncWorkName = "SyncWorkName"
+internal const val SyncTestOneWorkName = "SyncWorkName1"

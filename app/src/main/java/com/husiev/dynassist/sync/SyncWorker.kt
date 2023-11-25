@@ -31,7 +31,7 @@ class SyncWorker @AssistedInject constructor(
 	override suspend fun doWork(): Result {
 		return withContext(Dispatchers.IO) {
 			return@withContext try {
-				val nicknames = mutableListOf<String>()
+				val nicknames = mutableListOf<Pair<Int, String>>()
 				databaseRepository.checkedPlayers.first { list ->
 					if (list.isNotEmpty()) {
 						for (item in list) {
@@ -41,7 +41,7 @@ class SyncWorker @AssistedInject constructor(
 									databaseRepository.getStatisticData(item.id).first { list ->
 										if (list.isEmpty() || list.last().battles < networkData.statistics.all.battles) {
 											databaseRepository.updateNotification(NotifyEnum.UPDATES_AVAIL.ordinal, item.id)
-											nicknames.add(item.nickname)
+											nicknames.add(Pair(item.id, item.nickname))
 										}
 										true
 									}
@@ -65,8 +65,10 @@ class SyncWorker @AssistedInject constructor(
 	}
 	
 	companion object {
-//		fun startUpSyncWork() = OneTimeWorkRequestBuilder<SyncWorker>()
 		fun startUpSyncWork() = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
+			.setConstraints(syncConstraints)
+			.build()
+		fun startUpSyncTestOneWork() = OneTimeWorkRequestBuilder<SyncWorker>()
 			.setConstraints(syncConstraints)
 			.build()
 	}
