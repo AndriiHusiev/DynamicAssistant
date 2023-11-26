@@ -6,11 +6,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
-//interface MainRoutesData {
-//	val headers: List<String>
-//	val listItems: List<List<String>>
-//}
-
 @ViewModelScoped
 class MainRoutesData @Inject constructor(
 	@ApplicationContext private val context: Context,
@@ -31,11 +26,3 @@ private fun converterToMap(items: List<String>): Map<String, String> {
 	
 	return map
 }
-
-//@InstallIn(ActivityComponent::class)
-//@Module
-//abstract class MainRoutesDataModule {
-//
-//	@Binds
-//	abstract fun bindMainRoutesData(mainRoutesDataImpl: SummaryData): MainRoutesData
-//}

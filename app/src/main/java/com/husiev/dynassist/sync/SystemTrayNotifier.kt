@@ -24,6 +24,7 @@ import javax.inject.Singleton
 private const val NOTIFICATION_CHANNEL_ID = "VERBOSE_NOTIFICATION"
 private const val UPDATES_NOTIFICATION_GROUP = "UPDATES_NOTIFICATIONS"
 private const val TARGET_ACTIVITY_NAME = "com.husiev.dynassist.components.main.MainActivity"
+private const val SUMMARY_ID = 0
 
 /**
  * Implementation of [Notifier] that displays notifications in the system tray.
@@ -33,7 +34,7 @@ class SystemTrayNotifier @Inject constructor(
 	@ApplicationContext private val context: Context,
 ) : Notifier {
 	
-	override fun postNewsNotifications(lines: List<Pair<Int, String>>) = with(context) {
+	override fun postNewsNotifications(lines: List<AccountNotifierShortData>) = with(context) {
 		if (ActivityCompat.checkSelfPermission(
 				this,
 				Manifest.permission.POST_NOTIFICATIONS,
@@ -42,25 +43,44 @@ class SystemTrayNotifier @Inject constructor(
 			return
 		}
 		
-		for (line in lines) {
+		for (account in lines) {
 			// Create the notification
 			val notification = createNotification {
-				setContentTitle(getString(R.string.notification_title))
-//					.setContentText(setNotifyText(lines, getString(R.string.notification_more)))
-					.setContentText(line.second)
+				setContentTitle(account.nickname)
+					.setContentText(account.battlesCollapsed)
 					.setSmallIcon(R.drawable.ic_small_notification)
 					// Build info into InboxStyle template.
-//					.setStyle(setNotificationStyle(lines))
-					.setContentIntent(pendingIntent(line))
+					.setStyle(setNotificationStyle(
+						listOf(account.battlesExpanded, account. winRate, account.lastBattleTime),
+						account.nickname,
+						getString(R.string.notification_title)
+					))
+					.setContentIntent(pendingIntent(account))
 					.setGroup(UPDATES_NOTIFICATION_GROUP)
-					.setGroupSummary(true)
 					.setAutoCancel(true)
 					.build()
 			}
 			
 			// Send the notifications
-			NotificationManagerCompat.from(this).notify(line.first, notification)
+			NotificationManagerCompat.from(this).notify(account.accountId, notification)
 		}
+		
+		val summaryNotification = createNotification {
+			val text = setNotifyText(lines.map { it.nickname }, getString(R.string.notification_more))
+			setContentTitle(getString(R.string.notification_channel_description))
+				.setContentText(text)
+				.setSmallIcon(R.drawable.ic_small_notification)
+				.setStyle(setNotificationStyle(
+					listOf(text),
+					getString(R.string.notification_channel_description),
+				))
+				.setGroup(UPDATES_NOTIFICATION_GROUP)
+				.setGroupSummary(true)
+				.build()
+		}
+		
+		// Send the group summary notification
+		NotificationManagerCompat.from(this).notify(SUMMARY_ID, summaryNotification)
 	}
 	
 	private fun setNotifyText(lines: List<String>, postfix: String) =
@@ -122,7 +142,7 @@ private fun Context.ensureNotificationChannelExists() {
  * Opens MainActivity and puts proper extras
  */
 private fun Context.pendingIntent(
-	account: Pair<Int, String>,
+	account: AccountNotifierShortData,
 ): PendingIntent? = TaskStackBuilder.create(this).run {
 	// Add the intent, which inflates the back stack.
 	addNextIntentWithParentStack(Intent().apply {
@@ -131,10 +151,10 @@ private fun Context.pendingIntent(
 			packageName,
 			TARGET_ACTIVITY_NAME,
 		)
-		putExtra("nickname", account.second)
-		putExtra("account_id", account.first)
+		putExtra("nickname", account.nickname)
+		putExtra("account_id", account.accountId)
 	})
 	// Get the PendingIntent containing the entire back stack.
-	getPendingIntent(account.first,
+	getPendingIntent(account.accountId,
 		PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }

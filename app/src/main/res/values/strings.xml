@@ -130,7 +130,7 @@
     <!-- Notifications -->
     <string name="notification_channel_name">Accounts updates</string>
     <string name="notification_channel_description">The latest updates on chosen accounts</string>
-    <string name="notification_title">There is new data in the following account:</string>
+    <string name="notification_title">There is new data</string>
     <string name="notification_notify_text">Notify if there is new data</string>
     <string name="notification_more">more</string>
 

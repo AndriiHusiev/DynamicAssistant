@@ -8,9 +8,13 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
+import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.getMainAvg
+import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.DatabaseRepository
+import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.network.NetworkRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -31,7 +35,7 @@ class SyncWorker @AssistedInject constructor(
 	override suspend fun doWork(): Result {
 		return withContext(Dispatchers.IO) {
 			return@withContext try {
-				val nicknames = mutableListOf<Pair<Int, String>>()
+				val nicknames = mutableListOf<AccountNotifierShortData>()
 				databaseRepository.checkedPlayers.first { list ->
 					if (list.isNotEmpty()) {
 						for (item in list) {
@@ -41,7 +45,13 @@ class SyncWorker @AssistedInject constructor(
 									databaseRepository.getStatisticData(item.id).first { list ->
 										if (list.isEmpty() || list.last().battles < networkData.statistics.all.battles) {
 											databaseRepository.updateNotification(NotifyEnum.UPDATES_AVAIL.ordinal, item.id)
-											nicknames.add(Pair(item.id, item.nickname))
+											nicknames.add(setShortData(
+												accountId = item.id,
+												nickname = item.nickname,
+												lastBattleTime = networkData.lastBattleTime,
+												battles = networkData.statistics.all.battles - list.last().battles,
+												wins = networkData.statistics.all.wins - list.last().wins
+											))
 										}
 										true
 									}
@@ -63,6 +73,21 @@ class SyncWorker @AssistedInject constructor(
 			}
 		}
 	}
+	
+	private fun setShortData(
+		accountId: Int,
+		nickname: String,
+		battles: Int,
+		wins: Int,
+		lastBattleTime: Int,
+	) = AccountNotifierShortData(
+		accountId = accountId,
+		nickname = nickname,
+		lastBattleTime = appContext.resources.getString(R.string.last_battle_time) + ": " + lastBattleTime.asStringDate(),
+		battlesExpanded = appContext.resources.getString(R.string.vehicle_battles) + ": +$battles",
+		battlesCollapsed = "+$battles " + appContext.resources.getString(R.string.battles),
+		winRate = appContext.resources.getString(R.string.vehicle_win_rate) + ": " + getMainAvg(wins, battles).toScreen(100f, "%"),
+	)
 	
 	companion object {
 		fun startUpSyncWork() = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
