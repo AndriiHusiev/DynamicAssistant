@@ -19,9 +19,9 @@ interface PlayersDao: BaseDao<PlayersEntity> {
 	@Query("UPDATE players SET clan = :clan, emblem = :emblem WHERE account_id = :accountId")
 	fun updateClan(clan: String?, emblem: String?, accountId: Int)
 	
-	@Query("SELECT * FROM players WHERE notification = 1")
+	@Query("SELECT * FROM players WHERE notification > 0")
 	fun checkedPlayers(): Flow<List<PlayersEntity>>
 	
-	@Query("UPDATE players SET notification = :notification WHERE account_id = :accountId")
-	suspend fun updateNotification(notification: Int, accountId: Int)
+	@Query("UPDATE players SET notification = :notification, notified_battles = :notifiedBattles WHERE account_id = :accountId")
+	suspend fun updateNotification(notification: Int, notifiedBattles: Int, accountId: Int)
 }

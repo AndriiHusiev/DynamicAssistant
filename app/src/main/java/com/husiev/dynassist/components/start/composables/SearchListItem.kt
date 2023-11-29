@@ -57,7 +57,7 @@ fun SearchListItemPreview() {
 	DynamicAssistantTheme {
 		val dateTime = Date().time.toString()
 		SearchListItem(
-			accountInfo = StartAccountInfo(1,"nickname", updateTime = dateTime, notification = NotifyEnum.UNCHECKED)
+			accountInfo = StartAccountInfo(1,"nickname", updateTime = dateTime, notification = NotifyEnum.UNCHECKED, notifiedBattles = 0)
 		)
 	}
 }

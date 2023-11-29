@@ -201,7 +201,7 @@ fun NotificationDot(
 }
 
 enum class NotifyEnum {
-	UNCHECKED, CHECKED, UPDATES_AVAIL
+	UNCHECKED, NO_UPDATES, UPDATES_AVAIL
 }
 
 @Preview(showBackground = true)
@@ -217,7 +217,7 @@ fun AccountListItemPreview() {
 			Column {
 				val dateTime = Date().time.toString()
 				AccountListItem(
-					StartAccountInfo(1, "eater", "KFC", null, dateTime),
+					StartAccountInfo(1, "eater", "KFC", null, dateTime, notifiedBattles = 0),
 				)
 				AccountListItem(
 					StartAccountInfo(
@@ -226,7 +226,8 @@ fun AccountListItemPreview() {
 						"NPE",
 						null,
 						dateTime,
-						NotifyEnum.UPDATES_AVAIL
+						NotifyEnum.UPDATES_AVAIL,
+						0
 					),
 				)
 			}

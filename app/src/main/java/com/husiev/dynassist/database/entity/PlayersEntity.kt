@@ -17,6 +17,8 @@ data class PlayersEntity (
 	val updateTime: String,
 	@ColumnInfo(defaultValue = "0")
 	val notification: Int,
+	@ColumnInfo(name = "notified_battles", defaultValue = "0")
+	val notifiedBattles: Int,
 )
 
 fun PlayersEntity.asExternalModel() = StartAccountInfo(
@@ -27,5 +29,6 @@ fun PlayersEntity.asExternalModel() = StartAccountInfo(
 	updateTime = updateTime,
 	notification = enumValues<NotifyEnum>().firstOrNull {
 		it.ordinal == notification
-	} ?: NotifyEnum.UNCHECKED
+	} ?: NotifyEnum.UNCHECKED,
+	notifiedBattles = notifiedBattles,
 )

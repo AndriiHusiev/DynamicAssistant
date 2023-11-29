@@ -19,6 +19,7 @@ data class StartAccountInfo(
 	val emblem: String? = null,
 	val updateTime: String,
 	val notification: NotifyEnum = NotifyEnum.UNCHECKED,
+	val notifiedBattles: Int,
 )
 
 fun StartAccountInfo.asEntity() = PlayersEntity(
@@ -28,6 +29,7 @@ fun StartAccountInfo.asEntity() = PlayersEntity(
 	emblem = emblem,
 	updateTime = updateTime,
 	notification = notification.ordinal,
+	notifiedBattles = notifiedBattles,
 )
 
 fun logDebugOut(obj: String, message: String, param: Any) {

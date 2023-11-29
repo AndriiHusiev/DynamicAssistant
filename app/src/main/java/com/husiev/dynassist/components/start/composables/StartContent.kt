@@ -90,16 +90,17 @@ fun StartContentPreview() {
 	DynamicAssistantTheme {
 		val dateTime = Date().time.toString()
 		StartContent(listOf(
-			StartAccountInfo(1, "load","DTS", null, dateTime),
-			StartAccountInfo(1, "vector", updateTime = dateTime),
-			StartAccountInfo(1, "asset", updateTime = dateTime),
-			StartAccountInfo(1, "format","KFC", null, dateTime),
+			StartAccountInfo(1, "load","DTS", null, dateTime, notifiedBattles = 0),
+			StartAccountInfo(1, "vector", updateTime = dateTime, notifiedBattles = 0),
+			StartAccountInfo(1, "asset", updateTime = dateTime, notifiedBattles = 0),
+			StartAccountInfo(1, "format","KFC", null, dateTime, notifiedBattles = 0),
 			StartAccountInfo(
 				id = 1,
 				nickname = "MaterialThemeColorSchemeOnSecondaryContainer",
 				clan = "BTW",
 				updateTime = dateTime,
-				notification = NotifyEnum.UPDATES_AVAIL),
+				notification = NotifyEnum.UPDATES_AVAIL,
+				notifiedBattles = 0),
 			)
 		)
 	}

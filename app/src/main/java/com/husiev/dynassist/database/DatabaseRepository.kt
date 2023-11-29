@@ -42,8 +42,8 @@ class DatabaseRepository @Inject constructor(
 	fun loadPlayer(accountId: Int) = database.playersDao().loadPlayer(accountId)
 		.map { it.asExternalModel() }
 	
-	suspend fun updateNotification(notification: Int, accountId: Int) =
-		database.playersDao().updateNotification(notification, accountId)
+	suspend fun updateNotification(notification: Int, notifiedBattles: Int, accountId: Int) =
+		database.playersDao().updateNotification(notification, notifiedBattles, accountId)
 	
 	
 	suspend fun addPersonalData(accountPersonalData: AccountPersonalData) =

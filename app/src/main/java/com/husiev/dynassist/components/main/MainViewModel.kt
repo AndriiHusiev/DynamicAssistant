@@ -80,7 +80,11 @@ class MainViewModel @Inject constructor(
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch(Dispatchers.IO) {
-			databaseRepository.updateNotification(state.toInt(), accountId)
+			databaseRepository.getStatisticData(accountId).first { list ->
+				val battles = if (list.isEmpty()) 0 else list.last().battles
+				databaseRepository.updateNotification(state.toInt(), battles, accountId)
+				true
+			}
 		}
 	}
 	

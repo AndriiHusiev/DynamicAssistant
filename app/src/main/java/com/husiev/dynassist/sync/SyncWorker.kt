@@ -43,8 +43,15 @@ class SyncWorker @AssistedInject constructor(
 							if (response != null) {
 								response.data?.get(item.id.toString())?.let { networkData ->
 									databaseRepository.getStatisticData(item.id).first { list ->
-										if (list.isEmpty() || list.last().battles < networkData.statistics.all.battles) {
-											databaseRepository.updateNotification(NotifyEnum.UPDATES_AVAIL.ordinal, item.id)
+										if (list.isEmpty() ||
+											networkData.statistics.all.battles > list.last().battles &&
+											networkData.statistics.all.battles > item.notifiedBattles) {
+											
+											databaseRepository.updateNotification(
+												NotifyEnum.UPDATES_AVAIL.ordinal,
+												networkData.statistics.all.battles,
+												item.id
+											)
 											nicknames.add(setShortData(
 												accountId = item.id,
 												nickname = item.nickname,

@@ -41,5 +41,6 @@ data class NetworkErrorInfo (
 fun NetworkAccountInfo.asExternalModel() = StartAccountInfo(
 	id = accountId,
 	nickname = nickname,
-	updateTime = Date().time.toString()
+	updateTime = Date().time.toString(),
+	notifiedBattles = 0
 )
