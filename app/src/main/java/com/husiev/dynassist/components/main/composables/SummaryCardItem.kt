@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -96,7 +96,7 @@ fun SummaryCardItem(
 
 @Composable
 fun MainDivider() {
-	Divider(
+	HorizontalDivider(
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(horizontal = dimensionResource(R.dimen.padding_small)),

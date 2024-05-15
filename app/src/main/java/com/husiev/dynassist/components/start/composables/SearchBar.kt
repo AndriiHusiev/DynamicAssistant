@@ -10,7 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -32,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.husiev.dynassist.R
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
 	modifier: Modifier = Modifier,
@@ -50,7 +48,7 @@ fun SearchBar(
 	) {
 		IconButton(onClick = { onBackClick() }) {
 			Icon(
-				imageVector = Icons.Filled.ArrowBack,
+				imageVector = Icons.AutoMirrored.Filled.ArrowBack,
 				contentDescription = stringResource(
 					id = R.string.back,
 				),

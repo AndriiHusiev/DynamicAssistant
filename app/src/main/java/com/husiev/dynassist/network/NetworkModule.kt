@@ -21,14 +21,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 	
-	private const val baseUrl = "https://api.worldoftanks.eu/wot/"
+	private const val BASE_URL = "https://api.worldoftanks.eu/wot/"
+	
+	private val json = Json { ignoreUnknownKeys = true }
 	
 	@Provides
 	@Singleton
 	fun provideNetworkService(): NetworkApiService {
 		val retrofit: Retrofit = Retrofit.Builder()
-			.addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-			.baseUrl(baseUrl)
+			.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+			.baseUrl(BASE_URL)
 			.build()
 		
 		return retrofit.create(NetworkApiService::class.java)

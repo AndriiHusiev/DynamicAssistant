@@ -7,7 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +32,7 @@ fun TechnicsSortDialog(
 			)
 		},
 		text = {
-			Divider()
+			HorizontalDivider()
 			Column(Modifier.verticalScroll(rememberScrollState())) {
 				Column(Modifier.selectableGroup()) {
 					SettingsDialogThemeChooserRow(
@@ -66,7 +66,7 @@ fun TechnicsSortDialog(
 						onClick = { onChangeSort(SortTechnics.PREMIUM) },
 					)
 				}
-				Divider(Modifier.padding(top = 8.dp))
+				HorizontalDivider(Modifier.padding(top = 8.dp))
 			}
 		},
 		confirmButton = {

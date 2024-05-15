@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -37,7 +37,7 @@ fun SettingsDialog(
 			)
 		},
 		text = {
-			Divider()
+			HorizontalDivider()
 			Column {
 				Column(Modifier.selectableGroup()) {
 					SettingsDialogThemeChooserRow(
@@ -56,7 +56,7 @@ fun SettingsDialog(
 						onClick = { onChangeTheme(ThemeConfig.DARK) },
 					)
 				}
-				Divider(Modifier.padding(top = 8.dp))
+				HorizontalDivider(Modifier.padding(top = 8.dp))
 			}
 		},
 		confirmButton = {

@@ -1,10 +1,10 @@
 package com.husiev.dynassist.components.main.composables
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -53,7 +53,7 @@ fun MainTopBar(
 			}
 			
 			technicsNavigationRoute -> {
-				navigationIcon = Icons.Filled.Sort
+				navigationIcon = Icons.AutoMirrored.Filled.Sort
 				actionIcon = Icons.Filled.FilterList
 				navigationIconContentDescription = stringResource(R.string.description_sort_list)
 				actionIconContentDescription = stringResource(R.string.description_filter_list)
@@ -79,7 +79,7 @@ fun MainTopBar(
 						}
 					}
 				}
-				navigationIcon = Icons.Filled.ArrowBack
+				navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
 				navigationIconContentDescription = stringResource(R.string.description_back)
 				onNavigationClick = { appState.navController.popBackStack() }
 			}
