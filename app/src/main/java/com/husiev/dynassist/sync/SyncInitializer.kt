@@ -2,7 +2,6 @@ package com.husiev.dynassist.sync
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 
 object Sync {
@@ -16,16 +15,16 @@ object Sync {
 				ExistingPeriodicWorkPolicy.KEEP,
 				SyncWorker.startUpSyncWork(),
 			)
-		WorkManager
-			.getInstance(context)
-			.enqueueUniqueWork(
-				SyncTestOneWorkName,
-				ExistingWorkPolicy.REPLACE,
-				SyncWorker.startUpSyncTestOneWork(),
-			)
+//		WorkManager
+//			.getInstance(context)
+//			.enqueueUniqueWork(
+//				SyncTestOneWorkName,
+//				ExistingWorkPolicy.REPLACE,
+//				SyncWorker.startUpSyncTestOneWork(),
+//			)
 	}
 }
 
 // This name should not be changed otherwise the app may have concurrent sync requests running
 internal const val SyncWorkName = "SyncWorkName"
-internal const val SyncTestOneWorkName = "SyncWorkName1"
+//internal const val SyncTestOneWorkName = "SyncWorkName1"

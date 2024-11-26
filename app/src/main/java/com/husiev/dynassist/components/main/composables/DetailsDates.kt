@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -137,10 +136,7 @@ fun SwitchableItem(
 		)
 		Switch(
 			checked = checked,
-			onCheckedChange = { onSwitch(it) },
-			colors = SwitchDefaults.colors(
-				checkedThumbColor = MaterialTheme.colorScheme.primary
-			)
+			onCheckedChange = { onSwitch(it) }
 		)
 	}
 }

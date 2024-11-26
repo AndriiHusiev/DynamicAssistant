@@ -18,7 +18,7 @@ sealed interface SearchResultUiState {
 	data class Success(
 		val accounts: NetworkStartSearchInfo,
 	) : SearchResultUiState {
-		fun isEmpty(): Boolean = accounts.data?.isEmpty() ?: false
+		fun isEmpty(): Boolean = accounts.data?.isEmpty() == true
 	}
 	
 }

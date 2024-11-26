@@ -1,12 +1,16 @@
 package com.husiev.dynassist
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.husiev.dynassist.sync.Sync
-import com.husiev.dynassist.sync.SyncWorkerFactory
+import dagger.hilt.EntryPoint
+import dagger.hilt.EntryPoints
+import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -15,13 +19,16 @@ class DynAssistApplication: Application(), ImageLoaderFactory, Configuration.Pro
 	@Inject
 	lateinit var imageLoader: Provider<ImageLoader>
 	
-	@Inject
-	lateinit var workerFactory: SyncWorkerFactory
+	@EntryPoint
+	@InstallIn(SingletonComponent::class)
+	interface HiltWorkerFactoryEntryPoint {
+		fun workerFactory(): HiltWorkerFactory
+	}
 
-	override fun getWorkManagerConfiguration() =
+	override val workManagerConfiguration =
 		Configuration.Builder()
 			.setMinimumLoggingLevel(android.util.Log.INFO)
-			.setWorkerFactory(workerFactory)
+			.setWorkerFactory(EntryPoints.get(this, HiltWorkerFactoryEntryPoint::class.java).workerFactory())
 			.build()
 	
 	override fun onCreate() {

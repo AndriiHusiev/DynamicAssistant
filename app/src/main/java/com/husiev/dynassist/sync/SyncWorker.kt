@@ -5,7 +5,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.husiev.dynassist.R
@@ -40,28 +39,26 @@ class SyncWorker @AssistedInject constructor(
 					if (list.isNotEmpty()) {
 						for (item in list) {
 							val response = networkRepository.getAccountAllData(item.id, false)
-							if (response != null) {
-								response.data?.get(item.id.toString())?.let { networkData ->
-									databaseRepository.getStatisticData(item.id).first { list ->
-										if (list.isEmpty() ||
-											networkData.statistics.all.battles > list.last().battles &&
-											networkData.statistics.all.battles > item.notifiedBattles) {
-											
-											databaseRepository.updateNotification(
-												NotifyEnum.UPDATES_AVAIL.ordinal,
-												networkData.statistics.all.battles,
-												item.id
-											)
-											nicknames.add(setShortData(
-												accountId = item.id,
-												nickname = item.nickname,
-												lastBattleTime = networkData.lastBattleTime,
-												battles = networkData.statistics.all.battles - list.last().battles,
-												wins = networkData.statistics.all.wins - list.last().wins
-											))
-										}
-										true
+							response?.data?.get(item.id.toString())?.let { networkData ->
+								databaseRepository.getStatisticData(item.id).first { list ->
+									if (list.isEmpty() ||
+										networkData.statistics.all.battles > list.last().battles &&
+										networkData.statistics.all.battles > item.notifiedBattles) {
+										
+										databaseRepository.updateNotification(
+											NotifyEnum.UPDATES_AVAIL.ordinal,
+											networkData.statistics.all.battles,
+											item.id
+										)
+										nicknames.add(setShortData(
+											accountId = item.id,
+											nickname = item.nickname,
+											lastBattleTime = networkData.lastBattleTime,
+											battles = networkData.statistics.all.battles - list.last().battles,
+											wins = networkData.statistics.all.wins - list.last().wins
+										))
 									}
+									true
 								}
 							}
 						}
@@ -100,9 +97,9 @@ class SyncWorker @AssistedInject constructor(
 		fun startUpSyncWork() = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
 			.setConstraints(syncConstraints)
 			.build()
-		fun startUpSyncTestOneWork() = OneTimeWorkRequestBuilder<SyncWorker>()
-			.setConstraints(syncConstraints)
-			.build()
+//		fun startUpSyncTestOneWork() = OneTimeWorkRequestBuilder<SyncWorker>()
+//			.setConstraints(syncConstraints)
+//			.build()
 	}
 }
 
