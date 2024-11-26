@@ -83,7 +83,7 @@ fun tierToResId(tier: Int?) = when(tier) {
 	6 -> R.drawable.level_6
 	7 -> R.drawable.level_7
 	8 -> R.drawable.level_8
-	9 -> R.drawable.level_8
+	9 -> R.drawable.level_9
 	10 -> R.drawable.level_10
 	else -> R.drawable.level_none
 }

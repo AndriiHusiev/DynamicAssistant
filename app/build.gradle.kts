@@ -1,21 +1,22 @@
 plugins {
-	id("com.android.application")
-	id("org.jetbrains.kotlin.android")
-	id("com.google.devtools.ksp")
-	id("com.google.dagger.hilt.android")
-	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+	alias(libs.plugins.android.application)
+	alias(libs.plugins.kotlin.android)
+	alias(libs.plugins.devtools.ksp)
+	alias(libs.plugins.dagger.hilt)
+	alias(libs.plugins.kotlin.serialization)
+	alias(libs.plugins.compose.compiler)
 }
 
 android {
 	namespace = "com.husiev.dynassist"
-	compileSdk = 34
+	compileSdk = 35
 	
 	defaultConfig {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
-		targetSdk = 34
-		versionCode = 34
-		versionName = "0.7.5"
+		targetSdk = 35
+		versionCode = 35
+		versionName = "0.7.6"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -47,9 +48,6 @@ android {
 		// Adds exported schema location as test app assets.
 		getByName("androidTest").assets.srcDir("$projectDir/schemas")
 	}
-	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.5"
-	}
 	packaging {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -59,53 +57,52 @@ android {
 
 dependencies {
 	
-	implementation("androidx.core:core-ktx:1.13.1")
-	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-	implementation("androidx.activity:activity-compose:1.9.0")
-	implementation(platform("androidx.compose:compose-bom:2024.05.00"))
-	implementation("androidx.compose.ui:ui:1.6.7")
-	implementation("androidx.compose.ui:ui-graphics:1.6.7")
-	implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
-	implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
-	implementation("androidx.compose.material3:material3:1.2.1")
-	implementation("androidx.compose.material:material:1.6.7")
-	implementation("androidx.compose.material:material-icons-core:1.6.7")
-	implementation("androidx.compose.material:material-icons-core-android:1.6.7")
-	implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
-	implementation("androidx.compose.material:material-icons-extended:1.6.7")
-	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-	implementation("androidx.datastore:datastore-preferences:1.1.1")
-	implementation("androidx.navigation:navigation-compose:2.7.7")
-	implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
+	implementation(libs.androidx.core.ktx)
+	implementation(libs.androidx.lifecycle.runtime.ktx)
+	implementation(libs.androidx.activity.compose)
+	implementation(platform(libs.androidx.compose.bom))
+	implementation(libs.androidx.ui)
+	implementation(libs.androidx.ui.graphics)
+	implementation(libs.androidx.ui.tooling.preview)
+	implementation(libs.androidx.material3.window.size.clazz)
+	implementation(libs.androidx.material3)
+	implementation(libs.androidx.material)
+	implementation(libs.androidx.material.icons.core)
+	implementation(libs.androidx.material.icons.core.android)
+	implementation(libs.androidx.material.icons.extended.android)
+	implementation(libs.androidx.material.icons.extended)
+	implementation(libs.androidx.lifecycle.runtime.compose)
+	implementation(libs.androidx.datastore.preferences)
+	implementation(libs.androidx.navigation.compose)
+	implementation(libs.kotlin.reflect)
 	// Hilt
-	implementation("com.google.dagger:hilt-android:2.51.1")
-	implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-	implementation("androidx.hilt:hilt-work:1.2.0")
-	implementation(platform("androidx.compose:compose-bom:2024.05.00"))
-	androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
-	ksp ("com.google.dagger:hilt-compiler:2.51.1")
-	ksp ("androidx.hilt:hilt-compiler:1.2.0")
+	implementation(libs.hilt.android)
+	implementation(libs.androidx.hilt.navigation.compose)
+	implementation(libs.androidx.hilt.work)
+	implementation(platform(libs.androidx.compose.bom))
+	ksp (libs.hilt.compiler)
+	ksp (libs.androidx.hilt.compiler)
 	// Retrofit
-	implementation("com.squareup.retrofit2:retrofit:2.11.0")
-	implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-	implementation("com.squareup.okhttp3:okhttp:4.12.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-	implementation("io.coil-kt:coil-compose:2.6.0")
+	implementation(libs.retrofit)
+	implementation(libs.retrofit2.kotlinx.serialization.converter)
+	implementation(libs.okhttp)
+	implementation(libs.kotlinx.serialization.json)
+	implementation(libs.coil.compose)
 	// Room
-	implementation("androidx.room:room-runtime:2.6.1")
-	implementation("androidx.room:room-ktx:2.6.1")
-	annotationProcessor("androidx.room:room-compiler:2.6.1")
-	ksp("androidx.room:room-compiler:2.6.1")
+	implementation(libs.androidx.room.runtime)
+	implementation(libs.androidx.room.ktx)
+	annotationProcessor(libs.androidx.room.compiler)
+	ksp(libs.androidx.room.compiler)
 	// WorkManager dependency
-	implementation("androidx.work:work-runtime-ktx:2.8.1")
+	implementation(libs.androidx.work.runtime.ktx)
 	// Test
-	testImplementation("junit:junit:4.13.2")
-	androidTestImplementation("androidx.test.ext:junit:1.1.5")
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-	androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
-	debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
-	debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
+	testImplementation(libs.junit)
+	androidTestImplementation(libs.androidx.junit)
+	androidTestImplementation(libs.androidx.espresso.core)
+	androidTestImplementation(platform(libs.androidx.compose.bom))
+	androidTestImplementation(libs.androidx.ui.test.junit4)
+	debugImplementation(libs.androidx.ui.tooling)
+	debugImplementation(libs.androidx.ui.test.manifest)
 }
 
 class RoomSchemaArgProvider(
