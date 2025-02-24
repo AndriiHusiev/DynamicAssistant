@@ -71,9 +71,9 @@ fun MainScreen(
 			onChangeFilter = mainViewModel::changeFilterTechnics
 		)
 	}
-//	if (queryResult is Result.Success) {
-//		mainViewModel.switchNotification(notifyState != NotifyEnum.UNCHECKED)
-//	}
+	if (queryResult is Result.Success && notifyState == NotifyEnum.UPDATES_AVAIL) {
+		mainViewModel.switchNotification(true)
+	}
 	
 	val noConnectionMessage = stringResource(R.string.no_connection)
 	val retryLabel = stringResource(R.string.retry)

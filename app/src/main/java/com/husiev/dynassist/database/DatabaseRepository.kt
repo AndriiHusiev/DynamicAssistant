@@ -7,6 +7,7 @@ import com.husiev.dynassist.components.start.utils.asEntity
 import com.husiev.dynassist.database.entity.ClanEntity
 import com.husiev.dynassist.database.entity.PlayersEntity
 import com.husiev.dynassist.database.entity.VehicleShortDataEntity
+import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import com.husiev.dynassist.database.entity.asExternalModel
 import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
 import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
@@ -75,9 +76,15 @@ class DatabaseRepository @Inject constructor(
 	suspend fun addVehiclesShortData(data: List<VehicleShortDataEntity>) =
 		database.vehicleShortDao().insertOrReplace(data)
 	
-	fun getVehiclesShortData(accountId: Int) =
-		database.vehicleShortDao().loadVehicleShortData(accountId)
+	fun getVehiclesShortData() =
+		database.vehicleShortDao().loadVehicleShortData()
 	
-	fun getVehicleStatData(accountId: Int) =
-		database.vehicleStatDao().loadVehicleStatData(accountId)
+	suspend fun addVehiclesStatData(data: List<VehicleStatDataEntity>) =
+		database.vehicleStatDao().insertAll(data)
+	
+//	fun getVehicleStatData(tankId: Int) =
+//		database.vehicleStatDao().loadVehicleStatData(tankId)
+	
+	fun getAllVehiclesStatData(accountId: Int) =
+		database.vehicleStatDao().loadAllVehiclesStatData(accountId)
 }

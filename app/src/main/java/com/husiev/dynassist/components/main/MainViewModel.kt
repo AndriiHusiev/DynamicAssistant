@@ -18,12 +18,13 @@ import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.MainRoutesData
 import com.husiev.dynassist.components.main.utils.Result
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.asExternalModel
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.database.entity.VehicleShortDataEntity
+import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import com.husiev.dynassist.database.entity.asExternalModel
 import com.husiev.dynassist.database.entity.fillMaxFields
 import com.husiev.dynassist.network.NetworkRepository
@@ -42,6 +43,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
+import kotlin.collections.component2
 
 private const val ACCOUNT_ID = "account_id"
 private const val NICKNAME = "nickname"
@@ -107,7 +109,7 @@ class MainViewModel @Inject constructor(
 	
 	val statisticData: StateFlow<Map<String, List<AccountStatisticsData>>> =
 		databaseRepository.getStatisticData(accountId)
-			.combine(databaseRepository.getVehiclesShortData(accountId)) { stat, veh ->
+			.combine(databaseRepository.getVehiclesShortData()) { stat, veh ->
 				stat.lastOrNull()?.fillMaxFields(veh)
 				stat
 			}
@@ -127,13 +129,31 @@ class MainViewModel @Inject constructor(
 				initialValue = null
 			)
 	
-	val shortData: StateFlow<List<VehicleShortData>> =
-		databaseRepository.getVehiclesShortData(accountId)
-			.map { it.asExternalModel() }
+//	val vehicleData: StateFlow<List<VehicleStatData>> =
+//		databaseRepository.getAllVehiclesStatData(accountId)
+//			.map { it.asExternalModel() }
+//			.stateIn(
+//				scope = viewModelScope,
+//				started = SharingStarted.WhileSubscribed(5_000),
+//				initialValue = emptyList<VehicleStatDataEntity>().asExternalModel()
+//			)
+	
+	val shortData: StateFlow<List<VehicleData>> =
+		databaseRepository.getVehiclesShortData()
+			.combine(databaseRepository.getAllVehiclesStatData(accountId)) { short, stat ->
+				val veh = mutableListOf<VehicleData>()
+				short.forEach { item ->
+					val lst = stat.filter { it.tankId == item.tankId }
+					if (lst.isNotEmpty()) {
+						veh.add(item.asExternalModel(lst))
+					}
+				}
+				veh
+			}
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = emptyList<VehicleShortDataEntity>().asExternalModel()
+				initialValue = emptyList<VehicleData>()
 			)
 	
 	fun getAccountAllData() {
@@ -151,9 +171,9 @@ class MainViewModel @Inject constructor(
 			
 			// Vehicles short and statistic data
 			if (lastBattleTimeAccount != null) {
-				val vehicles = retrieveVehicleShortData(accountId, networkRepository)
+				val vehicles = retrieveVehicleShortData(accountId, lastBattleTimeAccount, networkRepository, databaseRepository)
 				
-				retrieveVehicleInfo(accountId, lastBattleTimeAccount, context, vehicles, networkRepository, databaseRepository)
+				retrieveVehicleInfo(accountId, context, vehicles, networkRepository, databaseRepository)
 			}
 		}
 	}
@@ -214,26 +234,32 @@ private suspend fun retrieveClanData(
 
 private suspend fun retrieveVehicleShortData(
 	accountId: Int,
+	lastBattleTime: Int,
 	networkRepository: NetworkRepository,
-): List<VehicleShortDataEntity> {
+	databaseRepository: DatabaseRepository,
+): List<VehicleStatDataEntity> {
 	return when(val response = networkRepository.getVehicleShortData(accountId)) {
 		null -> emptyList()
-		else -> response.data?.get(accountId.toString())?.let {
-			it.map { item -> item.asEntity(accountId) }
-		} ?: emptyList()
+		else -> {
+			response.data?.get(accountId.toString())?.let {
+				val data = it.map { item -> item.asEntity(accountId, lastBattleTime) }
+				databaseRepository.addVehiclesStatData(data)
+				data
+			} ?: emptyList()
+		}
 	}
 }
 
 private suspend fun retrieveVehicleInfo(
 	accountId: Int,
-	lastBattleTimeAccount: Int,
 	context: Context,
-	vehicles: List<VehicleShortDataEntity>,
+	vehicles: List<VehicleStatDataEntity>,
 	networkRepository: NetworkRepository,
 	databaseRepository: DatabaseRepository,
 ) {
 	val limit = 100
 	var index = 0
+	val newVehShort = mutableListOf<VehicleShortDataEntity>()
 	networkRepository.queriesAmount += (vehicles.size + limit - 1) / limit - 1
 	while (index < vehicles.size) {
 		// The list needs to be split into parts first, since the server can only process
@@ -246,31 +272,28 @@ private suspend fun retrieveVehicleInfo(
 		when(val response = networkRepository.getVehicleInfo(sublist)) {
 			null -> return
 			else -> {
-				databaseRepository.getVehiclesShortData(accountId).first { list ->
+				databaseRepository.getVehiclesShortData().first { list ->
 					response.data?.let { map ->
 						map.forEach { (key, item) ->
 							val oldVehicleData = list.singleOrNull { it.tankId.toString() == key }
-							val newVehicleData = vehicles.singleOrNull { it.tankId.toString() == key }
-							if (newVehicleData != null && item != null) {
+							val newVehicleStat = vehicles.singleOrNull { it.tankId.toString() == key }
+							if (oldVehicleData == null && newVehicleStat != null && item != null) {
 								preloadImage(context, item.images.bigIcon.secure())
-								newVehicleData.apply {
-									lastBattleTime = if (oldVehicleData == null || oldVehicleData.battles < battles)
-										lastBattleTimeAccount
-									else
-										oldVehicleData.lastBattleTime
-									name = item.name
-									type = item.type
-									description = item.description
-									nation = item.nation
-									urlSmallIcon = item.images.smallIcon.secure()
-									urlBigIcon = item.images.bigIcon.secure()
+								newVehShort.add(VehicleShortDataEntity(
+									tankId = item.tankId,
+									urlSmallIcon = item.images.smallIcon.secure(),
+									urlBigIcon = item.images.bigIcon.secure(),
+									priceGold = item.priceGold,
+									priceCredit = item.priceCredit,
+									isWheeled = item.isWheeled,
+									isPremium = item.isPremium,
+									isGift = item.isGift,
+									name = item.name,
+									type = item.type,
+									description = item.description,
+									nation = item.nation,
 									tier = item.tier
-									priceGold = item.priceGold
-									priceCredit = item.priceCredit
-									isPremium = item.isPremium
-									isGift = item.isGift
-									isWheeled = item.isWheeled
-								}
+								))
 							}
 						}
 					}
@@ -280,7 +303,7 @@ private suspend fun retrieveVehicleInfo(
 		}
 		index += limit
 	}
-	databaseRepository.addVehiclesShortData(vehicles)
+	databaseRepository.addVehiclesShortData(newVehShort)
 }
 
 fun preloadImage(context: Context, imageUrl: String?) =

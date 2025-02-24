@@ -2,12 +2,13 @@ package com.husiev.dynassist.components.main.utils
 
 import com.husiev.dynassist.R
 
-data class VehicleShortData(
+data class VehicleData(
 	val tankId: Int,
 	val markOfMastery: Int,
 	val battles: Int,
 	val wins: Int,
-	val winRate: String,
+	val winRate: Float,
+	val winRateLabel: String,
 	val lastBattleTime: String,
 	val name: String? = null,
 	val type: String? = null,
@@ -21,11 +22,25 @@ data class VehicleShortData(
 	val isPremium: Boolean? = null,
 	val isGift: Boolean? = null,
 	val isWheeled: Boolean? = null,
-) : Comparable<VehicleShortData> {
-	override fun compareTo(other: VehicleShortData): Int {
+	val stat: List<VehicleStatData>,
+) : Comparable<VehicleData> {
+	override fun compareTo(other: VehicleData): Int {
 		return compareValuesBy(this, other, { it.battles }, { it.type }, { it.tier }, { it.nation }, { it.winRate }, { it.isPremium })
 	}
 }
+
+data class VehicleStatData(
+	val tankId: Int,
+	val lastBattleTime: String,
+	val markOfMastery: Int,
+	val battles: Int,
+	val wins: Int,
+//	val losses: Int,
+//	val draws: Int,
+//	val frags: Int,
+//	val xp: Int,
+//	val survivedBattles: Int,
+)
 
 fun masteryToResId(markOfMastery: Int) = when(markOfMastery) {
 	1 -> R.drawable.ic_step_mark_3

@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.bigToString
 import com.husiev.dynassist.components.main.utils.flagToResId
 import com.husiev.dynassist.components.main.utils.getMainAvg
@@ -55,7 +55,7 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleTechnicsContent(
-	shortData: List<VehicleShortData>,
+	shortData: List<VehicleData>,
 	modifier: Modifier = Modifier,
 	singleId: Int? = null,
 ) {
@@ -193,7 +193,7 @@ fun SingleTechnicsImageCard(
 
 @Composable
 fun SingleTechnicsCard(
-	item: VehicleShortData,
+	item: VehicleData,
 	modifier: Modifier = Modifier,
 ) {
 	ElevatedCard(
@@ -223,7 +223,7 @@ fun SingleTechnicsCard(
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_win_rate),
-				value = item.winRate
+				value = item.winRateLabel
 			)
 			
 			SingleSummaryCardItem(
@@ -243,12 +243,13 @@ fun SingleTechnicsCardItemPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			SingleTechnicsContent(
-				shortData = listOf(VehicleShortData(
+				shortData = listOf(VehicleData(
 					tankId = 1,
 					markOfMastery = 1,
 					battles = 256,
 					wins = 130,
-					winRate = getMainAvg(130, 256)
+					winRate = 50.78f,
+					winRateLabel = getMainAvg(130, 256)
 						.toScreen(100f, "%"),
 					lastBattleTime = 1669914970.asStringDate("short"),
 					name = "T-34",
@@ -262,7 +263,8 @@ fun SingleTechnicsCardItemPreview() {
 					priceCredit = 456456,
 					isPremium = false,
 					isGift = false,
-					isWheeled = false
+					isWheeled = false,
+					stat = emptyList()
 				)), singleId = 1
 			)
 		}

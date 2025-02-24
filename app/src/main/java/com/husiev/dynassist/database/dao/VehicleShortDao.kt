@@ -12,6 +12,6 @@ interface VehicleShortDao: BaseDao<VehicleShortDataEntity> {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertOrReplace(list: List<VehicleShortDataEntity>)
 	
-	@Query("SELECT * FROM vehicle_short_data where account_id = :accountId")
-	fun loadVehicleShortData(accountId: Int): Flow<List<VehicleShortDataEntity>>
+	@Query("SELECT * FROM vehicle_short_data")
+	fun loadVehicleShortData(): Flow<List<VehicleShortDataEntity>>
 }

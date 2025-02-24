@@ -1,6 +1,6 @@
 package com.husiev.dynassist.network.dataclasses
 
-import com.husiev.dynassist.database.entity.VehicleShortDataEntity
+import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -27,9 +27,10 @@ data class NetworkVehicleShortSubItem(
 	val battles: Int,
 )
 
-fun NetworkVehicleShortItem.asEntity(accountId: Int) = VehicleShortDataEntity(
+fun NetworkVehicleShortItem.asEntity(accountId: Int, lastBattleTime: Int) = VehicleStatDataEntity(
 	accountId = accountId,
 	tankId = tankId,
+	lastBattleTime = lastBattleTime,
 	markOfMastery = markOfMastery,
 	battles = statistics.battles,
 	wins = statistics.wins,

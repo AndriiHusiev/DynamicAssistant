@@ -11,14 +11,14 @@ import androidx.compose.ui.res.dimensionResource
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.SHORT_PATTERN
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.database.entity.asStringDate
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun TechnicsContent(
-	shortData: List<VehicleShortData>,
+	shortData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	modifier: Modifier = Modifier,
@@ -49,45 +49,45 @@ fun TechnicsContent(
 }
 
 fun getComparator(sort: SortTechnics) = when(sort) {
-	SortTechnics.TYPE -> compareByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::winRate)
-		.thenByDescending(VehicleShortData::isPremium)
-	SortTechnics.LEVEL -> compareByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::winRate)
-		.thenByDescending(VehicleShortData::isPremium)
-	SortTechnics.NATION -> compareByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::winRate)
-		.thenByDescending(VehicleShortData::isPremium)
-	SortTechnics.WINRATING -> compareByDescending(VehicleShortData::winRate)
-		.thenByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::isPremium)
-	SortTechnics.PREMIUM -> compareByDescending(VehicleShortData::isPremium)
-		.thenByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::winRate)
-	else -> compareByDescending(VehicleShortData::battles)
-		.thenByDescending(VehicleShortData::tier)
-		.thenByDescending(VehicleShortData::type)
-		.thenByDescending(VehicleShortData::nation)
-		.thenByDescending(VehicleShortData::winRate)
-		.thenByDescending(VehicleShortData::isPremium)
+	SortTechnics.TYPE -> compareByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::winRate)
+		.thenByDescending(VehicleData::isPremium)
+	SortTechnics.LEVEL -> compareByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::winRate)
+		.thenByDescending(VehicleData::isPremium)
+	SortTechnics.NATION -> compareByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::winRate)
+		.thenByDescending(VehicleData::isPremium)
+	SortTechnics.WINRATING -> compareByDescending(VehicleData::winRate)
+		.thenByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::isPremium)
+	SortTechnics.PREMIUM -> compareByDescending(VehicleData::isPremium)
+		.thenByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::winRate)
+	else -> compareByDescending(VehicleData::battles)
+		.thenByDescending(VehicleData::tier)
+		.thenByDescending(VehicleData::type)
+		.thenByDescending(VehicleData::nation)
+		.thenByDescending(VehicleData::winRate)
+		.thenByDescending(VehicleData::isPremium)
 }
 
-fun getLastDate(shortData: List<VehicleShortData>): String {
+fun getLastDate(shortData: List<VehicleData>): String {
 	val lastDate = shortData.maxOfOrNull {
 		if (it.lastBattleTime == NO_DATA)
 			0
@@ -104,7 +104,7 @@ fun getLastDate(shortData: List<VehicleShortData>): String {
 
 fun getFilter(
 	filter: FilterTechnics,
-	vehicle: VehicleShortData,
+	vehicle: VehicleData,
 	lastBattleTime: String
 ) = when(filter) {
 	FilterTechnics.LIGHT,

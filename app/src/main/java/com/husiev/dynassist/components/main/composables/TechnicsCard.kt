@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.flagToResId
 import com.husiev.dynassist.components.main.utils.getMainAvg
 import com.husiev.dynassist.components.main.utils.masteryToResId
@@ -44,7 +44,7 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun TechnicsCard(
-	shortData: VehicleShortData,
+	shortData: VehicleData,
 	modifier: Modifier = Modifier,
 	onClick: (Int) -> Unit = {}
 ) {
@@ -119,7 +119,7 @@ fun TechnicsCard(
 						horizontalAlignment = Alignment.End
 					) {
 						Text(
-							text = shortData.winRate,
+							text = shortData.winRateLabel,
 							style = MaterialTheme.typography.bodyLarge
 						)
 						
@@ -176,13 +176,14 @@ fun TechnicsCard(
 fun TechnicsContentPreview() {
 	DynamicAssistantTheme {
 		TechnicsCard(
-			shortData = VehicleShortData(
+			shortData = VehicleData(
 				tankId = 1,
 				markOfMastery = 4,
 				battles = 996,
 				wins = 598,
 				lastBattleTime = 1692967640.asStringDate("short"),
-				winRate = getMainAvg(598, 996)
+				winRate = getMainAvg(598, 996)?:0f,
+				winRateLabel = getMainAvg(598, 996)
 					.toScreen(100f, "%"),
 				name = "T-34",
 				type = "mediumTank",
@@ -196,6 +197,7 @@ fun TechnicsContentPreview() {
 				isPremium = false,
 				isGift = false,
 				isWheeled = false,
+				stat = emptyList()
 			),
 		)
 	}

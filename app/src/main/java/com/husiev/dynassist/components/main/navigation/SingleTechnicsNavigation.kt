@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.husiev.dynassist.components.main.composables.SingleTechnicsContent
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 
 const val TECHNICS_SINGLE_ARG = "single_id"
 const val technicsSingleRoute = "technics_single"
@@ -17,7 +17,7 @@ fun NavController.navigateToTechnicsSingle(singleArg: Int, navOptions: NavOption
 }
 
 fun NavGraphBuilder.technicsSingleScreen(
-	shortData: List<VehicleShortData>,
+	shortData: List<VehicleData>,
 ) {
 	composable(
 		route = "$technicsSingleRoute/{$TECHNICS_SINGLE_ARG}",

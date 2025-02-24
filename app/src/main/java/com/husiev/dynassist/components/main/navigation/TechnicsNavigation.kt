@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.composables.TechnicsContent
-import com.husiev.dynassist.components.main.utils.VehicleShortData
+import com.husiev.dynassist.components.main.utils.VehicleData
 
 const val technicsNavigationRoute = "technics_route"
 
@@ -16,7 +16,7 @@ fun NavController.navigateToTechnics(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.technicsScreen(
-	shortData: List<VehicleShortData>,
+	shortData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	onClick: (Int) -> Unit
