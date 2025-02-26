@@ -18,7 +18,7 @@ import java.util.Locale
 
 @Composable
 fun TechnicsContent(
-	shortData: List<VehicleData>,
+	vehicleData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	modifier: Modifier = Modifier,
@@ -32,15 +32,15 @@ fun TechnicsContent(
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
-		val lastBattleTime = getLastDate(shortData)
+		val lastBattleTime = getLastDate(vehicleData)
 		
-		shortData
+		vehicleData
 			.sortedWith(getComparator(sort))
 			.filter { getFilter(filter, it, lastBattleTime) }
 			.forEach { item ->
 				item {
 					TechnicsCard(
-						shortData = item,
+						vehicleData = item,
 						onClick = onClick
 					)
 				}
@@ -87,8 +87,8 @@ fun getComparator(sort: SortTechnics) = when(sort) {
 		.thenByDescending(VehicleData::isPremium)
 }
 
-fun getLastDate(shortData: List<VehicleData>): String {
-	val lastDate = shortData.maxOfOrNull {
+fun getLastDate(vehicleData: List<VehicleData>): String {
+	val lastDate = vehicleData.maxOfOrNull {
 		if (it.lastBattleTime == NO_DATA)
 			0
 		else

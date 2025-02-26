@@ -76,14 +76,14 @@ class DatabaseRepository @Inject constructor(
 	suspend fun addVehiclesShortData(data: List<VehicleShortDataEntity>) =
 		database.vehicleShortDao().insertOrReplace(data)
 	
+	fun getExactVehiclesShortData(vehicles: List<Int>) =
+		database.vehicleShortDao().loadExactVehicleShortData(vehicles)
+	
 	fun getVehiclesShortData() =
 		database.vehicleShortDao().loadVehicleShortData()
 	
 	suspend fun addVehiclesStatData(data: List<VehicleStatDataEntity>) =
 		database.vehicleStatDao().insertAll(data)
-	
-//	fun getVehicleStatData(tankId: Int) =
-//		database.vehicleStatDao().loadVehicleStatData(tankId)
 	
 	fun getAllVehiclesStatData(accountId: Int) =
 		database.vehicleStatDao().loadAllVehiclesStatData(accountId)

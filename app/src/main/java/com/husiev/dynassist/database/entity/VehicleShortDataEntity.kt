@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
+import com.husiev.dynassist.components.main.utils.asStatisticModel
 import com.husiev.dynassist.components.main.utils.getMainAvg
-import com.husiev.dynassist.components.main.utils.toScreen
 
 @Entity(tableName = "vehicle_short_data")
 data class VehicleShortDataEntity(
@@ -33,16 +33,16 @@ data class VehicleShortDataEntity(
 	var tier: Int? = null,
 )
 
-fun VehicleShortDataEntity.asExternalModel(stat: List<VehicleStatDataEntity>): VehicleData {
-	val lastStat = stat.last()
+fun VehicleShortDataEntity.asExternalModel(statEntity: List<VehicleStatDataEntity>): VehicleData {
+	val lastStat = statEntity.last()
 	val winRate = getMainAvg(lastStat.wins, lastStat.battles)
+	
 	return VehicleData(
 		tankId = this.tankId,
 		markOfMastery = lastStat.markOfMastery,
 		battles = lastStat.battles,
 		wins = lastStat.wins,
 		winRate = winRate?: 0f,
-		winRateLabel = winRate.toScreen(100f, "%"),
 		lastBattleTime = lastStat.lastBattleTime?.asStringDate("short") ?: NO_DATA,
 		name = this.name,
 		type = this.type,
@@ -56,6 +56,6 @@ fun VehicleShortDataEntity.asExternalModel(stat: List<VehicleStatDataEntity>): V
 		isPremium = this.isPremium,
 		isGift = this.isGift,
 		isWheeled = this.isWheeled,
-		stat = stat.asExternalModel()
+		stat = statEntity.asStatisticModel()
 	)
 }

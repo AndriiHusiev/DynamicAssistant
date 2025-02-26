@@ -17,7 +17,7 @@ fun NavController.navigateToTechnicsSingle(singleArg: Int, navOptions: NavOption
 }
 
 fun NavGraphBuilder.technicsSingleScreen(
-	shortData: List<VehicleData>,
+	vehicleData: List<VehicleData>,
 ) {
 	composable(
 		route = "$technicsSingleRoute/{$TECHNICS_SINGLE_ARG}",
@@ -27,7 +27,7 @@ fun NavGraphBuilder.technicsSingleScreen(
 	) { navBackStackEntry ->
 		val singleArg = navBackStackEntry.arguments?.getInt(TECHNICS_SINGLE_ARG)
 		SingleTechnicsContent(
-			shortData = shortData,
+			vehicleData = vehicleData,
 			singleId = singleArg,
 		)
 	}

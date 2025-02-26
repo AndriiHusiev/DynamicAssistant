@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.CardDefaults
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,25 +44,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.bigToString
 import com.husiev.dynassist.components.main.utils.flagToResId
-import com.husiev.dynassist.components.main.utils.getMainAvg
 import com.husiev.dynassist.components.main.utils.masteryToResId
 import com.husiev.dynassist.components.main.utils.roleResId
-import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleTechnicsContent(
-	shortData: List<VehicleData>,
+	vehicleData: List<VehicleData>,
 	modifier: Modifier = Modifier,
 	singleId: Int? = null,
 ) {
 	val state = rememberLazyListState()
-	val singleItem = shortData.singleOrNull { it.tankId == singleId }
+	val singleItem = vehicleData.singleOrNull { it.tankId == singleId }
 	
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
@@ -80,6 +81,8 @@ fun SingleTechnicsContent(
 					priceGold = item.priceGold,
 				)
 			}
+			item { SmoothLineGraph(item.stat?.values) }
+			
 			item {
 				SingleTechnicsCard(item = item)
 			}
@@ -223,7 +226,19 @@ fun SingleTechnicsCard(
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_win_rate),
-				value = item.winRateLabel
+				value = item.stat?.mainValue
+			)
+			
+			SingleSummaryCardItem(
+				title = stringResource(R.string.average_value_per_session),
+				value = item.stat?.sessionAvgValue
+			)
+			
+			SingleSummaryCardItem(
+				title = stringResource(R.string.session_impact),
+				value = item.stat?.sessionImpactValue,
+				imageVector = item.stat?.imageVector,
+				color = item.stat?.color
 			)
 			
 			SingleSummaryCardItem(
@@ -243,14 +258,12 @@ fun SingleTechnicsCardItemPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			SingleTechnicsContent(
-				shortData = listOf(VehicleData(
+				vehicleData = listOf(VehicleData(
 					tankId = 1,
 					markOfMastery = 1,
 					battles = 256,
 					wins = 130,
 					winRate = 50.78f,
-					winRateLabel = getMainAvg(130, 256)
-						.toScreen(100f, "%"),
 					lastBattleTime = 1669914970.asStringDate("short"),
 					name = "T-34",
 					type = "mediumTank",
@@ -264,7 +277,19 @@ fun SingleTechnicsCardItemPreview() {
 					isPremium = false,
 					isGift = false,
 					isWheeled = false,
-					stat = emptyList()
+					stat = AccountStatisticsData(
+						title = "Wins",
+						mainValue = "50.8%",
+						auxValue = "0.0078 / 83.3%",
+						absValue = "130",
+						sessionAbsValue = "5",
+						sessionAvgValue = "83.3%",
+						sessionImpactValue = "+0.0078",
+						color = Color(0xFF009688),
+						imageVector = Icons.Filled.ArrowDropUp,
+						values = listOf(118f, 125f, 130f),
+						comment = null
+					)
 				)), singleId = 1
 			)
 		}

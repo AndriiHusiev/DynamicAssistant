@@ -129,24 +129,19 @@ class MainViewModel @Inject constructor(
 				initialValue = null
 			)
 	
-//	val vehicleData: StateFlow<List<VehicleStatData>> =
-//		databaseRepository.getAllVehiclesStatData(accountId)
-//			.map { it.asExternalModel() }
-//			.stateIn(
-//				scope = viewModelScope,
-//				started = SharingStarted.WhileSubscribed(5_000),
-//				initialValue = emptyList<VehicleStatDataEntity>().asExternalModel()
-//			)
-	
-	val shortData: StateFlow<List<VehicleData>> =
-		databaseRepository.getVehiclesShortData()
-			.combine(databaseRepository.getAllVehiclesStatData(accountId)) { short, stat ->
+	val vehicleData: StateFlow<List<VehicleData>> =
+		databaseRepository.getAllVehiclesStatData(accountId)
+			.map { stat ->
+				val onlyTankId = stat.map { it.tankId }.distinct()
 				val veh = mutableListOf<VehicleData>()
-				short.forEach { item ->
-					val lst = stat.filter { it.tankId == item.tankId }
-					if (lst.isNotEmpty()) {
-						veh.add(item.asExternalModel(lst))
+				databaseRepository.getExactVehiclesShortData(onlyTankId).first { list ->
+					list.forEach { item ->
+						val lst = stat.filter { it.tankId == item.tankId }
+						if (lst.isNotEmpty()) {
+							veh.add(item.asExternalModel(lst))
+						}
 					}
+					true
 				}
 				veh
 			}
@@ -173,7 +168,7 @@ class MainViewModel @Inject constructor(
 			if (lastBattleTimeAccount != null) {
 				val vehicles = retrieveVehicleShortData(accountId, lastBattleTimeAccount, networkRepository, databaseRepository)
 				
-				retrieveVehicleInfo(accountId, context, vehicles, networkRepository, databaseRepository)
+				retrieveVehicleInfo(context, vehicles, networkRepository, databaseRepository)
 			}
 		}
 	}
@@ -251,7 +246,6 @@ private suspend fun retrieveVehicleShortData(
 }
 
 private suspend fun retrieveVehicleInfo(
-	accountId: Int,
 	context: Context,
 	vehicles: List<VehicleStatDataEntity>,
 	networkRepository: NetworkRepository,

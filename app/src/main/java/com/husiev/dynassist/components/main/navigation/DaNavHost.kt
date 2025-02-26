@@ -19,7 +19,7 @@ fun DaNavHost(
 	personalData: AccountPersonalData?,
 	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
 	clanData: AccountClanInfo?,
-	shortData: List<VehicleData>,
+	vehicleData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	onSummaryClick: (String) -> Unit,
@@ -39,7 +39,7 @@ fun DaNavHost(
 		)
 		
 		technicsScreen(
-			shortData = shortData,
+			vehicleData = vehicleData,
 			sort = sort,
 			filter = filter,
 			onClick = onTechnicsClick
@@ -59,7 +59,7 @@ fun DaNavHost(
 		)
 		
 		technicsSingleScreen(
-			shortData = shortData,
+			vehicleData = vehicleData,
 		)
 	}
 }

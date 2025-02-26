@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.husiev.dynassist.database.entity.PersonalEntity
 import com.husiev.dynassist.database.entity.StatisticsEntity
+import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -68,6 +69,37 @@ data class AccountStatisticsData(
 	val comment: String? = null,
 )
 
+/**
+ * Transformation for vehicle statistic.
+ */
+fun List<VehicleStatDataEntity>.asStatisticModel(): AccountStatisticsData {
+	val items = arrayOf<Int?>(null, null, null, null)
+	if (this.isNotEmpty()) {
+		items[0] = this[this.size-1].wins
+		items[2] = this[this.size-1].battles
+		if (this.size > 1) {
+			items[1] = this[this.size-2].wins
+			items[3] = this[this.size-2].battles
+		}
+	}
+	
+	return fullStatItem(
+		tag = "wins",
+		items = mapOf("wins" to "Wins"),
+		allMembers = listOf(
+			mapOf("wins" to items[0], "battles" to items[2]),
+			mapOf("wins" to items[1], "battles" to items[3]),
+		),
+		values = calcFloatList(
+			this.map { it.wins.toFloat() },
+			this.map { it.battles.toFloat() }
+		),
+	)
+}
+
+/**
+ * Transformation for account statistic.
+ */
 fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<AccountStatisticsData>> {
 	val allMembers = mutableListOf<Map<String, Any?>>()
 	val allValues = mutableMapOf<String, List<Float>>()

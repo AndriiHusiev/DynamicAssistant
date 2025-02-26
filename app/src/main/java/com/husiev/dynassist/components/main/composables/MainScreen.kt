@@ -50,7 +50,7 @@ fun MainScreen(
 	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
 	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
 	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
-	val shortData by mainViewModel.shortData.collectAsStateWithLifecycle()
+	val vehicleData by mainViewModel.vehicleData.collectAsStateWithLifecycle()
 	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
 	val filterTechnics by mainViewModel.filterTechnics.collectAsStateWithLifecycle()
 	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
@@ -133,7 +133,7 @@ fun MainScreen(
 						personalData = personalData,
 						accountStatisticsData = statisticData,
 						clanData = clanData,
-						shortData = shortData,
+						vehicleData = vehicleData,
 						sort = sortTechnics,
 						filter = filterTechnics,
 						onSummaryClick = appState::navigateToSummarySingle,

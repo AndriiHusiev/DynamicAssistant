@@ -16,7 +16,7 @@ fun NavController.navigateToTechnics(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.technicsScreen(
-	shortData: List<VehicleData>,
+	vehicleData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	onClick: (Int) -> Unit
@@ -25,7 +25,7 @@ fun NavGraphBuilder.technicsScreen(
 		route = technicsNavigationRoute,
 	) {
 		TechnicsContent(
-			shortData = shortData,
+			vehicleData = vehicleData,
 			sort = sort,
 			filter = filter,
 			onClick = onClick

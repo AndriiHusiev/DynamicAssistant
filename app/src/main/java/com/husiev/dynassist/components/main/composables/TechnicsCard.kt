@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -30,21 +32,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.flagToResId
-import com.husiev.dynassist.components.main.utils.getMainAvg
 import com.husiev.dynassist.components.main.utils.masteryToResId
 import com.husiev.dynassist.components.main.utils.roleToResId
 import com.husiev.dynassist.components.main.utils.symbolToResId
 import com.husiev.dynassist.components.main.utils.tierToResId
-import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun TechnicsCard(
-	shortData: VehicleData,
+	vehicleData: VehicleData,
 	modifier: Modifier = Modifier,
 	onClick: (Int) -> Unit = {}
 ) {
@@ -52,7 +53,7 @@ fun TechnicsCard(
 		modifier = modifier
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_small)))
 			.fillMaxWidth()
-			.clickable { onClick(shortData.tankId) },
+			.clickable { onClick(vehicleData.tankId) },
 		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
@@ -60,7 +61,7 @@ fun TechnicsCard(
 	) {
 		Box(modifier = Modifier) {
 			Image(
-				painter = painterResource(flagToResId(shortData.nation)),
+				painter = painterResource(flagToResId(vehicleData.nation)),
 				contentDescription = null,
 				modifier = Modifier.size(251.dp, 92.dp)
 			)
@@ -75,7 +76,7 @@ fun TechnicsCard(
 				) {
 					Row(verticalAlignment = Alignment.CenterVertically) {
 						Image(
-							painter = painterResource(symbolToResId(shortData.nation)),
+							painter = painterResource(symbolToResId(vehicleData.nation)),
 							contentDescription = null,
 							modifier = Modifier
 								.size(32.dp, 32.dp)
@@ -85,12 +86,12 @@ fun TechnicsCard(
 								)
 						)
 						Image(
-							painter = painterResource(roleToResId(shortData.type)),
+							painter = painterResource(roleToResId(vehicleData.type)),
 							contentDescription = null,
 							modifier = Modifier.size(15.dp, 30.dp),
 						)
 						Image(
-							painter = painterResource(tierToResId(shortData.tier)),
+							painter = painterResource(tierToResId(vehicleData.tier)),
 							contentDescription = null,
 							modifier = Modifier
 								.padding(horizontal = dimensionResource(R.dimen.padding_small))
@@ -98,7 +99,7 @@ fun TechnicsCard(
 						)
 					}
 					Text(
-						text = shortData.lastBattleTime,
+						text = vehicleData.lastBattleTime,
 						modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_extra_large)),
 						style = MaterialTheme.typography.bodySmall
 					)
@@ -110,7 +111,7 @@ fun TechnicsCard(
 						.align(Alignment.End)
 						.padding(
 							end = dimensionResource(R.dimen.padding_extra_small),
-							top = dimensionResource(R.dimen.padding_medium)
+							top = dimensionResource(R.dimen.padding_extra_small)
 						),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
@@ -119,13 +120,30 @@ fun TechnicsCard(
 						horizontalAlignment = Alignment.End
 					) {
 						Text(
-							text = shortData.winRateLabel,
+							text = vehicleData.stat?.mainValue?: NO_DATA,
 							style = MaterialTheme.typography.bodyLarge
 						)
 						
+						Row(verticalAlignment = Alignment.CenterVertically) {
+							if (vehicleData.stat?.imageVector != null && vehicleData.stat.color != null) {
+								Box(modifier = Modifier.requiredSize(16.dp)) {
+									Icon(
+										imageVector = vehicleData.stat.imageVector,
+										contentDescription = null,
+										modifier = Modifier.requiredSize(24.dp),
+										tint = vehicleData.stat.color
+									)
+								}
+							}
+							Text(
+								text = vehicleData.stat?.auxValue?: NO_DATA,
+								modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_extra_small)),
+								style = MaterialTheme.typography.bodySmall
+							)
+						}
+						
 						Text(
-							text = "${shortData.battles} " + stringResource(R.string.battles),
-							modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_extra_small)),
+							text = "${vehicleData.battles} " + stringResource(R.string.battles),
 							style = MaterialTheme.typography.bodySmall
 						)
 					}
@@ -138,7 +156,7 @@ fun TechnicsCard(
 			}
 			
 			AsyncImage(
-				model = shortData.urlBigIcon,
+				model = vehicleData.urlBigIcon,
 				error = painterResource(R.drawable.ic_tank_empty),
 				placeholder = painterResource(R.drawable.ic_tank_empty),
 				contentDescription = null,
@@ -153,7 +171,7 @@ fun TechnicsCard(
 			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Image(
-				painter = painterResource(masteryToResId(shortData.markOfMastery)),
+				painter = painterResource(masteryToResId(vehicleData.markOfMastery)),
 				contentDescription = null,
 				modifier = Modifier
 					.padding(horizontal = dimensionResource(R.dimen.padding_small))
@@ -161,7 +179,7 @@ fun TechnicsCard(
 			)
 			
 			Text(
-				text = shortData.name ?: NO_DATA,
+				text = vehicleData.name ?: NO_DATA,
 				modifier = Modifier.padding(
 					vertical = dimensionResource(R.dimen.padding_extra_small)
 				),
@@ -176,15 +194,13 @@ fun TechnicsCard(
 fun TechnicsContentPreview() {
 	DynamicAssistantTheme {
 		TechnicsCard(
-			shortData = VehicleData(
+			vehicleData = VehicleData(
 				tankId = 1,
 				markOfMastery = 4,
-				battles = 996,
-				wins = 598,
+				battles = 256,
+				wins = 130,
+				winRate = 50.78f,
 				lastBattleTime = 1692967640.asStringDate("short"),
-				winRate = getMainAvg(598, 996)?:0f,
-				winRateLabel = getMainAvg(598, 996)
-					.toScreen(100f, "%"),
 				name = "T-34",
 				type = "mediumTank",
 				description = "desc",
@@ -197,7 +213,19 @@ fun TechnicsContentPreview() {
 				isPremium = false,
 				isGift = false,
 				isWheeled = false,
-				stat = emptyList()
+				stat = AccountStatisticsData(
+					title = "Wins",
+					mainValue = "50.8%",
+					auxValue = "0.0078 / 83.3%",
+					absValue = "130",
+					sessionAbsValue = "5",
+					sessionAvgValue = "83.3%",
+					sessionImpactValue = "+0.0078",
+					color = Color(0xFF009688),
+					imageVector = Icons.Filled.ArrowDropUp,
+					values = listOf(118f, 125f, 130f),
+					comment = null
+				)
 			),
 		)
 	}

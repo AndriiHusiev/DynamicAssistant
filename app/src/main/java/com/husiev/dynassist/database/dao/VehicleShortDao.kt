@@ -14,4 +14,7 @@ interface VehicleShortDao: BaseDao<VehicleShortDataEntity> {
 	
 	@Query("SELECT * FROM vehicle_short_data")
 	fun loadVehicleShortData(): Flow<List<VehicleShortDataEntity>>
+	
+	@Query("SELECT * FROM vehicle_short_data WHERE tank_id IN (:tanks)")
+	fun loadExactVehicleShortData(tanks: List<Int>): Flow<List<VehicleShortDataEntity>>
 }

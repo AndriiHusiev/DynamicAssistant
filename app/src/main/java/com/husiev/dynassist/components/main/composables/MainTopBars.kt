@@ -73,7 +73,7 @@ fun MainTopBar(
 							title = param
 						}
 						"single_id" -> appState.getIntDestArg(arg)?.let { id ->
-							title = mainViewModel.shortData.value.singleOrNull { vehicle ->
+							title = mainViewModel.vehicleData.value.singleOrNull { vehicle ->
 								vehicle.tankId == id
 							}?.name ?: ""
 						}

@@ -5,8 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.VehicleStatData
 
 @Entity(
 	tableName = "vehicle_stat",
@@ -39,15 +37,3 @@ data class VehicleStatDataEntity(
 //	@ColumnInfo(name = "survived_battles")
 //	val survivedBattles: Int,
 )
-
-fun List<VehicleStatDataEntity>.asExternalModel(): List<VehicleStatData> {
-	return this.map {
-		VehicleStatData(
-			tankId = it.tankId,
-			lastBattleTime = it.lastBattleTime?.asStringDate("short") ?: NO_DATA,
-			markOfMastery = it.markOfMastery,
-			battles = it.battles,
-			wins = it.wins,
-		)
-	}
-}
