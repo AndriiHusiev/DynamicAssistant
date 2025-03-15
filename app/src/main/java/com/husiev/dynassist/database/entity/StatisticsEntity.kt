@@ -109,6 +109,10 @@ data class StatisticsEntity(
 	)
 }
 
+fun StatisticsEntity.getMaxFields(): List<Int> {
+	return listOf<Int>(this.maxXpTankId?:0, this.maxDamageTankId?:0, this.maxFragsTankId?:0)
+}
+
 fun StatisticsEntity.fillMaxFields(vehicleData: List<VehicleShortDataEntity>) {
 	vehicleData.singleOrNull {
 		this.maxXpTankId == it.tankId

@@ -61,10 +61,10 @@ class NetworkRepository @Inject constructor(
 			null
 		}
 	
-	suspend fun getVehicleShortData(accountId: Int) =
+	suspend fun getVehicleShortStat(accountId: Int) =
 		try {
-			val response = networkService.getVehicleShortData(appId, accountId)
-			_queryStatus.emit(Result.Success("short"))
+			val response = networkService.getVehicleShortStat(appId, accountId)
+			_queryStatus.emit(Result.Success("vehicles short stat"))
 			response
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get details on player's vehicles", exception)
@@ -72,10 +72,13 @@ class NetworkRepository @Inject constructor(
 			null
 		}
 	
-	suspend fun getVehicleInfo(tankId: String) =
-		try {
+	suspend fun getVehicleInfo(tankId: String? = null) =
+		if (tankId == null) {
+			_queryStatus.emit(Result.Success("all vehicles info is already downloaded"))
+			null
+		} else try {
 			val response = networkService.getVehicleInfo(appId, tankId)
-			_queryStatus.emit(Result.Success("general info $_queryCounter"))
+			_queryStatus.emit(Result.Success("vehicles info; _queryCounter = $_queryCounter"))
 			response
 		} catch (exception: IOException) {
 			logDebugOut("NetworkRepository", "Failed to get list of available vehicles", exception)

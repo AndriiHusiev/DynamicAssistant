@@ -1,5 +1,7 @@
 package com.husiev.dynassist.network.dataclasses
 
+import com.husiev.dynassist.components.main.secure
+import com.husiev.dynassist.database.entity.VehicleShortDataEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -45,3 +47,23 @@ data class NetworkVehicleInfoImages(
 	@SerialName(value = "big_icon")
 	val bigIcon: String,
 )
+
+fun List<NetworkVehicleInfoItem>.asEntity(): List<VehicleShortDataEntity> {
+	return this.map {
+		VehicleShortDataEntity(
+			tankId = it.tankId,
+			urlSmallIcon = it.images.smallIcon.secure(),
+			urlBigIcon = it.images.bigIcon.secure(),
+			priceGold = it.priceGold,
+			priceCredit = it.priceCredit,
+			isWheeled = it.isWheeled,
+			isPremium = it.isPremium,
+			isGift = it.isGift,
+			name = it.name,
+			type = it.type,
+			description = it.description,
+			nation = it.nation,
+			tier = it.tier
+		)
+	}
+}

@@ -70,7 +70,7 @@ interface NetworkApiService {
 	 * @param tankId Player's vehicle ID. Maximum limit: 100.
 	 */
 	@GET("account/tanks/")
-	suspend fun getVehicleShortData(
+	suspend fun getVehicleShortStat(
 		@Query("application_id") appId: String,
 		@Query("account_id") accountId: Int,
 		@Query("fields") fields: String = "",

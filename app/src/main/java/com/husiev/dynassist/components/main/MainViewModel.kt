@@ -23,11 +23,14 @@ import com.husiev.dynassist.components.main.utils.asExternalModel
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.StatisticsEntity
-import com.husiev.dynassist.database.entity.VehicleShortDataEntity
 import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import com.husiev.dynassist.database.entity.asExternalModel
 import com.husiev.dynassist.database.entity.fillMaxFields
+import com.husiev.dynassist.database.entity.getMaxFields
 import com.husiev.dynassist.network.NetworkRepository
+import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
+import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
+import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfoItem
 import com.husiev.dynassist.network.dataclasses.asEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,7 +39,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -109,11 +111,15 @@ class MainViewModel @Inject constructor(
 	
 	val statisticData: StateFlow<Map<String, List<AccountStatisticsData>>> =
 		databaseRepository.getStatisticData(accountId)
-			.combine(databaseRepository.getVehiclesShortData()) { stat, veh ->
-				stat.lastOrNull()?.fillMaxFields(veh)
-				stat
+			.map {
+				it.lastOrNull()?.let {
+					databaseRepository.getExactVehiclesShortData(it.getMaxFields()).first { list ->
+						it.fillMaxFields(list)
+						true
+					}
+				}
+				it.asExternalModel(mrd)
 			}
-			.map { it.asExternalModel(mrd) }
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
@@ -156,89 +162,77 @@ class MainViewModel @Inject constructor(
 		networkRepository.setStatus(Result.Loading)
 		
 		viewModelScope.launch(Dispatchers.IO) {
-			// Account personal and statistic data
-			val lastBattleTimeAccount: Int? =
-				retrievePersonalData(accountId, networkRepository, databaseRepository)
-			if (lastBattleTimeAccount != null) networkRepository.queriesAmount += 2
-			
-			// Clan member short data
-			retrieveClanData(accountId, context, networkRepository, databaseRepository)
-			
-			// Vehicles short and statistic data
+			// Download data from server
+			val networkAccountPersonalData = networkRepository.getAccountAllData(accountId)?.data?.get(accountId.toString())
+			val lastBattleTimeAccount = networkAccountPersonalData?.lastBattleTime
+			val networkAccountClanData = networkRepository.getClanShortInfo(accountId)?.data?.get(accountId.toString())
+			var vehicles: List<VehicleStatDataEntity> = emptyList()
+			var networkVehicleInfo: List<NetworkVehicleInfoItem> = emptyList()
 			if (lastBattleTimeAccount != null) {
-				val vehicles = retrieveVehicleShortData(accountId, lastBattleTimeAccount, networkRepository, databaseRepository)
-				
-				retrieveVehicleInfo(context, vehicles, networkRepository, databaseRepository)
+				vehicles = retrieveVehicleShortStat(accountId, lastBattleTimeAccount, networkRepository)
+				networkVehicleInfo = retrieveVehicleInfo(context, vehicles, networkRepository, databaseRepository)
+			}
+			
+			// Add all downloaded data to database
+			if (networkRepository.queryStatus.value is Result.Success) {
+				savePersonalData(accountId, networkAccountPersonalData, databaseRepository)
+				saveClanData(accountId, context, networkAccountClanData, databaseRepository)
+				if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)
+				if (vehicles.isNotEmpty()) databaseRepository.addVehiclesStatData(vehicles)
 			}
 		}
 	}
 }
 
-private suspend fun retrievePersonalData(
+private suspend fun savePersonalData(
 	accountId: Int,
-	networkRepository: NetworkRepository,
-	databaseRepository: DatabaseRepository,
-): Int? {
-	var lastBattleTimeAccount: Int? = null
-	when(val response = networkRepository.getAccountAllData(accountId)) {
-		null -> return null
-		else -> {
-			response.data?.get(accountId.toString())?.let { networkData ->
-				databaseRepository.getStatisticData(accountId).first { list ->
-					if (list.isEmpty() || list.last().battles < networkData.statistics.all.battles) {
-						lastBattleTimeAccount = networkData.lastBattleTime
-						databaseRepository.updatePersonalData(networkData)
-						databaseRepository.addStatisticData(
-							accountId,
-							networkData.statistics.all
-						)
-					}
-					databaseRepository.updateTime(Date().time.toString(), accountId)
-					true
-				}
-			}
-		}
-	}
-	
-	return lastBattleTimeAccount
-}
-
-private suspend fun retrieveClanData(
-	accountId: Int,
-	context: Context,
-	networkRepository: NetworkRepository,
+	networkAccountPersonalData: NetworkAccountPersonalData?,
 	databaseRepository: DatabaseRepository,
 ) {
-	when(val response = networkRepository.getClanShortInfo(accountId)) {
-		null -> return
-		else -> {
-			response.data?.get(accountId.toString())?.let { clanData ->
-				databaseRepository.updatePlayerClanInfo(clanData)
-				clanData.clan.emblems.x195.portal?.let {
-					preloadImage(context, it)
-					databaseRepository.updateClan(
-						clan = clanData.clan.tag,
-						emblem = it,
-						accountId = accountId
-					)
-				}
+	networkAccountPersonalData?.let {
+		databaseRepository.getStatisticData(accountId).first { list ->
+			if (list.isEmpty() || list.last().battles < it.statistics.all.battles) {
+				databaseRepository.updatePersonalData(it)
+				databaseRepository.addStatisticData(
+					accountId,
+					it.statistics.all
+				)
 			}
+			databaseRepository.updateTime(Date().time.toString(), accountId)
+			true
 		}
 	}
 }
 
-private suspend fun retrieveVehicleShortData(
+private suspend fun saveClanData(
+	accountId: Int,
+	context: Context,
+	networkAccountClanData: NetworkAccountClanData?,
+	databaseRepository: DatabaseRepository,
+) {
+	networkAccountClanData?.let { clanData ->
+		databaseRepository.updatePlayerClanInfo(clanData)
+		clanData.clan.emblems.x195.portal?.let {
+			preloadImage(context, it)
+			databaseRepository.updateClan(
+				clan = clanData.clan.tag,
+				emblem = it,
+				accountId = accountId
+			)
+		}
+	}
+}
+
+private suspend fun retrieveVehicleShortStat(
 	accountId: Int,
 	lastBattleTime: Int,
 	networkRepository: NetworkRepository,
-	databaseRepository: DatabaseRepository,
 ): List<VehicleStatDataEntity> {
-	return when(val response = networkRepository.getVehicleShortData(accountId)) {
+	return when(val response = networkRepository.getVehicleShortStat(accountId)) {
 		null -> emptyList()
 		else -> {
 			response.data?.get(accountId.toString())?.let {
 				val data = it.map { item -> item.asEntity(accountId, lastBattleTime) }
-				databaseRepository.addVehiclesStatData(data)
 				data
 			} ?: emptyList()
 		}
@@ -250,54 +244,61 @@ private suspend fun retrieveVehicleInfo(
 	vehicles: List<VehicleStatDataEntity>,
 	networkRepository: NetworkRepository,
 	databaseRepository: DatabaseRepository,
-) {
+): List<NetworkVehicleInfoItem> {
 	val limit = 100
 	var index = 0
-	val newVehShort = mutableListOf<VehicleShortDataEntity>()
-	networkRepository.queriesAmount += (vehicles.size + limit - 1) / limit - 1
-	while (index < vehicles.size) {
+	val newVehShort = mutableListOf<NetworkVehicleInfoItem>()
+	
+	// First get list of missing entries
+	val listOfNewVehicles = getListOfNewVehicles(vehicles, databaseRepository)
+	if (listOfNewVehicles.isEmpty()) {
+		networkRepository.getVehicleInfo()
+		return emptyList()
+	}
+	
+	// Then we can request missing vehicles info from server
+	networkRepository.queriesAmount += (listOfNewVehicles.size + limit - 1) / limit - 1
+	while (index < listOfNewVehicles.size) {
 		// The list needs to be split into parts first, since the server can only process
 		// a maximum of 100 items in each request.
-		val sublist = vehicles
-			.subList(index, (index + limit).coerceAtMost(vehicles.size))
-			.map { it.tankId }
+		val sublist = listOfNewVehicles
+			.subList(index, (index + limit).coerceAtMost(listOfNewVehicles.size))
 			.joinToString(separator = ",")
 		
 		when(val response = networkRepository.getVehicleInfo(sublist)) {
-			null -> return
+			null -> return emptyList()
 			else -> {
-				databaseRepository.getVehiclesShortData().first { list ->
-					response.data?.let { map ->
-						map.forEach { (key, item) ->
-							val oldVehicleData = list.singleOrNull { it.tankId.toString() == key }
-							val newVehicleStat = vehicles.singleOrNull { it.tankId.toString() == key }
-							if (oldVehicleData == null && newVehicleStat != null && item != null) {
-								preloadImage(context, item.images.bigIcon.secure())
-								newVehShort.add(VehicleShortDataEntity(
-									tankId = item.tankId,
-									urlSmallIcon = item.images.smallIcon.secure(),
-									urlBigIcon = item.images.bigIcon.secure(),
-									priceGold = item.priceGold,
-									priceCredit = item.priceCredit,
-									isWheeled = item.isWheeled,
-									isPremium = item.isPremium,
-									isGift = item.isGift,
-									name = item.name,
-									type = item.type,
-									description = item.description,
-									nation = item.nation,
-									tier = item.tier
-								))
-							}
+				response.data?.let { map ->
+					map.forEach { (_, item) ->
+						item?.let {
+							preloadImage(context, item.images.bigIcon.secure())
+							newVehShort.add(item)
 						}
 					}
-					true
 				}
 			}
 		}
 		index += limit
 	}
-	databaseRepository.addVehiclesShortData(newVehShort)
+	return newVehShort
+}
+
+/**
+ * Get list of missing entries
+ */
+private suspend fun getListOfNewVehicles(
+	vehicles: List<VehicleStatDataEntity>,
+	databaseRepository: DatabaseRepository,
+) :List<Int> {
+	val idsFromNW = vehicles.map { it.tankId }
+	val listOfNewVehicles = mutableListOf<Int>()
+	
+	databaseRepository.getVehiclesIds(idsFromNW).first { idsFromDB ->
+		listOfNewVehicles.addAll( idsFromNW.filter { it !in idsFromDB } )
+		true
+	}
+	
+	return listOfNewVehicles
 }
 
 fun preloadImage(context: Context, imageUrl: String?) =
