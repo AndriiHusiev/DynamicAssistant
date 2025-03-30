@@ -111,7 +111,7 @@ fun TechnicsCard(
 						.align(Alignment.End)
 						.padding(
 							end = dimensionResource(R.dimen.padding_extra_small),
-							top = dimensionResource(R.dimen.padding_extra_small)
+							top = dimensionResource(R.dimen.padding_medium)
 						),
 					verticalAlignment = Alignment.CenterVertically,
 				) {
@@ -119,31 +119,43 @@ fun TechnicsCard(
 						modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_extra_small)),
 						horizontalAlignment = Alignment.End
 					) {
-						Text(
-							text = vehicleData.stat?.mainValue?: NO_DATA,
-							style = MaterialTheme.typography.bodyLarge
-						)
+						val battles = vehicleData.stat[0]
+						val wins = vehicleData.stat[1]
 						
 						Row(verticalAlignment = Alignment.CenterVertically) {
-							if (vehicleData.stat?.imageVector != null && vehicleData.stat.color != null) {
+							if (wins.imageVector != null && wins.color != null) {
 								Box(modifier = Modifier.requiredSize(16.dp)) {
 									Icon(
-										imageVector = vehicleData.stat.imageVector,
+										imageVector = wins.imageVector,
 										contentDescription = null,
 										modifier = Modifier.requiredSize(24.dp),
-										tint = vehicleData.stat.color
+										tint = wins.color
 									)
 								}
 							}
+							
+							var winRateSlash = " / "
+							if (wins.sessionImpactValue == null || wins.sessionImpactValue == NO_DATA)
+								winRateSlash = ""
+							else
+								Text(
+									text = wins.sessionImpactValue,
+									modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_extra_small)),
+									style = MaterialTheme.typography.bodySmall
+								)
+							
 							Text(
-								text = vehicleData.stat?.auxValue?: NO_DATA,
-								modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_extra_small)),
-								style = MaterialTheme.typography.bodySmall
+								text = winRateSlash + wins.mainValue,
+								style = MaterialTheme.typography.bodyLarge
 							)
 						}
 						
+						val sssBattles = battles.sessionAbsValue?.toIntOrNull()
+						val sessionBattles = if (sssBattles != null && sssBattles > 0)
+							"+$sssBattles / "
+						else ""
 						Text(
-							text = "${vehicleData.battles} " + stringResource(R.string.battles),
+							text = "$sessionBattles${vehicleData.battles} " + stringResource(R.string.battles),
 							style = MaterialTheme.typography.bodySmall
 						)
 					}
@@ -213,7 +225,19 @@ fun TechnicsContentPreview() {
 				isPremium = false,
 				isGift = false,
 				isWheeled = false,
-				stat = AccountStatisticsData(
+				stat = listOf(AccountStatisticsData(
+					title = "Battles",
+					mainValue = "256",
+					auxValue = null,
+					absValue = "256",
+					sessionAbsValue = "6",
+					sessionAvgValue = null,
+					sessionImpactValue = null,
+					color = null,
+					imageVector = null,
+					values = listOf(242f, 250f, 256f),
+					comment = null
+				), AccountStatisticsData(
 					title = "Wins",
 					mainValue = "50.8%",
 					auxValue = "0.0078 / 83.3%",
@@ -225,7 +249,7 @@ fun TechnicsContentPreview() {
 					imageVector = Icons.Filled.ArrowDropUp,
 					values = listOf(118f, 125f, 130f),
 					comment = null
-				)
+				),)
 			),
 		)
 	}

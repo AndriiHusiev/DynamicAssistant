@@ -81,7 +81,7 @@ fun SingleTechnicsContent(
 					priceGold = item.priceGold,
 				)
 			}
-			item { SmoothLineGraph(item.stat?.values) }
+			item { SmoothLineGraph(item.stat[1].values) }
 			
 			item {
 				SingleTechnicsCard(item = item)
@@ -199,6 +199,9 @@ fun SingleTechnicsCard(
 	item: VehicleData,
 	modifier: Modifier = Modifier,
 ) {
+	val battles = item.stat[0]
+	val wins = item.stat[1]
+	
 	ElevatedCard(
 		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
 		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
@@ -216,29 +219,29 @@ fun SingleTechnicsCard(
 		Column(modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))) {
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_battles),
-				value = item.battles.bigToString()
+				value = item.battles.doubleBubble(battles.sessionAbsValue)
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_victories),
-				value = item.wins.bigToString()
+				value = item.wins.doubleBubble(wins.sessionAbsValue)
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_win_rate),
-				value = item.stat?.mainValue
+				value = wins.mainValue
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.average_value_per_session),
-				value = item.stat?.sessionAvgValue
+				value = wins.sessionAvgValue
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.session_impact),
-				value = item.stat?.sessionImpactValue,
-				imageVector = item.stat?.imageVector,
-				color = item.stat?.color
+				value = wins.sessionImpactValue,
+				imageVector = wins.imageVector,
+				color = wins.color
 			)
 			
 			SingleSummaryCardItem(
@@ -248,6 +251,13 @@ fun SingleTechnicsCard(
 			)
 		}
 	}
+}
+
+fun Int.doubleBubble(session: String?): String {
+	return if (session != null && session != NO_DATA)
+		"$session / " + this.bigToString()
+	else
+		this.bigToString()
 }
 
 @Preview(showBackground = true)
@@ -277,19 +287,31 @@ fun SingleTechnicsCardItemPreview() {
 					isPremium = false,
 					isGift = false,
 					isWheeled = false,
-					stat = AccountStatisticsData(
+					stat = listOf(AccountStatisticsData(
+						title = "Battles",
+						mainValue = "256",
+						auxValue = null,
+						absValue = "256",
+						sessionAbsValue = "+6",
+						sessionAvgValue = null,
+						sessionImpactValue = null,
+						color = null,
+						imageVector = null,
+						values = listOf(242f, 250f, 256f),
+						comment = null
+					), AccountStatisticsData(
 						title = "Wins",
 						mainValue = "50.8%",
 						auxValue = "0.0078 / 83.3%",
 						absValue = "130",
-						sessionAbsValue = "5",
+						sessionAbsValue = "+5",
 						sessionAvgValue = "83.3%",
 						sessionImpactValue = "+0.0078",
 						color = Color(0xFF009688),
 						imageVector = Icons.Filled.ArrowDropUp,
 						values = listOf(118f, 125f, 130f),
 						comment = null
-					)
+					),)
 				)), singleId = 1
 			)
 		}

@@ -72,7 +72,7 @@ data class AccountStatisticsData(
 /**
  * Transformation for vehicle statistic.
  */
-fun List<VehicleStatDataEntity>.asStatisticModel(): AccountStatisticsData {
+fun List<VehicleStatDataEntity>.asStatisticModel(): List<AccountStatisticsData> {
 	val items = arrayOf<Int?>(null, null, null, null)
 	if (this.isNotEmpty()) {
 		items[0] = this[this.size-1].wins
@@ -82,17 +82,26 @@ fun List<VehicleStatDataEntity>.asStatisticModel(): AccountStatisticsData {
 			items[3] = this[this.size-2].battles
 		}
 	}
+	val allMembers = listOf(
+		mapOf("wins" to items[0], "battles" to items[2]),
+		mapOf("wins" to items[1], "battles" to items[3]),
+	)
 	
-	return fullStatItem(
-		tag = "wins",
-		items = mapOf("wins" to "Wins"),
-		allMembers = listOf(
-			mapOf("wins" to items[0], "battles" to items[2]),
-			mapOf("wins" to items[1], "battles" to items[3]),
+	return listOf(
+		reducedStatItem(
+			tag = "battles",
+			items = mapOf("battles" to "Battles"),
+			allMembers = allMembers,
+			values = this.map { it.battles.toFloat() },
 		),
-		values = calcFloatList(
-			this.map { it.wins.toFloat() },
-			this.map { it.battles.toFloat() }
+		fullStatItem(
+			tag = "wins",
+			items = mapOf("wins" to "Wins"),
+			allMembers = allMembers,
+			values = calcFloatList(
+				this.map { it.wins.toFloat() },
+				this.map { it.battles.toFloat() }
+			),
 		),
 	)
 }

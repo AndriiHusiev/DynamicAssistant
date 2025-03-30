@@ -174,7 +174,7 @@ class MainViewModel @Inject constructor(
 			}
 			
 			// Add all downloaded data to database
-			if (networkRepository.queryStatus.value is Result.Success) {
+			if (networkRepository.queryStatus.value !is Result.Error) {
 				savePersonalData(accountId, networkAccountPersonalData, databaseRepository)
 				saveClanData(accountId, context, networkAccountClanData, databaseRepository)
 				if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)

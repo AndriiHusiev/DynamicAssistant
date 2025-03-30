@@ -5,6 +5,7 @@ import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,8 +53,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toSize
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import kotlin.math.roundToInt
+
+private const val MAX_DOTS = 10
 
 /*
 * Copyright 2023 The Android Open Source Project
@@ -76,9 +81,11 @@ fun SmoothLineGraph(
 ) {
     val barColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.4f)
     val chartColor = Color(0xFF00897B)
+    var allRangeMode by rememberSaveable { mutableStateOf(false) }
     
     Box(
         modifier = modifier
+            .clickable(onClick = { allRangeMode = !allRangeMode })
             .clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .aspectRatio(3 / 2f)
@@ -107,8 +114,22 @@ fun SmoothLineGraph(
             val animationProgress = remember { Animatable(0f) }
             var highlightedLine by remember { mutableStateOf<Int?>(null) }
             val localView = LocalView.current
-            val dotsAmount = minOf(10, graphData.size)
-            val list = graphData.takeLast(dotsAmount)
+            val numDots = graphData.size
+            var dotsAmount = minOf(MAX_DOTS, numDots)
+            var list = graphData.takeLast(dotsAmount)
+            if (allRangeMode && numDots > MAX_DOTS) {
+                val step = (numDots-1) / (MAX_DOTS-1).toFloat()
+                val lst = mutableListOf<Float>()
+                var i = 0f
+                
+                while (i < numDots) {
+                    lst.add(graphData[i.roundToInt()])
+                    i += step
+                }
+                
+                list = lst
+                dotsAmount = lst.size
+            }
     
             LaunchedEffect(highlightedLine) {
                 if (highlightedLine != null) {
@@ -198,7 +219,7 @@ fun SmoothLineGraph(
                                 this.drawHighlight(
                                     circleColor = chartColor,
                                     highlightColor = barColor,
-                                    highlightedLine = it,
+                                    highlightedLine =  maxOf(0, minOf(it, dotsAmount-1)),
                                     graphData = list,
                                     textMeasurer = textMeasurer,
                                     labelTextStyle = labelTextStyle
@@ -260,6 +281,8 @@ fun DrawScope.drawHighlight(
     labelTextStyle: TextStyle
 ) {
         val amount = graphData[highlightedLine]
+        val impact = if (highlightedLine > 0)
+            '\n' + (graphData[highlightedLine] - graphData[highlightedLine - 1]).toScreen(1f,"",true) else ""
         val minAmount = graphData.minBy { it }
         val range = graphData.maxBy { it } - minAmount
         val percentageHeight = ((amount - minAmount) / range)
@@ -282,7 +305,7 @@ fun DrawScope.drawHighlight(
         )
 
         // draw info box
-        val textLayoutResult = textMeasurer.measure("$amount", style = labelTextStyle)
+        val textLayoutResult = textMeasurer.measure("$amount" + impact, style = labelTextStyle)
         val highlightContainerSize = (textLayoutResult.size)
             .toIntRect()
             .inflate(4.dp.roundToPx())
