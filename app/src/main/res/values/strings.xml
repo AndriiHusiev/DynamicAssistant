@@ -151,4 +151,8 @@
     <string name="description_sort_list">Sort List</string>
     <string name="description_filter_list">Filter List</string>
     <string name="description_new_data_dot">Account has new data</string>
+
+    <!-- Line Graph -->
+    <string name="graph_10_dots">10 dots</string>
+    <string name="graph_all_dots">All dots</string>
 </resources>

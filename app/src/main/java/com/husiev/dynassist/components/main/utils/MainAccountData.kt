@@ -318,8 +318,7 @@ fun Float.format(forceToInt: Boolean, forceToAll: Boolean = false): String =
 	"%,.${this.exp(forceToInt, forceToAll)}f"
 
 fun Float.exp(forceToInt: Boolean, forceToAll: Boolean = false): Int {
-	val (_, exponent) = String.format(null, "%e", this).split("e")
-	var exp = exponent.toInt()
+	var exp = getPureExponent(this)
 	if (forceToAll) return (exp - 2).absoluteValue
 	if (forceToInt) exp = 10
 	return when(exp) {
@@ -328,6 +327,11 @@ fun Float.exp(forceToInt: Boolean, forceToAll: Boolean = false): Int {
 		-1, 0 -> (exp - 2).absoluteValue
 		else -> 3
 	}
+}
+
+fun getPureExponent(number: Float): Int {
+	val (_, exponent) = String.format(null, "%e", number).split("e")
+	return exponent.toInt()
 }
 
 fun Float?.happyIcon(): ImageVector? {

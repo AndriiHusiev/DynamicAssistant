@@ -26,3 +26,9 @@ private fun converterToMap(items: List<String>): Map<String, String> {
 	
 	return map
 }
+
+data class Range(
+	val min: Float,
+	val max: Float,
+	val range: Float = max - min
+)
