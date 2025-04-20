@@ -1,7 +1,6 @@
 package com.husiev.dynassist.components.main.composables
 
 import android.graphics.PointF
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -49,7 +48,6 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
@@ -66,6 +64,8 @@ import com.husiev.dynassist.components.main.utils.Range
 import com.husiev.dynassist.components.main.utils.getPureExponent
 import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
+import java.util.Locale
+import kotlin.String
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -127,20 +127,13 @@ fun SmoothLineGraph(
             
             val animationProgress = remember { Animatable(0f) }
             var highlightedLine by remember { mutableStateOf<Int?>(null) }
-            var highlightedX by remember { mutableFloatStateOf(0f) }
+            var highlightedX by remember { mutableFloatStateOf(-1f) }
             var highlightedOffset: Offset? = null
-            val localView = LocalView.current
             val numDots = graphData.size
             val list = if (allRangeMode && numDots > MAX_DOTS) graphData
                 else graphData.takeLast(minOf(MAX_DOTS, numDots))
             val dotsAmount = list.size
             val graphRange = getRange(list)
-    
-            LaunchedEffect(highlightedLine) {
-                if (highlightedLine != null) {
-                    localView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                }
-            }
     
             LaunchedEffect(key1 = list, block = {
                 animationProgress.animateTo(1f, tween(3000))
@@ -163,15 +156,17 @@ fun SmoothLineGraph(
                                     // bypassing unwanted behavior
                                     val num = if (allRangeMode) graphData.size else dotsAmount
                                     val sectionWidth = size.width / (num - 1)
-                                    highlightedLine = ((offset.x + sectionWidth / 1.25f) / sectionWidth).toInt()
+                                    highlightedLine =
+                                        ((offset.x + sectionWidth / 1.25f) / sectionWidth).toInt()
                                 },
-                                onDragEnd = { highlightedLine = null },
-                                onDragCancel = { highlightedLine = null },
+                                onDragEnd = { highlightedLine = null; highlightedX = -1f },
+                                onDragCancel = { highlightedLine = null; highlightedX = -1f },
                                 onDrag = { change, _ ->
                                     highlightedX = change.position.x
                                     val num = if (allRangeMode) graphData.size else dotsAmount
                                     val sectionWidth = size.width / (num - 1)
-                                    highlightedLine = ((change.position.x + sectionWidth / 1.25f) / sectionWidth).toInt()
+                                    highlightedLine =
+                                        ((change.position.x + sectionWidth / 1.25f) / sectionWidth).toInt()
                                 }
                             )
                         }
@@ -191,7 +186,7 @@ fun SmoothLineGraph(
                                 val horizontalLines = 5
                                 val sectionSize = size.height / horizontalLines
                                 
-                                repeat(horizontalLines) { i ->
+                                repeat(graphRange.numLines) { i ->
                                     val startY = sectionSize * (i + 1)
                                     drawLine(
                                         barColor,
@@ -202,9 +197,8 @@ fun SmoothLineGraph(
                                         pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f))
                                     )
                                     
-                                    val range = graphRange.max - graphRange.min
-                                    val lineLabel = graphRange.min + range * (horizontalLines - (i+1)) / horizontalLines
-                                    val textLayoutResult = textMeasurer.measure("$lineLabel", labelTextStyleM)
+                                    val textLayoutResult =
+                                        textMeasurer.measure(graphRange.dots[i], labelTextStyleM)
                                     drawText(
                                         textLayoutResult,
                                         color = barColor,
@@ -233,7 +227,7 @@ fun SmoothLineGraph(
                                     this.drawHighlight(
                                         circleColor = chartColor,
                                         highlightColor = barColor,
-                                        highlightedLine =  maxOf(0, minOf(it, dotsAmount-1)),
+                                        highlightedLine = maxOf(0, minOf(it, dotsAmount - 1)),
                                         dotX = highlightedOffset?.x ?: 0f,
                                         dotY = highlightedOffset?.y ?: 0f,
                                         graphData = list,
@@ -338,12 +332,14 @@ fun getExactPathPos(path: Path, x: Float, width: Float): Offset {
     var posX = xx
     var curPos = pm.getPosition(distance * length)
     var diff = xx - curPos.x
+    var counter = 0
     // in the loop decrease the difference between the finger pointer
     // and the position inside the path
-    while (diff.absoluteValue > deviation) {
-        posX = (posX + diff)
+    while (diff.absoluteValue > deviation && counter < 10) {
+        posX = (posX + diff * 0.8f)
         curPos = pm.getPosition((posX / width) * length)
         diff = xx - curPos.x
+        counter++
     }
     return pm.getPosition((posX / width) * pm.length)
 }
@@ -353,12 +349,29 @@ fun getRange(data: List<Float>?): Range {
         val max = data.maxBy { it }
         val min = data.minBy { it }
         val range = max - min
-        val mul = 10f.pow(getPureExponent(range))
-        return Range(
-            ((min / mul).roundToInt() - 1) * mul,
-            ((max / mul).toInt() + 2) * mul
-        )
-    } ?: return Range(1f, 5f)
+        val exp = getPureExponent(range)
+        val mul = 10f.pow(if (exp==1) 0 else exp)
+        val filledParts = 3f
+        val allParts = 5f
+        
+        val rawStep = (range / mul) / filledParts
+        val allRange = ((rawStep) * 10f).roundToInt() * allParts / 10f * mul
+        val step = allRange / allParts
+        var rMax = max + step
+        var rMin = rMax - allRange
+        val expo = if(exp < 2) exp.absoluteValue + 1 else 0
+        rMin = (rMin / mul * 10f).roundToInt() / 10f * mul
+        rMax = (rMax / mul * 10f).roundToInt() / 10f * mul
+        
+        val lines = mutableListOf<String>()
+        val horizontalLines = allParts.toInt()
+        repeat(horizontalLines) { i ->
+            val item = rMax - step * (i + 1)
+            lines.add(String.format(Locale.getDefault(), "%,.${expo}f", item))
+        }
+        
+        return Range(rMin, rMax, lines, horizontalLines)
+    } ?: return Range(1f, 5f, listOf("1", "2", "3", "4", "5"))
 }
 
 fun DrawScope.drawHighlight(
