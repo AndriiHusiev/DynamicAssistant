@@ -22,6 +22,9 @@ import javax.inject.Singleton
 class DatabaseRepository @Inject constructor(
 	private val database: AppDatabase
 ) {
+	var accountId: Int = 0
+	var nickname: String = ""
+	
 	val listOfPlayers: Flow<List<StartAccountInfo>> = database.playersDao().loadPlayersList()
 		.map { it.map(PlayersEntity::asExternalModel) }
 	

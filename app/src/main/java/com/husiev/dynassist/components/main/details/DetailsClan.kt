@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.details
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
@@ -33,7 +34,7 @@ fun DetailsClanCard(
 	
 	ElevatedCard(
 		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)

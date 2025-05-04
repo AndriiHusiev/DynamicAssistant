@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.summary
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
@@ -41,7 +41,7 @@ fun SummaryCardItem(
 		modifier = modifier
 			.fillMaxWidth()
 			.clickable { onClick(title) },
-		verticalAlignment = Alignment.CenterVertically,
+		verticalAlignment = Alignment.Companion.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		Text(
@@ -56,18 +56,18 @@ fun SummaryCardItem(
 		
 		Row(
 			modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_extra_small)),
-			verticalAlignment = Alignment.CenterVertically,
+			verticalAlignment = Alignment.Companion.CenterVertically,
 		) {
 			Column(
 				modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_extra_small)),
-				horizontalAlignment = Alignment.End
+				horizontalAlignment = Alignment.Companion.End
 			) {
 				Text(
 					text = mainValue,
 					style = MaterialTheme.typography.bodyLarge
 				)
 				
-				Row(verticalAlignment = Alignment.CenterVertically) {
+				Row(verticalAlignment = Alignment.Companion.CenterVertically) {
 					if (auxValue != null && imageVector != null && color != null) {
 						Icon(
 							imageVector = imageVector,
@@ -83,12 +83,12 @@ fun SummaryCardItem(
 					
 				}
 			}
-			
+
 //			auxValue?.let {
-				Icon(
-					imageVector = Icons.Filled.ChevronRight,
-					contentDescription = null
-				)
+			Icon(
+				imageVector = Icons.Filled.ChevronRight,
+				contentDescription = null
+			)
 //			}
 		}
 	}
@@ -116,13 +116,13 @@ fun MainCardVehicle(
 			horizontal = dimensionResource(R.dimen.padding_medium),
 			vertical = dimensionResource(R.dimen.padding_medium),
 		),
-		horizontalAlignment = Alignment.CenterHorizontally
+		horizontalAlignment = Alignment.Companion.CenterHorizontally
 	) {
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(vertical = dimensionResource(R.dimen.padding_extra_small)),
-			verticalAlignment = Alignment.CenterVertically,
+			verticalAlignment = Alignment.Companion.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			Text(
@@ -140,7 +140,7 @@ fun MainCardVehicle(
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(vertical = dimensionResource(R.dimen.padding_extra_small)),
-			verticalAlignment = Alignment.CenterVertically,
+			verticalAlignment = Alignment.Companion.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			Text(
@@ -180,7 +180,7 @@ fun MainCardItemPreview() {
 					mainValue = "56.3%",
 					auxValue = "+0.024% / 58.2%",
 					absSessionValue = "+5",
-					color = Color.Green,
+					color = Color.Companion.Green,
 					imageVector = Icons.Filled.ArrowDropUp,
 				)
 			}

@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.summary
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +22,7 @@ fun SummaryCard(
 ) {
 	ElevatedCard(
 		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)
@@ -33,7 +33,7 @@ fun SummaryCard(
 			style = MaterialTheme.typography.headlineSmall
 		)
 		
-		summaryData.forEach {  item ->
+		summaryData.forEach { item ->
 			MainDivider()
 			if (item.comment == null) {
 				SummaryCardItem(

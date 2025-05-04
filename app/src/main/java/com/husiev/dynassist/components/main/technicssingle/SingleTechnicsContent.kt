@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.technicssingle
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -42,8 +42,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.composables.SmoothLineGraph
+import com.husiev.dynassist.components.main.summary.MainDivider
+import com.husiev.dynassist.components.main.summarysingle.SingleSummaryCardItem
+import com.husiev.dynassist.components.main.technics.TechnicsViewModel
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
@@ -56,11 +62,12 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleTechnicsContent(
-	vehicleData: List<VehicleData>,
 	modifier: Modifier = Modifier,
 	singleId: Int? = null,
+	viewModel: TechnicsViewModel = hiltViewModel(),
 ) {
 	val state = rememberLazyListState()
+	val vehicleData by viewModel.vehicleData.collectAsStateWithLifecycle()
 	val singleItem = vehicleData.singleOrNull { it.tankId == singleId }
 	
 	LazyColumn(
@@ -113,7 +120,7 @@ fun SingleTechnicsImageCard(
 					stiffness = Spring.StiffnessLow
 				)
 			),
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)
@@ -203,8 +210,12 @@ fun SingleTechnicsCard(
 	val wins = item.stat[1]
 	
 	ElevatedCard(
-		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		modifier = modifier.clip(
+			androidx.compose.foundation.shape.RoundedCornerShape(
+				dimensionResource(R.dimen.padding_medium)
+			)
+		),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)
@@ -267,53 +278,59 @@ fun SingleTechnicsCardItemPreview() {
 		Surface(
 			color = MaterialTheme.colorScheme.background
 		) {
-			SingleTechnicsContent(
-				vehicleData = listOf(VehicleData(
-					tankId = 1,
-					markOfMastery = 1,
-					battles = 256,
-					wins = 130,
-					winRate = 50.78f,
-					lastBattleTime = 1669914970.asStringDate("short"),
-					name = "T-34",
-					type = "mediumTank",
-					description = "description",
-					nation = "ussr",
-					urlSmallIcon = "urlSmallIcon",
-					urlBigIcon = "urlBigIcon",
-					tier = 5,
-					priceGold = 0,
-					priceCredit = 456456,
-					isPremium = false,
-					isGift = false,
-					isWheeled = false,
-					stat = listOf(AccountStatisticsData(
-						title = "Battles",
-						mainValue = "256",
-						auxValue = null,
-						absValue = "256",
-						sessionAbsValue = "+6",
-						sessionAvgValue = null,
-						sessionImpactValue = null,
-						color = null,
-						imageVector = null,
-						values = listOf(242f, 250f, 256f),
-						comment = null
-					), AccountStatisticsData(
-						title = "Wins",
-						mainValue = "50.8%",
-						auxValue = "0.0078 / 83.3%",
-						absValue = "130",
-						sessionAbsValue = "+5",
-						sessionAvgValue = "83.3%",
-						sessionImpactValue = "+0.0078",
-						color = Color(0xFF009688),
-						imageVector = Icons.Filled.ArrowDropUp,
-						values = listOf(118f, 125f, 130f),
-						comment = null
-					),)
-				)), singleId = 1
-			)
+			Column {
+				SmoothLineGraph(null)
+				SingleTechnicsCard(
+					item = VehicleData(
+						tankId = 1,
+						markOfMastery = 1,
+						battles = 256,
+						wins = 130,
+						winRate = 50.78f,
+						lastBattleTime = 1669914970.asStringDate("short"),
+						name = "T-34",
+						type = "mediumTank",
+						description = "description",
+						nation = "ussr",
+						urlSmallIcon = "urlSmallIcon",
+						urlBigIcon = "urlBigIcon",
+						tier = 5,
+						priceGold = 0,
+						priceCredit = 456456,
+						isPremium = false,
+						isGift = false,
+						isWheeled = false,
+						stat = listOf(
+							AccountStatisticsData(
+								title = "Battles",
+								mainValue = "256",
+								auxValue = null,
+								absValue = "256",
+								sessionAbsValue = "+6",
+								sessionAvgValue = null,
+								sessionImpactValue = null,
+								color = null,
+								imageVector = null,
+								values = listOf(242f, 250f, 256f),
+								comment = null
+							),
+							AccountStatisticsData(
+								title = "Wins",
+								mainValue = "50.8%",
+								auxValue = "0.0078 / 83.3%",
+								absValue = "130",
+								sessionAbsValue = "+5",
+								sessionAvgValue = "83.3%",
+								sessionImpactValue = "+0.0078",
+								color = Color(0xFF009688),
+								imageVector = Icons.Filled.ArrowDropUp,
+								values = listOf(118f, 125f, 130f),
+								comment = null
+							),
+						)
+					)
+				)
+			}
 		}
 	}
 }

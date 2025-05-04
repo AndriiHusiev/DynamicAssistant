@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.summarysingle
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,20 +33,27 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.composables.SmoothLineGraph
+import com.husiev.dynassist.components.main.summary.MainDivider
+import com.husiev.dynassist.components.main.summary.SummaryViewModel
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleSummaryContent(
-	summaryData: Map<String, List<AccountStatisticsData>>,
 	modifier: Modifier = Modifier,
 	singleTitle: String? = null,
+	viewModel: SummaryViewModel = hiltViewModel(),
 ) {
+	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
 	var singleItem: AccountStatisticsData? = null
-	summaryData.forEach { entry ->
+	
+	statisticData.forEach { entry ->
 		val item = entry.value.firstOrNull { it.title == singleTitle }
 		if (item != null) singleItem = item
 	}
@@ -73,7 +81,7 @@ fun SingleSummaryCard(
 ) {
 	ElevatedCard(
 		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)

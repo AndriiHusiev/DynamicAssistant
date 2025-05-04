@@ -8,14 +8,18 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.MainViewModel
-import com.husiev.dynassist.components.main.navigation.sessionsNavigationRoute
-import com.husiev.dynassist.components.main.navigation.summaryNavigationRoute
-import com.husiev.dynassist.components.main.navigation.technicsNavigationRoute
+import com.husiev.dynassist.components.main.sessions.sessionsNavigationRoute
+import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
+import com.husiev.dynassist.components.main.technics.TechnicsViewModel
+import com.husiev.dynassist.components.main.technics.technicsNavigationRoute
 import com.husiev.dynassist.components.main.utils.DaAppState
 import com.husiev.dynassist.components.start.composables.DaTopAppBar
 
@@ -27,14 +31,16 @@ fun MainTopBar(
 	onSortClick: () -> Unit,
 	onFilterClick: () -> Unit,
 	modifier: Modifier = Modifier,
+	technicsViewModel: TechnicsViewModel = hiltViewModel(),
 ) {
-	var title = mainViewModel.nickname
+	var title = technicsViewModel.nickname
 	var navigationIconContentDescription: String? = null
 	var actionIconContentDescription: String? = null
 	var navigationIcon: ImageVector? = null
 	var actionIcon: ImageVector? = null
 	var onNavigationClick: () -> Unit = {}
 	var onActionClick: () -> Unit = {}
+	val vehicleData by technicsViewModel.vehicleData.collectAsStateWithLifecycle()
 	
 	appState.currentDestination?.let {
 		when(it.route) {
@@ -73,7 +79,7 @@ fun MainTopBar(
 							title = param
 						}
 						"single_id" -> appState.getIntDestArg(arg)?.let { id ->
-							title = mainViewModel.vehicleData.value.singleOrNull { vehicle ->
+							title = vehicleData.singleOrNull { vehicle ->
 								vehicle.tankId == id
 							}?.name ?: ""
 						}

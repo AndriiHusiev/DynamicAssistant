@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.technics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.composables.FilterTechnics
+import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.SHORT_PATTERN
 import com.husiev.dynassist.components.main.utils.VehicleData
@@ -18,12 +23,13 @@ import java.util.Locale
 
 @Composable
 fun TechnicsContent(
-	vehicleData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	modifier: Modifier = Modifier,
-	onClick: (Int) -> Unit = {}
+	onClick: (Int) -> Unit = {},
+	viewModel: TechnicsViewModel = hiltViewModel(),
 ) {
+	val vehicleData by viewModel.vehicleData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
 	
 	LazyColumn(
@@ -44,7 +50,7 @@ fun TechnicsContent(
 						onClick = onClick
 					)
 				}
-		}
+			}
 	}
 }
 

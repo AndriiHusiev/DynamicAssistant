@@ -2,7 +2,6 @@ package com.husiev.dynassist.components.main
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,20 +12,10 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
-import com.husiev.dynassist.components.main.utils.AccountClanInfo
-import com.husiev.dynassist.components.main.utils.AccountPersonalData
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
-import com.husiev.dynassist.components.main.utils.MainRoutesData
 import com.husiev.dynassist.components.main.utils.Result
-import com.husiev.dynassist.components.main.utils.VehicleData
-import com.husiev.dynassist.components.main.utils.asExternalModel
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
-import com.husiev.dynassist.database.entity.StatisticsEntity
 import com.husiev.dynassist.database.entity.VehicleStatDataEntity
-import com.husiev.dynassist.database.entity.asExternalModel
-import com.husiev.dynassist.database.entity.fillMaxFields
-import com.husiev.dynassist.database.entity.getMaxFields
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
 import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
@@ -46,23 +35,24 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 import kotlin.collections.component2
+import androidx.core.graphics.drawable.toDrawable
 
 private const val ACCOUNT_ID = "account_id"
 private const val NICKNAME = "nickname"
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-	private val mrd: MainRoutesData,
 	private val savedStateHandle: SavedStateHandle,
 	private val networkRepository: NetworkRepository,
 	private val databaseRepository: DatabaseRepository,
 	@ApplicationContext private val context: Context,
 ): ViewModel() {
+	
 	val accountId: Int = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
 	
-	val nickname: String = savedStateHandle.get<String>(NICKNAME) ?: ""
-	
 	init {
+		databaseRepository.accountId = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
+		databaseRepository.nickname = savedStateHandle.get<String>(NICKNAME) ?: ""
 		getAccountAllData()
 	}
 	
@@ -99,62 +89,6 @@ class MainViewModel @Inject constructor(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
 				initialValue = NotifyEnum.UNCHECKED
-			)
-	
-	val personalData: StateFlow<AccountPersonalData?> =
-		databaseRepository.getPersonalData(accountId)
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = null
-			)
-	
-	val statisticData: StateFlow<Map<String, List<AccountStatisticsData>>> =
-		databaseRepository.getStatisticData(accountId)
-			.map {
-				it.lastOrNull()?.let {
-					databaseRepository.getExactVehiclesShortData(it.getMaxFields()).first { list ->
-						it.fillMaxFields(list)
-						true
-					}
-				}
-				it.asExternalModel(mrd)
-			}
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = emptyList<StatisticsEntity>().asExternalModel(mrd)
-			)
-	
-	val clanData: StateFlow<AccountClanInfo?> =
-		databaseRepository.getPlayerClanInfo(accountId)
-			.map { it.asExternalModel() }
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = null
-			)
-	
-	val vehicleData: StateFlow<List<VehicleData>> =
-		databaseRepository.getAllVehiclesStatData(accountId)
-			.map { stat ->
-				val onlyTankId = stat.map { it.tankId }.distinct()
-				val veh = mutableListOf<VehicleData>()
-				databaseRepository.getExactVehiclesShortData(onlyTankId).first { list ->
-					list.forEach { item ->
-						val lst = stat.filter { it.tankId == item.tankId }
-						if (lst.isNotEmpty()) {
-							veh.add(item.asExternalModel(lst))
-						}
-					}
-					true
-				}
-				veh
-			}
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = emptyList<VehicleData>()
 			)
 	
 	fun getAccountAllData() {
@@ -309,7 +243,7 @@ fun preloadImage(context: Context, imageUrl: String?) =
 			.memoryCachePolicy(CachePolicy.DISABLED)
 			// Set a custom `Decoder.Factory` that skips the decoding step.
 			.decoderFactory { _, _, _ ->
-				Decoder { DecodeResult(ColorDrawable(Color.BLACK), false) }
+				Decoder { DecodeResult(Color.BLACK.toDrawable(), false) }
 			}
 			.build()
 		)

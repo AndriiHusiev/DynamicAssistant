@@ -1,4 +1,4 @@
-package com.husiev.dynassist.components.main.composables
+package com.husiev.dynassist.components.main.technics
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,7 +54,7 @@ fun TechnicsCard(
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_small)))
 			.fillMaxWidth()
 			.clickable { onClick(vehicleData.tankId) },
-		shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
+		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
 		elevation = CardDefaults.elevatedCardElevation(
 			dimensionResource(R.dimen.padding_extra_small)
 		)
@@ -140,7 +140,11 @@ fun TechnicsCard(
 							else
 								Text(
 									text = wins.sessionImpactValue,
-									modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_extra_small)),
+									modifier = Modifier.padding(
+										start = dimensionResource(
+											R.dimen.padding_extra_small
+										)
+									),
 									style = MaterialTheme.typography.bodySmall
 								)
 							
@@ -225,31 +229,34 @@ fun TechnicsContentPreview() {
 				isPremium = false,
 				isGift = false,
 				isWheeled = false,
-				stat = listOf(AccountStatisticsData(
-					title = "Battles",
-					mainValue = "256",
-					auxValue = null,
-					absValue = "256",
-					sessionAbsValue = "6",
-					sessionAvgValue = null,
-					sessionImpactValue = null,
-					color = null,
-					imageVector = null,
-					values = listOf(242f, 250f, 256f),
-					comment = null
-				), AccountStatisticsData(
-					title = "Wins",
-					mainValue = "50.8%",
-					auxValue = "0.0078 / 83.3%",
-					absValue = "130",
-					sessionAbsValue = "5",
-					sessionAvgValue = "83.3%",
-					sessionImpactValue = "+0.0078",
-					color = Color(0xFF009688),
-					imageVector = Icons.Filled.ArrowDropUp,
-					values = listOf(118f, 125f, 130f),
-					comment = null
-				),)
+				stat = listOf(
+					AccountStatisticsData(
+						title = "Battles",
+						mainValue = "256",
+						auxValue = null,
+						absValue = "256",
+						sessionAbsValue = "6",
+						sessionAvgValue = null,
+						sessionImpactValue = null,
+						color = null,
+						imageVector = null,
+						values = listOf(242f, 250f, 256f),
+						comment = null
+					),
+					AccountStatisticsData(
+						title = "Wins",
+						mainValue = "50.8%",
+						auxValue = "0.0078 / 83.3%",
+						absValue = "130",
+						sessionAbsValue = "5",
+						sessionAvgValue = "83.3%",
+						sessionImpactValue = "+0.0078",
+						color = Color(0xFF009688),
+						imageVector = Icons.Filled.ArrowDropUp,
+						values = listOf(118f, 125f, 130f),
+						comment = null
+					),
+				)
 			),
 		)
 	}

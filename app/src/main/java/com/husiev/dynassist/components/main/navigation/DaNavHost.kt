@@ -6,25 +6,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
-import com.husiev.dynassist.components.main.utils.AccountClanInfo
-import com.husiev.dynassist.components.main.utils.AccountPersonalData
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
-import com.husiev.dynassist.components.main.utils.VehicleData
-import com.husiev.dynassist.components.start.composables.NotifyEnum
+import com.husiev.dynassist.components.main.details.detailsScreen
+import com.husiev.dynassist.components.main.sessions.sessionsScreen
+import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
+import com.husiev.dynassist.components.main.summary.summaryScreen
+import com.husiev.dynassist.components.main.summarysingle.summarySingleScreen
+import com.husiev.dynassist.components.main.technics.technicsScreen
+import com.husiev.dynassist.components.main.technicssingle.technicsSingleScreen
 
 @Composable
 fun DaNavHost(
 	navController: NavHostController,
-	notifyState: NotifyEnum,
-	personalData: AccountPersonalData?,
-	accountStatisticsData: Map<String, List<AccountStatisticsData>>,
-	clanData: AccountClanInfo?,
-	vehicleData: List<VehicleData>,
 	sort: SortTechnics,
 	filter: FilterTechnics,
 	onSummaryClick: (String) -> Unit,
 	onTechnicsClick: (Int) -> Unit,
-	onNotifyClick: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,
 ) {
@@ -34,12 +30,10 @@ fun DaNavHost(
 		modifier = modifier,
 	) {
 		summaryScreen(
-			summaryData = accountStatisticsData,
 			onClick = onSummaryClick
 		)
 		
 		technicsScreen(
-			vehicleData = vehicleData,
 			sort = sort,
 			filter = filter,
 			onClick = onTechnicsClick
@@ -47,19 +41,10 @@ fun DaNavHost(
 		
 		sessionsScreen(onClick = {})
 		
-		detailsScreen(
-			detailsData = personalData,
-			clanData = clanData,
-			notifyState = notifyState,
-			onNotifyClick = onNotifyClick,
-		)
+		detailsScreen()
 		
-		summarySingleScreen(
-			summaryData = accountStatisticsData,
-		)
+		summarySingleScreen()
 		
-		technicsSingleScreen(
-			vehicleData = vehicleData,
-		)
+		technicsSingleScreen()
 	}
 }

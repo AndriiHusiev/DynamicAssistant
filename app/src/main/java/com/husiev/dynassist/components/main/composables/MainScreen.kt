@@ -47,10 +47,6 @@ fun MainScreen(
 	),
 ) {
 	val notifyState by mainViewModel.notifyState.collectAsStateWithLifecycle()
-	val personalData by mainViewModel.personalData.collectAsStateWithLifecycle()
-	val statisticData by mainViewModel.statisticData.collectAsStateWithLifecycle()
-	val clanData by mainViewModel.clanData.collectAsStateWithLifecycle()
-	val vehicleData by mainViewModel.vehicleData.collectAsStateWithLifecycle()
 	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
 	val filterTechnics by mainViewModel.filterTechnics.collectAsStateWithLifecycle()
 	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
@@ -129,16 +125,10 @@ fun MainScreen(
 				Box {
 					DaNavHost(
 						navController = appState.navController,
-						notifyState = notifyState,
-						personalData = personalData,
-						accountStatisticsData = statisticData,
-						clanData = clanData,
-						vehicleData = vehicleData,
 						sort = sortTechnics,
 						filter = filterTechnics,
 						onSummaryClick = appState::navigateToSummarySingle,
 						onTechnicsClick = appState::navigateToTechnicsSingle,
-						onNotifyClick = mainViewModel::switchNotification,
 					)
 					
 					if (queryResult is Result.Loading) {
