@@ -7,6 +7,7 @@ import com.husiev.dynassist.components.main.utils.AccountClanInfo
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
+import com.husiev.dynassist.database.entity.GlobalRatingData
 import com.husiev.dynassist.database.entity.asExternalModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,8 +37,7 @@ class DetailsViewModel @Inject constructor(
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch(Dispatchers.IO) {
-			databaseRepository.getStatisticData(accountId).first { list ->
-				val battles = if (list.isEmpty()) 0 else list.last().battles
+			databaseRepository.getBattlesCount(accountId).first { battles ->
 				databaseRepository.updateNotification(state.toInt(), battles, accountId)
 				true
 			}
@@ -59,5 +59,14 @@ class DetailsViewModel @Inject constructor(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
 				initialValue = null
+			)
+	
+	val globalRatingData: StateFlow<GlobalRatingData> =
+		databaseRepository.getGlobalRatingData(accountId)
+			.map { it.asExternalModel() }
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.WhileSubscribed(5_000),
+				initialValue = GlobalRatingData(emptyList(), emptyList())
 			)
 }

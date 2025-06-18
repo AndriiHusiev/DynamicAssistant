@@ -125,7 +125,7 @@ data class NetworkAccountPersonalStatistics(
 	val battleAvgXp: Int,
 )
 
-fun NetworkAccountPersonalStatistics.asEntity(accountId: Int) = StatisticsEntity(
+fun NetworkAccountPersonalStatistics.asEntity(accountId: Int, globalRating: Int, lastBattleTime: Int) = StatisticsEntity(
 	accountId = accountId,
 	battles = battles,
 	wins = wins,
@@ -159,4 +159,6 @@ fun NetworkAccountPersonalStatistics.asEntity(accountId: Int) = StatisticsEntity
 	avgDamageAssisted = avgDamageAssisted,
 	avgDamageAssistedTrack = avgDamageAssistedTrack,
 	avgDamageAssistedRadio = avgDamageAssistedRadio,
+	globalRating = globalRating,
+	lastBattleTime = lastBattleTime,
 )

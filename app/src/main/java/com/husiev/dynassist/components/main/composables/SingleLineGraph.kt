@@ -53,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toSize
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.Range
 import com.husiev.dynassist.components.main.utils.getPureExponent
 import com.husiev.dynassist.components.main.utils.toScreen
@@ -91,6 +93,7 @@ private const val GRAPH_RATIO = 5 / 4f
 @Composable
 fun SmoothLineGraph(
     graphData: List<Float>?,
+    dateData: List<String>?,
     modifier: Modifier = Modifier,
 ) {
     val barColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.4f)
@@ -132,6 +135,8 @@ fun SmoothLineGraph(
             val numDots = graphData.size
             val list = if (allRangeMode && numDots > MAX_DOTS) graphData
                 else graphData.takeLast(minOf(MAX_DOTS, numDots))
+            val listDate = if (allRangeMode && numDots > MAX_DOTS) dateData
+                else dateData?.takeLast(minOf(MAX_DOTS, numDots))
             val dotsAmount = list.size
             val graphRange = getRange(list)
     
@@ -141,6 +146,8 @@ fun SmoothLineGraph(
     
             val textMeasurer = rememberTextMeasurer()
             val labelTextStyle = MaterialTheme.typography.labelSmall
+            val labelDateTextStyle = MaterialTheme.typography.labelSmall
+                .copy(fontWeight = FontWeight.Bold)
             val labelTextStyleM = MaterialTheme.typography.labelMedium
             
             Column(modifier = Modifier.fillMaxSize()) {
@@ -231,8 +238,10 @@ fun SmoothLineGraph(
                                         dotX = highlightedOffset?.x ?: 0f,
                                         dotY = highlightedOffset?.y ?: 0f,
                                         graphData = list,
+                                        dates = listDate,
                                         textMeasurer = textMeasurer,
-                                        labelTextStyle = labelTextStyle
+                                        labelTextStyle = labelTextStyle,
+                                        labelDateTextStyle = labelDateTextStyle,
                                     )
                                 }
                                 
@@ -379,11 +388,23 @@ fun DrawScope.drawHighlight(
     highlightColor: Color,
     highlightedLine: Int,
     graphData: List<Float>,
+    dates: List<String>?,
     dotX: Float,
     dotY: Float,
     textMeasurer: TextMeasurer,
-    labelTextStyle: TextStyle
+    labelTextStyle: TextStyle,
+    labelDateTextStyle: TextStyle,
 ) {
+    val pxSmall = 4.dp.toPx()
+    val pxMedium = 8.dp.toPx()
+    val pxLarge = 16.dp.toPx()
+    
+    var date = ""
+    var dateN = ""
+    if (dates != null && dates[highlightedLine] != NO_DATA) {
+        date = dates[highlightedLine]
+        dateN += '\n'
+    }
     val amount = graphData[highlightedLine]
     val impact = if (highlightedLine > 0)
         '\n' + (graphData[highlightedLine] - graphData[highlightedLine - 1]).toScreen(1f,"",true) else ""
@@ -397,35 +418,43 @@ fun DrawScope.drawHighlight(
     // draw hit circle on graph
     drawCircle(
         circleColor,
-        radius = 4.dp.toPx(),
+        radius = pxSmall,
         center = Offset(dotX, dotY)
     )
     drawCircle(
         circleColor,
-        radius = 8.dp.toPx(),
+        radius = pxMedium,
         center = Offset(dotX, dotY),
         alpha = 0.2f
     )
     // draw info box
-    val textLayoutResult = textMeasurer.measure("$amount" + impact, style = labelTextStyle)
+    val textLayoutResult = textMeasurer
+        .measure(date + dateN + "$amount" + impact, style = labelDateTextStyle)
     val highlightContainerSize = (textLayoutResult.size)
         .toIntRect()
         .inflate(4.dp.roundToPx())
         .size
-    var boxLeft = (dotX - (highlightContainerSize.width + 8.dp.toPx()))
-    if (boxLeft < 0) boxLeft += highlightContainerSize.width + 16.dp.toPx()
+    var boxLeft = (dotX - (highlightContainerSize.width + pxMedium))
+    if (boxLeft < 0) boxLeft += highlightContainerSize.width + pxLarge
     val boxTop = (dotY - (highlightContainerSize.height / 2f))
-        .coerceIn(8.dp.toPx(), size.height - (highlightContainerSize.height + 8.dp.toPx()))
+        .coerceIn(pxMedium, size.height - (highlightContainerSize.height + pxMedium))
     drawRoundRect(
         Color.White,
         topLeft = Offset(boxLeft, boxTop),
         size = highlightContainerSize.toSize(),
-        cornerRadius = CornerRadius(8.dp.toPx())
+        cornerRadius = CornerRadius(pxMedium)
+    )
+    val textLayoutDate = textMeasurer.measure(date, style = labelDateTextStyle)
+    val offs = if (date.isEmpty()) pxSmall else (textLayoutDate.size.height + pxMedium)
+    drawText(
+        textLayoutDate,
+        color = Color.Black,
+        topLeft = Offset(boxLeft + pxSmall, boxTop + pxSmall)
     )
     drawText(
-        textLayoutResult,
+        textMeasurer.measure("$amount" + impact, style = labelTextStyle),
         color = Color.Black,
-        topLeft = Offset(boxLeft + 4.dp.toPx(), boxTop + 4.dp.toPx())
+        topLeft = Offset(boxLeft + pxSmall, boxTop + offs)
     )
 }
 
@@ -436,13 +465,18 @@ fun SmoothLineGraphPreview() {
         65631f, 65931f, 65851f, 65931f, 66484f, 67684f, 66684f,
         66984f, 70600f, 71600f, 72600f, 72526f, 72976f, 73589f,
     )
+    val dates = listOf(
+        NO_DATA, NO_DATA, NO_DATA, NO_DATA, NO_DATA, NO_DATA, NO_DATA,
+//        "01.01.2025", "02.01.2025","03.01.2025", "05.01.2025","07.01.2025", "10.01.2025", "15.01.2025",
+        "17.01.2025", "16.02.2025","23.02.2025", "25.02.2025","27.02.2025", "11.03.2025", "19.05.2025",
+    )
     DynamicAssistantTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             Column {
-                SmoothLineGraph(previewData)
-                SmoothLineGraph(null)
+                SmoothLineGraph(previewData, dates)
+                SmoothLineGraph(null, null)
             }
         }
     }

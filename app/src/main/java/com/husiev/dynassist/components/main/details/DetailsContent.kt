@@ -30,6 +30,7 @@ fun DetailsContent(
 	val personalData by viewModel.personalData.collectAsStateWithLifecycle()
 	val clanData by viewModel.clanData.collectAsStateWithLifecycle()
 	val notifyState by viewModel.notifyState.collectAsStateWithLifecycle()
+	val globalRating by viewModel.globalRatingData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
 	
 	LazyColumn(
@@ -38,7 +39,7 @@ fun DetailsContent(
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
-		item { DetailsRatingCard(personalData?.globalRating) }
+		item { DetailsRatingCard(globalRating.globalRating, globalRating.lastBattleTime) }
 		item { DetailsClanCard(clanData) }
 		item {
 			DetailsDateCard(
@@ -59,7 +60,7 @@ fun DetailsContentPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			Column {
-				DetailsRatingCard(globalRating = 10563)
+				DetailsRatingCard(emptyList(), emptyList())
 				DetailsClanCard(null)
 				DetailsDateCard(
 					detailsData = AccountPersonalData(

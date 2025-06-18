@@ -54,6 +54,7 @@ fun Int?.bigToString(): String {
 
 const val DETAILS_PATTERN = "EEE, dd MMM yyy, HH:mm:ss"
 const val SHORT_PATTERN = "dd MMM yyy"
+const val SHORTEST_PATTERN = "dd.MM.yyyy"
 
 data class AccountStatisticsData(
 	val title: String,
@@ -73,18 +74,20 @@ data class AccountStatisticsData(
  * Transformation for vehicle statistic.
  */
 fun List<VehicleStatDataEntity>.asStatisticModel(): List<AccountStatisticsData> {
-	val items = arrayOf<Int?>(null, null, null, null)
+	val items = arrayOf<Int?>(null, null, null, null, null, null)
 	if (this.isNotEmpty()) {
 		items[0] = this[this.size-1].wins
 		items[2] = this[this.size-1].battles
+		items[4] = this[this.size-1].lastBattleTime
 		if (this.size > 1) {
 			items[1] = this[this.size-2].wins
 			items[3] = this[this.size-2].battles
+			items[5] = this[this.size-1].lastBattleTime
 		}
 	}
 	val allMembers = listOf(
-		mapOf("wins" to items[0], "battles" to items[2]),
-		mapOf("wins" to items[1], "battles" to items[3]),
+		mapOf("wins" to items[0], "battles" to items[2], "lastBattleTime" to items[4]),
+		mapOf("wins" to items[1], "battles" to items[3], "lastBattleTime" to items[5]),
 	)
 	
 	return listOf(
@@ -102,6 +105,12 @@ fun List<VehicleStatDataEntity>.asStatisticModel(): List<AccountStatisticsData> 
 				this.map { it.wins.toFloat() },
 				this.map { it.battles.toFloat() }
 			),
+		),
+		reducedStatItem(
+			tag = "lastBattleTime",
+			items = mapOf("lastBattleTime" to "Last Battle Time"),
+			allMembers = allMembers,
+			values = this.map { it.lastBattleTime?.toFloat() ?: 0f },
 		),
 	)
 }
@@ -163,6 +172,11 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 		reducedStatItem("avgDamageAssisted", mrd.items, allMembers, allValues["avgDamageAssisted"]),
 		reducedStatItem("avgDamageAssistedTrack", mrd.items, allMembers, allValues["avgDamageAssistedTrack"]),
 		reducedStatItem("avgDamageAssistedRadio", mrd.items, allMembers, allValues["avgDamageAssistedRadio"]),
+	)
+	
+	map[mrd.headers[4]] = listOf(
+		reducedStatItem("globalRating", mrd.items, allMembers, allValues["globalRating"]),
+		reducedStatItem("lastBattleTime", mrd.items, allMembers, allValues["lastBattleTime"]),
 	)
 	
 	return map

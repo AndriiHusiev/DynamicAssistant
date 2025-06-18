@@ -90,6 +90,11 @@ data class StatisticsEntity(
 	@Ignore var maxXpTank: String,
 	@Ignore var maxDamageTank: String,
 	@Ignore var maxFragsTank: String,
+	
+	@ColumnInfo(name = "global_rating", defaultValue = "0")
+	val globalRating: Int,
+	@ColumnInfo(name = "last_battle_time", defaultValue = "0")
+	val lastBattleTime: Int,
 ) {
 	constructor(id: Int = 0, accountId: Int, battles: Int, wins: Int, losses: Int, draws: Int,
 	            frags: Int, xp: Int, survivedBattles: Int, spotted: Int, capturePoints: Int,
@@ -99,13 +104,15 @@ data class StatisticsEntity(
 	            piercingsReceived: Int, tankingFactor: Float, maxXp: Int, maxXpTankId: Int? = null,
 	            maxDamage: Int, maxDamageTankId: Int? = null, maxFrags: Int,
 	            maxFragsTankId: Int? = null, avgDamageBlocked: Float, avgDamageAssisted: Float,
-	            avgDamageAssistedTrack: Float, avgDamageAssistedRadio: Float
+	            avgDamageAssistedTrack: Float, avgDamageAssistedRadio: Float, globalRating: Int,
+	            lastBattleTime: Int
 	) : this (id, accountId, battles, wins, losses, draws, frags, xp, survivedBattles, spotted,
 		capturePoints, droppedCapturePoints, damageDealt, shots, hits, explosionHits, piercings,
 		hitsPercents, damageReceived, directHitsReceived, explosionHitsReceived,
 		noDamageDirectHitsReceived, piercingsReceived, tankingFactor, maxXp, maxXpTankId,
 		maxDamage, maxDamageTankId, maxFrags, maxFragsTankId, avgDamageBlocked, avgDamageAssisted,
-		avgDamageAssistedTrack, avgDamageAssistedRadio, NO_DATA, NO_DATA, NO_DATA
+		avgDamageAssistedTrack, avgDamageAssistedRadio, NO_DATA, NO_DATA, NO_DATA, globalRating,
+		lastBattleTime
 	)
 }
 
@@ -131,4 +138,30 @@ fun StatisticsEntity.fillMaxFields(vehicleData: List<VehicleShortDataEntity>) {
 	}?.let {
 		this.maxDamageTank = it.name ?: NO_DATA
 	}
+}
+
+data class GlobalRatingSubSet(
+	@ColumnInfo(name = "global_rating")
+	val globalRating: Int,
+	@ColumnInfo(name = "last_battle_time")
+	val lastBattleTime: Int,
+)
+
+data class GlobalRatingData(
+	val globalRating: List<Int>,
+	val lastBattleTime: List<String>,
+)
+
+fun List<GlobalRatingSubSet>.asExternalModel(): GlobalRatingData {
+	val listGR = mutableListOf<Int>()
+	val listLBT = mutableListOf<String>()
+	
+	this.forEach {
+		if (it.globalRating > 0) {
+			listGR.add(it.globalRating)
+			listLBT.add(it.lastBattleTime.asStringDate("shortest"))
+		}
+	}
+	
+	return GlobalRatingData(listGR, listLBT)
 }

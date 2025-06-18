@@ -61,10 +61,18 @@ class DatabaseRepository @Inject constructor(
 			.map { it.asExternalModel() }
 	
 	
-	suspend fun addStatisticData(accountId: Int, stat: NetworkAccountPersonalStatistics) =
-		database.statisticsDao().insert(stat.asEntity(accountId))
+	suspend fun addStatisticData(
+		accountId: Int,
+		stat: NetworkAccountPersonalStatistics,
+		globalRating: Int,
+		lastBattleTime: Int
+	) = database.statisticsDao().insert(stat.asEntity(accountId, globalRating, lastBattleTime))
 	
 	fun getStatisticData(accountId: Int) = database.statisticsDao().loadStatisticsData(accountId)
+	
+	fun getBattlesCount(accountId: Int) = database.statisticsDao().loadLastBattlesCount(accountId)
+	
+	fun getGlobalRatingData(accountId: Int) = database.statisticsDao().loadGlobalRatingData(accountId)
 	
 	
 	suspend fun addPlayerClanInfo(info: ClanEntity) =

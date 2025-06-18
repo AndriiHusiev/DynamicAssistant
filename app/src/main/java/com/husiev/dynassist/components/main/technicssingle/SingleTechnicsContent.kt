@@ -88,7 +88,12 @@ fun SingleTechnicsContent(
 					priceGold = item.priceGold,
 				)
 			}
-			item { SmoothLineGraph(item.stat[1].values) }
+			item {
+				SmoothLineGraph(
+					item.stat[1].values,
+					item.stat[2].values?.map { it.toInt().asStringDate("shortest") }
+				)
+			}
 			
 			item {
 				SingleTechnicsCard(item = item)
@@ -279,7 +284,7 @@ fun SingleTechnicsCardItemPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			Column {
-				SmoothLineGraph(null)
+				SmoothLineGraph(null, null)
 				SingleTechnicsCard(
 					item = VehicleData(
 						tankId = 1,

@@ -24,8 +24,9 @@ object DatabaseModule {
 		AppDatabase::class.java,
 		"app_database",
 	)
-		.fallbackToDestructiveMigration()
+		.fallbackToDestructiveMigration(true)
 		.addMigrations(MIGRATION_3_4)
+		.addMigrations(MIGRATION_4_5)
 		.build()
 	
 	private val MIGRATION_3_4 = object : Migration(3, 4) {
@@ -55,6 +56,15 @@ object DatabaseModule {
 					"url_big_icon, price_gold, price_credit, is_wheeled, is_premium, is_gift, name, " +
 					"type, description, nation, tier FROM old_table")
 			database.execSQL("DROP TABLE old_table")
+			
+		}
+	}
+	
+	private val MIGRATION_4_5 = object : Migration(4, 5) {
+		override fun migrate(database: SupportSQLiteDatabase) {
+			
+			database.execSQL("ALTER TABLE statistics ADD COLUMN 'global_rating' INTEGER NOT NULL DEFAULT 0")
+			database.execSQL("ALTER TABLE statistics ADD COLUMN 'last_battle_time' INTEGER NOT NULL DEFAULT 0")
 			
 		}
 	}

@@ -34,6 +34,7 @@
         <item>Battle Performance</item>
         <item>Record Score</item>
         <item>Average Score per Battle</item>
+        <item>Other</item>
     </string-array>
 
     <string-array name="summary_items_array">
@@ -62,6 +63,9 @@
         <item>avgDamageAssisted:Assisted damage</item>
         <item>avgDamageAssistedTrack:Assisted track damage</item>
         <item>avgDamageAssistedRadio:Assisted track radio</item>
+
+        <item>globalRating:Global Rating</item>
+        <item>lastBattleTime:Last Battle Time</item>
     </string-array>
 
     <!-- tab No. 1.1 - Single Summary -->

@@ -29,6 +29,7 @@ fun SummaryContent(
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		statisticData.forEach { item ->
+			if (item.key == "Other") return@forEach
 			item {
 				SummaryCard(
 					header = item.key,

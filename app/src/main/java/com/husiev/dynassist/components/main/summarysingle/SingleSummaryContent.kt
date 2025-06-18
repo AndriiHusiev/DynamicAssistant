@@ -41,6 +41,7 @@ import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summary.SummaryViewModel
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -52,10 +53,13 @@ fun SingleSummaryContent(
 	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
 	var singleItem: AccountStatisticsData? = null
+	var dates: List<String>? = null
 	
 	statisticData.forEach { entry ->
 		val item = entry.value.firstOrNull { it.title == singleTitle }
 		if (item != null) singleItem = item
+		val itemDate = entry.value.firstOrNull { it.title == "Last Battle Time" }
+		if (itemDate != null) dates = itemDate.values?.map { it.toInt().asStringDate("shortest") }
 	}
 	
 	LazyColumn(
@@ -65,7 +69,7 @@ fun SingleSummaryContent(
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		singleItem?.let { item ->
-			item { SmoothLineGraph(item.values) }
+			item { SmoothLineGraph(item.values, dates) }
 			
 			item {
 				SingleSummaryCard(item = item)

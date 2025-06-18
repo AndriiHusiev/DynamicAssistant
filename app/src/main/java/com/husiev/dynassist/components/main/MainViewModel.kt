@@ -129,7 +129,9 @@ private suspend fun savePersonalData(
 				databaseRepository.updatePersonalData(it)
 				databaseRepository.addStatisticData(
 					accountId,
-					it.statistics.all
+					it.statistics.all,
+					it.globalRating,
+					it.lastBattleTime
 				)
 			}
 			databaseRepository.updateTime(Date().time.toString(), accountId)
