@@ -1,16 +1,16 @@
 package com.husiev.dynassist.components.main.details
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,14 +36,26 @@ fun DetailsContent(
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
 		state = state,
-		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
-		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
+		horizontalAlignment = Alignment.CenterHorizontally,
 	) {
-		item { DetailsRatingCard(globalRating.globalRating, globalRating.lastBattleTime) }
-		item { DetailsClanCard(clanData) }
+		item { 
+			DetailsRatingCard(
+				globalRating = globalRating.globalRating,
+				date = globalRating.lastBattleTime,
+				modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+			) 
+		}
+		item {
+			DetailsClanCard(
+				clanData = clanData,
+				modifier = Modifier
+					.padding(horizontal = dimensionResource(R.dimen.padding_big))
+			)
+		}
 		item {
 			DetailsDateCard(
 				detailsData = personalData,
+				modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
 				notifyState = notifyState,
 				onNotifyClick = viewModel::switchNotification
 			)
@@ -59,9 +71,13 @@ fun DetailsContentPreview() {
 		Surface(
 			color = MaterialTheme.colorScheme.background
 		) {
-			Column {
-				DetailsRatingCard(emptyList(), emptyList())
-				DetailsClanCard(null)
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				DetailsRatingCard(emptyList(), emptyList(),
+					Modifier.padding(dimensionResource(R.dimen.padding_big)))
+				DetailsClanCard(null,Modifier
+					.padding(horizontal = dimensionResource(R.dimen.padding_big)))
 				DetailsDateCard(
 					detailsData = AccountPersonalData(
 						accountId = 1,
@@ -73,6 +89,7 @@ fun DetailsContentPreview() {
 						clanId = null,
 						globalRating = 10563
 					),
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
 					notifyState = NotifyEnum.UNCHECKED,
 				)
 			}

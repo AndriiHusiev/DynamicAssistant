@@ -37,17 +37,17 @@ class DatabaseRepository @Inject constructor(
 	suspend fun deletePlayer(player: StartAccountInfo) =
 		database.playersDao().delete(player.asEntity())
 	
-	fun updateTime(updateTime: String, accountId: Int) =
+	fun updateTime(updateTime: String) =
 		database.playersDao().updateTime(updateTime, accountId)
 	
-	fun updateClan(clan: String?, emblem: String?, accountId: Int) =
+	fun updateClan(clan: String?, emblem: String?) =
 		database.playersDao().updateClan(clan, emblem, accountId)
 	
-	fun loadPlayer(accountId: Int) = database.playersDao().loadPlayer(accountId)
+	fun loadPlayer() = database.playersDao().loadPlayer(accountId)
 		.map { it.asExternalModel() }
 	
-	suspend fun updateNotification(notification: Int, notifiedBattles: Int, accountId: Int) =
-		database.playersDao().updateNotification(notification, notifiedBattles, accountId)
+	suspend fun updateNotification(notification: Int, notifiedBattles: Int, id: Int? = null) =
+		database.playersDao().updateNotification(notification, notifiedBattles, id ?: accountId)
 	
 	
 	suspend fun addPersonalData(accountPersonalData: AccountPersonalData) =
@@ -56,23 +56,23 @@ class DatabaseRepository @Inject constructor(
 	suspend fun updatePersonalData(networkData: NetworkAccountPersonalData) =
 		database.personalDataDao().update(networkData.asEntity())
 		
-	fun getPersonalData(accountId: Int) =
+	fun getPersonalData() =
 		database.personalDataDao().loadPersonalData(accountId)
 			.map { it.asExternalModel() }
 	
 	
 	suspend fun addStatisticData(
-		accountId: Int,
 		stat: NetworkAccountPersonalStatistics,
 		globalRating: Int,
 		lastBattleTime: Int
 	) = database.statisticsDao().insert(stat.asEntity(accountId, globalRating, lastBattleTime))
 	
-	fun getStatisticData(accountId: Int) = database.statisticsDao().loadStatisticsData(accountId)
+	fun getStatisticData(id: Int? = null) =
+		database.statisticsDao().loadStatisticsData(id ?: accountId)
 	
-	fun getBattlesCount(accountId: Int) = database.statisticsDao().loadLastBattlesCount(accountId)
+	fun getBattlesCount() = database.statisticsDao().loadLastBattlesCount(accountId)
 	
-	fun getGlobalRatingData(accountId: Int) = database.statisticsDao().loadGlobalRatingData(accountId)
+	fun getGlobalRatingData() = database.statisticsDao().loadGlobalRatingData(accountId)
 	
 	
 	suspend fun addPlayerClanInfo(info: ClanEntity) =
@@ -81,7 +81,7 @@ class DatabaseRepository @Inject constructor(
 	suspend fun updatePlayerClanInfo(clanData: NetworkAccountClanData) =
 		database.clanDataDao().update(clanData.asEntity())
 	
-	fun getPlayerClanInfo(accountId: Int) =
+	fun getPlayerClanInfo() =
 		database.clanDataDao().loadClanData(accountId)
 	
 	suspend fun addVehiclesShortData(data: List<NetworkVehicleInfoItem>) =
@@ -96,6 +96,5 @@ class DatabaseRepository @Inject constructor(
 	suspend fun addVehiclesStatData(data: List<VehicleStatDataEntity>) =
 		database.vehicleStatDao().insertAll(data)
 	
-	fun getAllVehiclesStatData(accountId: Int) =
-		database.vehicleStatDao().loadAllVehiclesStatData(accountId)
+	fun getAllVehiclesStatData() = database.vehicleStatDao().loadAllVehiclesStatData(accountId)
 }

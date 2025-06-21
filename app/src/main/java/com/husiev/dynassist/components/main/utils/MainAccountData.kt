@@ -70,6 +70,11 @@ data class AccountStatisticsData(
 	val comment: String? = null,
 )
 
+data class SingleParamData(
+	val item: AccountStatisticsData,
+	val dates: List<String>,
+)
+
 /**
  * Transformation for vehicle statistic.
  */
@@ -148,7 +153,7 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 		fullStatItem("wins", mrd.items, allMembers, calcFloatList(allValues["wins"], allValues["battles"])),
 		fullStatItem("losses", mrd.items, allMembers, calcFloatList(allValues["losses"], allValues["battles"]), revertHappiness = true),
 		fullStatItem("draws", mrd.items, allMembers, calcFloatList(allValues["draws"], allValues["battles"]), revertHappiness = true),
-		fullStatItem("frags", mrd.items, allMembers, calcFloatList(allValues["frags"], allValues["battles"]), multiplier = 1f),
+		fullStatItem("frags", mrd.items, allMembers, calcFloatList(allValues["frags"], allValues["battles"], 1f), multiplier = 1f),
 		fullStatItem("xp", mrd.items, allMembers, calcFloatList(allValues["xp"], allValues["battles"], 1f), multiplier = 1f),
 		fullStatItem("survivedBattles", mrd.items, allMembers, calcFloatList(allValues["survivedBattles"], allValues["battles"])),
 	)

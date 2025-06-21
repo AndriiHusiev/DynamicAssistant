@@ -74,16 +74,16 @@ class MainViewModel @Inject constructor(
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch(Dispatchers.IO) {
-			databaseRepository.getStatisticData(accountId).first { list ->
+			databaseRepository.getStatisticData().first { list ->
 				val battles = if (list.isEmpty()) 0 else list.last().battles
-				databaseRepository.updateNotification(state.toInt(), battles, accountId)
+				databaseRepository.updateNotification(state.toInt(), battles)
 				true
 			}
 		}
 	}
 	
 	val notifyState: StateFlow<NotifyEnum> =
-		databaseRepository.loadPlayer(accountId)
+		databaseRepository.loadPlayer()
 			.map { it.notification }
 			.stateIn(
 				scope = viewModelScope,
@@ -109,8 +109,8 @@ class MainViewModel @Inject constructor(
 			
 			// Add all downloaded data to database
 			if (networkRepository.queryStatus.value !is Result.Error) {
-				savePersonalData(accountId, networkAccountPersonalData, databaseRepository)
-				saveClanData(accountId, context, networkAccountClanData, databaseRepository)
+				savePersonalData(networkAccountPersonalData, databaseRepository)
+				saveClanData(context, networkAccountClanData, databaseRepository)
 				if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)
 				if (vehicles.isNotEmpty()) databaseRepository.addVehiclesStatData(vehicles)
 			}
@@ -119,29 +119,26 @@ class MainViewModel @Inject constructor(
 }
 
 private suspend fun savePersonalData(
-	accountId: Int,
 	networkAccountPersonalData: NetworkAccountPersonalData?,
 	databaseRepository: DatabaseRepository,
 ) {
 	networkAccountPersonalData?.let {
-		databaseRepository.getStatisticData(accountId).first { list ->
+		databaseRepository.getStatisticData().first { list ->
 			if (list.isEmpty() || list.last().battles < it.statistics.all.battles) {
 				databaseRepository.updatePersonalData(it)
 				databaseRepository.addStatisticData(
-					accountId,
 					it.statistics.all,
 					it.globalRating,
 					it.lastBattleTime
 				)
 			}
-			databaseRepository.updateTime(Date().time.toString(), accountId)
+			databaseRepository.updateTime(Date().time.toString())
 			true
 		}
 	}
 }
 
 private suspend fun saveClanData(
-	accountId: Int,
 	context: Context,
 	networkAccountClanData: NetworkAccountClanData?,
 	databaseRepository: DatabaseRepository,
@@ -153,7 +150,6 @@ private suspend fun saveClanData(
 			databaseRepository.updateClan(
 				clan = clanData.clan.tag,
 				emblem = it,
-				accountId = accountId
 			)
 		}
 	}

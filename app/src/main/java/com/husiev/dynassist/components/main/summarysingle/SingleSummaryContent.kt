@@ -12,11 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,8 +36,8 @@ import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summary.SummaryViewModel
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -50,17 +46,8 @@ fun SingleSummaryContent(
 	singleTitle: String? = null,
 	viewModel: SummaryViewModel = hiltViewModel(),
 ) {
-	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
+	val statisticData by viewModel.getSingleParam(singleTitle).collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
-	var singleItem: AccountStatisticsData? = null
-	var dates: List<String>? = null
-	
-	statisticData.forEach { entry ->
-		val item = entry.value.firstOrNull { it.title == singleTitle }
-		if (item != null) singleItem = item
-		val itemDate = entry.value.firstOrNull { it.title == "Last Battle Time" }
-		if (itemDate != null) dates = itemDate.values?.map { it.toInt().asStringDate("shortest") }
-	}
 	
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
@@ -68,11 +55,11 @@ fun SingleSummaryContent(
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
-		singleItem?.let { item ->
-			item { SmoothLineGraph(item.values, dates) }
+		statisticData?.let { item ->
+			item { SmoothLineGraph(item.item.values, item.dates) }
 			
 			item {
-				SingleSummaryCard(item = item)
+				SingleSummaryCard(item = item.item)
 			}
 		}
 	}
@@ -83,13 +70,7 @@ fun SingleSummaryCard(
 	item: AccountStatisticsData,
 	modifier: Modifier = Modifier,
 ) {
-	ElevatedCard(
-		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
-		elevation = CardDefaults.elevatedCardElevation(
-			dimensionResource(R.dimen.padding_extra_small)
-		)
-	) {
+	DaElevatedCard(modifier = modifier) {
 		Text(
 			text = stringResource(R.string.title_details),
 			modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),

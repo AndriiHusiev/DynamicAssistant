@@ -24,10 +24,8 @@ class DetailsViewModel @Inject constructor(
 	private val databaseRepository: DatabaseRepository,
 ): ViewModel() {
 	
-	val accountId = databaseRepository.accountId
-	
 	val notifyState: StateFlow<NotifyEnum> =
-		databaseRepository.loadPlayer(accountId)
+		databaseRepository.loadPlayer()
 			.map { it.notification }
 			.stateIn(
 				scope = viewModelScope,
@@ -37,15 +35,15 @@ class DetailsViewModel @Inject constructor(
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch(Dispatchers.IO) {
-			databaseRepository.getBattlesCount(accountId).first { battles ->
-				databaseRepository.updateNotification(state.toInt(), battles, accountId)
+			databaseRepository.getBattlesCount().first { battles ->
+				databaseRepository.updateNotification(state.toInt(), battles)
 				true
 			}
 		}
 	}
 	
 	val personalData: StateFlow<AccountPersonalData?> =
-		databaseRepository.getPersonalData(accountId)
+		databaseRepository.getPersonalData()
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
@@ -53,7 +51,7 @@ class DetailsViewModel @Inject constructor(
 			)
 	
 	val clanData: StateFlow<AccountClanInfo?> =
-		databaseRepository.getPlayerClanInfo(accountId)
+		databaseRepository.getPlayerClanInfo()
 			.map { it.asExternalModel() }
 			.stateIn(
 				scope = viewModelScope,
@@ -62,7 +60,7 @@ class DetailsViewModel @Inject constructor(
 			)
 	
 	val globalRatingData: StateFlow<GlobalRatingData> =
-		databaseRepository.getGlobalRatingData(accountId)
+		databaseRepository.getGlobalRatingData()
 			.map { it.asExternalModel() }
 			.stateIn(
 				scope = viewModelScope,

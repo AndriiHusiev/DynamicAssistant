@@ -1,15 +1,12 @@
 package com.husiev.dynassist.components.main.details
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -22,6 +19,7 @@ import coil.compose.AsyncImage
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.utils.AccountClanInfo
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
@@ -32,13 +30,7 @@ fun DetailsClanCard(
 ) {
 	var sorryText = ""
 	
-	ElevatedCard(
-		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
-		elevation = CardDefaults.elevatedCardElevation(
-			dimensionResource(R.dimen.padding_extra_small)
-		)
-	) {
+	DaElevatedCard(modifier = modifier) {
 		Text(
 			text = stringResource(R.string.clan_info),
 			modifier = Modifier
@@ -131,22 +123,24 @@ fun DetailsClanCard(
 @Composable
 fun DetailsClanPreview() {
 	DynamicAssistantTheme {
-		DetailsClanCard(
-//			null
-			AccountClanInfo(
-				accountId = 1,
-				joinedAt = 1691693119,
-				joinedDays = 22,
-				roleLocalized = "Private",
-				clanId = 502345049, // null,
-				createdAt = 1422654206,
-				membersCount = 42,
-				name = "We are newbies",
-				tag = "NOOB",
-				color = "#6D12A0",
-				emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
-						"cl_042/502345049/emblem_195x195.png",
+		Column(Modifier.padding(dimensionResource(R.dimen.padding_big))) {
+			DetailsClanCard(
+//    			null
+				AccountClanInfo(
+					accountId = 1,
+					joinedAt = 1691693119,
+					joinedDays = 22,
+					roleLocalized = "Private",
+					clanId = 502345049, // null,
+					createdAt = 1422654206,
+					membersCount = 42,
+					name = "We are newbies",
+					tag = "NOOB",
+					color = "#6D12A0",
+					emblem = "https://eu.wargaming.net/clans/media/clans/emblems/" +
+							"cl_042/502345049/emblem_195x195.png",
+				)
 			)
-		)
+		}
 	}
 }

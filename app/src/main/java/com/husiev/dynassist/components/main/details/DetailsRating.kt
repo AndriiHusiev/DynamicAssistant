@@ -9,13 +9,16 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,11 +32,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.composables.GRAPH_FULL_RATIO
 import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.utils.bigToString
 import com.husiev.dynassist.components.main.utils.getRating
@@ -48,16 +53,21 @@ fun DetailsRatingCard(
 	
 	Crossfade(
 		targetState = showStartScreen,
-		label = "AnimStartContent",
+		label = "AnimRatingContent",
 	) {
-		Surface(
-			onClick = { showStartScreen = !showStartScreen }
-		) {
-			if (it)
-				DetailsRatingBox(globalRating.lastOrNull(), modifier)
-			else
-				SmoothLineGraph(globalRating.map { it.toFloat() }, date)
-		}
+		if (it)
+			DetailsRatingBox(
+				globalRating = globalRating.lastOrNull(),
+				modifier = modifier,
+				onClick = { showStartScreen = !showStartScreen },
+			)
+		else
+			SmoothLineGraph(
+				graphData = globalRating.map { it.toFloat() },
+				dateData = date,
+				modifier = modifier,
+				onClick = { showStartScreen = !showStartScreen },
+			)
 	}
 }
 
@@ -65,37 +75,47 @@ fun DetailsRatingCard(
 fun DetailsRatingBox(
 	globalRating: Int?,
 	modifier: Modifier = Modifier,
+	onClick: () -> Unit = {},
 ) {
 	val ratingData = globalRating.getRating()
+	val size = 300.dp
 	
 	Box(
-		modifier = modifier
-			.padding(dimensionResource(R.dimen.padding_big))
+		modifier = Modifier.fillMaxWidth().aspectRatio(GRAPH_FULL_RATIO),
+		contentAlignment = Alignment.Center
 	) {
-		AnimatedCircle(
-			circleColor = ratingData.circleColor,
-			backgroundColor = ratingData.backgroundColor,
-			modifier = Modifier
-				.height(300.dp)
-				.align(Alignment.Center)
-				.fillMaxWidth()
-		)
-		Column(modifier = Modifier.align(Alignment.Center)) {
-			Text(
-				text = stringResource(R.string.global_rating),
-				style = MaterialTheme.typography.titleMedium,
-				modifier = Modifier.align(Alignment.CenterHorizontally)
+		Box(
+			modifier = modifier
+				.size(size)
+				.padding(dimensionResource(R.dimen.padding_big))
+				.graphicsLayer { clip = true; shape = CircleShape }
+				.clickable { onClick() },
+		) {
+			AnimatedCircle(
+				circleColor = ratingData.circleColor,
+				backgroundColor = ratingData.backgroundColor,
+				modifier = Modifier
+					.height(size)
+					.align(Alignment.Center)
+					.fillMaxWidth()
 			)
-			Text(
-				text = globalRating.bigToString(),
-				style = MaterialTheme.typography.displayMedium,
-				modifier = Modifier.align(Alignment.CenterHorizontally)
-			)
-			Text(
-				text = stringResource(R.string.better_than, ratingData.betterThen),
-				style = MaterialTheme.typography.bodySmall,
-				modifier = Modifier.align(Alignment.CenterHorizontally)
-			)
+			Column(modifier = Modifier.align(Alignment.Center)) {
+				Text(
+					text = stringResource(R.string.global_rating),
+					style = MaterialTheme.typography.titleMedium,
+					modifier = Modifier.align(Alignment.CenterHorizontally)
+				)
+				Text(
+					text = globalRating.bigToString(),
+					style = MaterialTheme.typography.displayMedium,
+					modifier = Modifier.align(Alignment.CenterHorizontally)
+				)
+				Text(
+					text = stringResource(R.string.better_than, ratingData.betterThen),
+					style = MaterialTheme.typography.bodySmall,
+					modifier = Modifier.align(Alignment.CenterHorizontally)
+				)
+			}
 		}
 	}
 }
@@ -128,7 +148,7 @@ fun AnimatedCircle(
             360f
         }
     }
-    val shift by transition.animateFloat(
+	val shift by transition.animateFloat(
         label = "shift",
         transitionSpec = {
 	        tween(
@@ -144,7 +164,7 @@ fun AnimatedCircle(
             30f
         }
     }
-    val bgColor by transition.animateColor(
+	val bgColor by transition.animateColor(
         label = "color",
         transitionSpec = {
 	        tween(

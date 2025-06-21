@@ -6,9 +6,11 @@ import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.asExternalModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -21,7 +23,7 @@ class TechnicsViewModel @Inject constructor(
 	val nickname = databaseRepository.nickname
 	
 	val vehicleData: StateFlow<List<VehicleData>> =
-		databaseRepository.getAllVehiclesStatData(databaseRepository.accountId)
+		databaseRepository.getAllVehiclesStatData()
 			.map { stat ->
 				val onlyTankId = stat.map { it.tankId }.distinct()
 				val veh = mutableListOf<VehicleData>()
@@ -36,6 +38,7 @@ class TechnicsViewModel @Inject constructor(
 				}
 				veh
 			}
+			.flowOn(Dispatchers.Default)
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),

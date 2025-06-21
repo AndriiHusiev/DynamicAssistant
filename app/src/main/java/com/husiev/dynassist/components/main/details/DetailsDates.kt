@@ -1,19 +1,16 @@
 package com.husiev.dynassist.components.main.details
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.entity.asStringDate
@@ -34,13 +32,7 @@ fun DetailsDateCard(
 	notifyState: NotifyEnum = NotifyEnum.UNCHECKED,
 	onNotifyClick: (Boolean) -> Unit = {},
 ) {
-	ElevatedCard(
-		modifier = modifier.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium))),
-		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
-		elevation = CardDefaults.elevatedCardElevation(
-			dimensionResource(R.dimen.padding_extra_small)
-		)
-	) {
+	DaElevatedCard(modifier = modifier) {
 		Text(
 			text = stringResource(R.string.events_time),
 			modifier = Modifier
@@ -146,17 +138,19 @@ fun SwitchableItem(
 @Composable
 fun DetailsDateCardPreview() {
 	DynamicAssistantTheme {
-		DetailsDateCard(
-			AccountPersonalData(
-				accountId = 1,
-				nickname = "CoolNickname",
-				lastBattleTime = 1669914970.asStringDate(),
-				createdAt = 1282720111.asStringDate(),
-				updatedAt = 1692550413.asStringDate(),
-				logoutAt = 1687009120.asStringDate(),
-				clanId = null,
-				globalRating = 10563
+		Column(Modifier.padding(dimensionResource(R.dimen.padding_big))) {
+			DetailsDateCard(
+				AccountPersonalData(
+					accountId = 1,
+					nickname = "CoolNickname",
+					lastBattleTime = 1669914970.asStringDate(),
+					createdAt = 1282720111.asStringDate(),
+					updatedAt = 1692550413.asStringDate(),
+					logoutAt = 1687009120.asStringDate(),
+					clanId = null,
+					globalRating = 10563
+				)
 			)
-		)
+		}
 	}
 }

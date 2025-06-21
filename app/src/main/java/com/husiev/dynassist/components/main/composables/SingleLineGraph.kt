@@ -3,8 +3,10 @@ package com.husiev.dynassist.components.main.composables
 import android.graphics.PointF
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
@@ -33,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toSize
 import com.husiev.dynassist.R
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.Range
 import com.husiev.dynassist.components.main.utils.getPureExponent
@@ -74,6 +75,7 @@ import kotlin.math.roundToInt
 
 private const val MAX_DOTS = 10
 private const val GRAPH_RATIO = 5 / 4f
+const val GRAPH_FULL_RATIO = 1.05f
 
 /*
 * Copyright 2023 The Android Open Source Project
@@ -95,201 +97,224 @@ fun SmoothLineGraph(
     graphData: List<Float>?,
     dateData: List<String>?,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
 ) {
     val barColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.4f)
     val chartColor = Color(0xFF00897B)
     var allRangeMode by rememberSaveable { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val combinedModifier = Modifier
+        .then(
+            if (onClick != null) {
+                Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = LocalIndication.current,
+                    onClick = onClick
+                )
+            } else {
+                Modifier
+            }
+        )
     
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .aspectRatio(1.05f)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (graphData == null || graphData.size < 2) {
-            Spacer(
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
-                    .aspectRatio(3 / 2f)
-                    .fillMaxSize()
-                    .drawWithCache {
-                        onDrawBehind {
-                            drawRect(barColor, style = Stroke(1.dp.toPx()))
-                        }
-                    }
-            )
-            Text(
-                text = stringResource(R.string.chart_no_data),
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                textAlign = TextAlign.Center
-            )
-        } else {
-            
-            val animationProgress = remember { Animatable(0f) }
-            var highlightedLine by remember { mutableStateOf<Int?>(null) }
-            var highlightedX by remember { mutableFloatStateOf(-1f) }
-            var highlightedOffset: Offset? = null
-            val numDots = graphData.size
-            val list = if (allRangeMode && numDots > MAX_DOTS) graphData
-                else graphData.takeLast(minOf(MAX_DOTS, numDots))
-            val listDate = if (allRangeMode && numDots > MAX_DOTS) dateData
-                else dateData?.takeLast(minOf(MAX_DOTS, numDots))
-            val dotsAmount = list.size
-            val graphRange = getRange(list)
-    
-            LaunchedEffect(key1 = list, block = {
-                animationProgress.animateTo(1f, tween(3000))
-            })
-    
-            val textMeasurer = rememberTextMeasurer()
-            val labelTextStyle = MaterialTheme.typography.labelSmall
-            val labelDateTextStyle = MaterialTheme.typography.labelSmall
-                .copy(fontWeight = FontWeight.Bold)
-            val labelTextStyleM = MaterialTheme.typography.labelMedium
-            
-            Column(modifier = Modifier.fillMaxSize()) {
-                
+    DaElevatedCard(modifier = modifier) {
+        Box(
+            modifier = combinedModifier
+                .aspectRatio(GRAPH_FULL_RATIO)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (graphData == null || graphData.size < 2) {
                 Spacer(
                     modifier = Modifier
-                        .aspectRatio(GRAPH_RATIO)
+                        .padding(dimensionResource(R.dimen.padding_small))
+                        .aspectRatio(3 / 2f)
                         .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = { offset ->
-                                    highlightedX = offset.x
-                                    // bypassing unwanted behavior
-                                    val num = if (allRangeMode) graphData.size else dotsAmount
-                                    val sectionWidth = size.width / (num - 1)
-                                    highlightedLine =
-                                        ((offset.x + sectionWidth / 1.25f) / sectionWidth).toInt()
-                                },
-                                onDragEnd = { highlightedLine = null; highlightedX = -1f },
-                                onDragCancel = { highlightedLine = null; highlightedX = -1f },
-                                onDrag = { change, _ ->
-                                    highlightedX = change.position.x
-                                    val num = if (allRangeMode) graphData.size else dotsAmount
-                                    val sectionWidth = size.width / (num - 1)
-                                    highlightedLine =
-                                        ((change.position.x + sectionWidth / 1.25f) / sectionWidth).toInt()
-                                }
-                            )
-                        }
                         .drawWithCache {
-                            val path = generateSmoothPath(list, size, graphRange)
-                            val filledPath = Path()
-                            filledPath.addPath(path)
-                            filledPath.relativeLineTo(0f, size.height)
-                            filledPath.lineTo(0f, size.height)
-                            filledPath.close()
-                            if (highlightedLine != null) {
-                                highlightedOffset = getExactPathPos(path, highlightedX, size.width)
-                            }
-                            
                             onDrawBehind {
-                                val barWidthPx = 1.dp.toPx()
-                                val horizontalLines = 5
-                                val sectionSize = size.height / horizontalLines
-                                
-                                repeat(graphRange.numLines) { i ->
-                                    val startY = sectionSize * (i + 1)
-                                    drawLine(
-                                        barColor,
-                                        start = Offset(0f, startY),
-                                        end = Offset(size.width, startY),
-                                        strokeWidth = barWidthPx,
-                                        alpha = 0.25f,
-                                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f))
-                                    )
-                                    
-                                    val textLayoutResult =
-                                        textMeasurer.measure(graphRange.dots[i], labelTextStyleM)
-                                    drawText(
-                                        textLayoutResult,
-                                        color = barColor,
-                                        topLeft = Offset(4.dp.toPx(), startY - 16.dp.toPx()),
-                                    )
-                                }
-            
-                                // draw line
-                                clipRect(right = size.width * animationProgress.value) {
-                                    drawPath(path, chartColor, style = Stroke(2.dp.toPx()))
-                                    
-                                    drawPath(
-                                        filledPath,
-                                        brush = Brush.verticalGradient(
-                                            listOf(
-                                                chartColor.copy(alpha = 0.4f),
-                                                Color.Transparent
-                                            )
-                                        ),
-                                        style = Fill
-                                    )
-                                }
-                                
-                                // draw highlight if user is dragging
-                                highlightedLine?.let {
-                                    this.drawHighlight(
-                                        circleColor = chartColor,
-                                        highlightColor = barColor,
-                                        highlightedLine = maxOf(0, minOf(it, dotsAmount - 1)),
-                                        dotX = highlightedOffset?.x ?: 0f,
-                                        dotY = highlightedOffset?.y ?: 0f,
-                                        graphData = list,
-                                        dates = listDate,
-                                        textMeasurer = textMeasurer,
-                                        labelTextStyle = labelTextStyle,
-                                        labelDateTextStyle = labelDateTextStyle,
-                                    )
-                                }
-                                
+                                drawRect(barColor, style = Stroke(1.dp.toPx()))
                             }
                         }
                 )
+                Text(
+                    text = stringResource(R.string.chart_no_data),
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    textAlign = TextAlign.Center
+                )
+            } else {
                 
+                val animationProgress = remember { Animatable(0f) }
+                var highlightedLine by remember { mutableStateOf<Int?>(null) }
+                var highlightedX by remember { mutableFloatStateOf(-1f) }
+                var highlightedOffset: Offset? = null
+                val numDots = graphData.size
+                val list = if (allRangeMode && numDots > MAX_DOTS) graphData
+                else graphData.takeLast(minOf(MAX_DOTS, numDots))
+                val listDate = if (allRangeMode && numDots > MAX_DOTS) dateData
+                else dateData?.takeLast(minOf(MAX_DOTS, numDots))
+                val dotsAmount = list.size
+                val graphRange = getRange(list)
                 
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = dimensionResource(R.dimen.padding_big))
-                        .wrapContentHeight()
-                        .height(32.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    val bgColorNotSelected = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    )
-                    val bgColorSelected = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff4153FF),
-                        contentColor = Color.White
+                LaunchedEffect(key1 = list, block = {
+                    animationProgress.animateTo(1f, tween(3000))
+                })
+                
+                val textMeasurer = rememberTextMeasurer()
+                val labelTextStyle = MaterialTheme.typography.labelSmall
+                val labelDateTextStyle = MaterialTheme.typography.labelSmall
+                    .copy(fontWeight = FontWeight.Bold)
+                val labelTextStyleM = MaterialTheme.typography.labelMedium
+                
+                Column(modifier = Modifier.fillMaxSize()) {
+                    
+                    Spacer(
+                        modifier = Modifier
+                            .aspectRatio(GRAPH_RATIO)
+                            .fillMaxSize()
+                            .pointerInput(Unit) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = { offset ->
+                                        highlightedX = offset.x
+                                        // bypassing unwanted behavior
+                                        val num = if (allRangeMode) graphData.size else dotsAmount
+                                        val sectionWidth = size.width / (num - 1)
+                                        highlightedLine =
+                                            ((offset.x + sectionWidth / 1.25f) / sectionWidth).toInt()
+                                    },
+                                    onDragEnd = { highlightedLine = null; highlightedX = -1f },
+                                    onDragCancel = { highlightedLine = null; highlightedX = -1f },
+                                    onDrag = { change, _ ->
+                                        highlightedX = change.position.x
+                                        val num = if (allRangeMode) graphData.size else dotsAmount
+                                        val sectionWidth = size.width / (num - 1)
+                                        highlightedLine =
+                                            ((change.position.x + sectionWidth / 1.25f) / sectionWidth).toInt()
+                                    }
+                                )
+                            }
+                            .drawWithCache {
+                                val path = generateSmoothPath(list, size, graphRange)
+                                val filledPath = Path()
+                                filledPath.addPath(path)
+                                filledPath.relativeLineTo(0f, size.height)
+                                filledPath.lineTo(0f, size.height)
+                                filledPath.close()
+                                if (highlightedLine != null) {
+                                    highlightedOffset =
+                                        getExactPathPos(path, highlightedX, size.width)
+                                }
+                                
+                                onDrawBehind {
+                                    val barWidthPx = 1.dp.toPx()
+                                    val horizontalLines = 5
+                                    val sectionSize = size.height / horizontalLines
+                                    
+                                    repeat(graphRange.numLines) { i ->
+                                        val startY = sectionSize * (i + 1)
+                                        drawLine(
+                                            barColor,
+                                            start = Offset(0f, startY),
+                                            end = Offset(size.width, startY),
+                                            strokeWidth = barWidthPx,
+                                            alpha = 0.25f,
+                                            pathEffect = PathEffect.dashPathEffect(
+                                                floatArrayOf(
+                                                    20f,
+                                                    20f
+                                                )
+                                            )
+                                        )
+                                        
+                                        val textLayoutResult =
+                                            textMeasurer.measure(
+                                                graphRange.dots[i],
+                                                labelTextStyleM
+                                            )
+                                        drawText(
+                                            textLayoutResult,
+                                            color = barColor,
+                                            topLeft = Offset(4.dp.toPx(), startY - 16.dp.toPx()),
+                                        )
+                                    }
+                                    
+                                    // draw line
+                                    clipRect(right = size.width * animationProgress.value) {
+                                        drawPath(path, chartColor, style = Stroke(2.dp.toPx()))
+                                        
+                                        drawPath(
+                                            filledPath,
+                                            brush = Brush.verticalGradient(
+                                                listOf(
+                                                    chartColor.copy(alpha = 0.4f),
+                                                    Color.Transparent
+                                                )
+                                            ),
+                                            style = Fill
+                                        )
+                                    }
+                                    
+                                    // draw highlight if user is dragging
+                                    highlightedLine?.let {
+                                        this.drawHighlight(
+                                            circleColor = chartColor,
+                                            highlightColor = barColor,
+                                            highlightedLine = maxOf(0, minOf(it, dotsAmount - 1)),
+                                            dotX = highlightedOffset?.x ?: 0f,
+                                            dotY = highlightedOffset?.y ?: 0f,
+                                            graphData = list,
+                                            dates = listDate,
+                                            textMeasurer = textMeasurer,
+                                            labelTextStyle = labelTextStyle,
+                                            labelDateTextStyle = labelDateTextStyle,
+                                        )
+                                    }
+                                    
+                                }
+                            }
                     )
                     
-                    FilledTonalButton(
-                        onClick = { allRangeMode = false },
-                        colors = if (allRangeMode) bgColorNotSelected else bgColorSelected,
-                        contentPadding = PaddingValues(8.dp,0.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.graph_10_dots),
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                        )
-                    }
                     
-                    FilledTonalButton(
-                        onClick = { allRangeMode = true },
-                        colors = if (allRangeMode) bgColorSelected else bgColorNotSelected,
-                        contentPadding = PaddingValues(8.dp,0.dp)
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = dimensionResource(R.dimen.padding_big))
+                            .wrapContentHeight()
+                            .height(32.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Text(
-                            text = stringResource(R.string.graph_all_dots),
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                        val bgColorNotSelected = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
                         )
+                        val bgColorSelected = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xff4153FF),
+                            contentColor = Color.White
+                        )
+                        
+                        FilledTonalButton(
+                            onClick = { allRangeMode = false },
+                            colors = if (allRangeMode) bgColorNotSelected else bgColorSelected,
+                            contentPadding = PaddingValues(8.dp, 0.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.graph_10_dots),
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                            )
+                        }
+                        
+                        FilledTonalButton(
+                            onClick = { allRangeMode = true },
+                            colors = if (allRangeMode) bgColorSelected else bgColorNotSelected,
+                            contentPadding = PaddingValues(8.dp, 0.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.graph_all_dots),
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                            )
+                        }
                     }
                 }
             }
@@ -474,7 +499,10 @@ fun SmoothLineGraphPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            Column(
+                Modifier.padding(dimensionResource(R.dimen.padding_big)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big))
+            ) {
                 SmoothLineGraph(previewData, dates)
                 SmoothLineGraph(null, null)
             }

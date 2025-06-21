@@ -4,11 +4,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,13 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +30,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -51,6 +45,7 @@ import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summarysingle.SingleSummaryCardItem
 import com.husiev.dynassist.components.main.technics.TechnicsViewModel
 import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.bigToString
@@ -73,8 +68,6 @@ fun SingleTechnicsContent(
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
 		state = state,
-		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_big)),
-		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		singleItem?.let { item ->
 			item {
@@ -86,17 +79,22 @@ fun SingleTechnicsContent(
 					tier = item.tier,
 					priceCredit = item.priceCredit,
 					priceGold = item.priceGold,
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
 				)
 			}
 			item {
 				SmoothLineGraph(
 					item.stat[1].values,
-					item.stat[2].values?.map { it.toInt().asStringDate("shortest") }
+					item.stat[2].values?.map { it.toInt().asStringDate("shortest") },
+					Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big))
 				)
 			}
 			
 			item {
-				SingleTechnicsCard(item = item)
+				SingleTechnicsCard(
+					item = item,
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+				)
 			}
 		}
 	}
@@ -115,92 +113,91 @@ fun SingleTechnicsImageCard(
 ) {
 	var expanded by rememberSaveable { mutableStateOf(false) }
 	
-	ElevatedCard(
-		modifier = modifier
-			.clip(RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
-			.clickable(onClick = { expanded = !expanded })
+	Box(
+		modifier = Modifier
 			.animateContentSize(
 				animationSpec = spring(
 					dampingRatio = Spring.DampingRatioMediumBouncy,
 					stiffness = Spring.StiffnessLow
 				)
-			),
-		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
-		elevation = CardDefaults.elevatedCardElevation(
-			dimensionResource(R.dimen.padding_extra_small)
-		)
+			)
 	) {
-		Row(
-			modifier = Modifier.fillMaxWidth(),
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceBetween
+		DaElevatedCard(
+			onClick = { expanded = !expanded },
+			modifier = modifier,
 		) {
-			Text(
-				text = stringResource(R.string.general_info),
-				modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
-				style = MaterialTheme.typography.headlineSmall
-			)
-			IconButton(onClick = { expanded = !expanded }) {
-				Icon(
-					imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-					contentDescription = if (expanded)
-						stringResource(R.string.show_less)
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
+			) {
+				Text(
+					text = stringResource(R.string.general_info),
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
+					style = MaterialTheme.typography.headlineSmall
+				)
+				IconButton(onClick = { expanded = !expanded }) {
+					Icon(
+						imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+						contentDescription = if (expanded)
+							stringResource(R.string.show_less)
+						else
+							stringResource(R.string.show_more)
+					)
+				}
+			}
+			
+			if (expanded) {
+				Box(modifier = Modifier) {
+					Image(
+						painter = painterResource(flagToResId(nation)),
+						contentDescription = null,
+						modifier = Modifier.size(347.dp, 127.dp)
+					)
+					AsyncImage(
+						model = urlIcon,
+						error = painterResource(R.drawable.ic_tank_empty),
+						placeholder = painterResource(R.drawable.ic_tank_empty),
+						contentDescription = null,
+						modifier = Modifier
+							.fillMaxWidth()
+							.size(200.dp, 127.dp)
+					)
+				}
+				
+				Text(
+					text = description ?: "",
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+					style = MaterialTheme.typography.bodySmall
+				)
+				
+				MainDivider()
+				
+				SingleSummaryCardItem(
+					title = stringResource(R.string.vehicle_role),
+					value = stringResource(role.roleResId())
+				)
+				
+				SingleSummaryCardItem(
+					title = stringResource(R.string.vehicle_tier),
+					value = tier?.toString() ?: NO_DATA
+				)
+				
+				val textPrice = if (priceCredit == null && priceGold == null)
+					stringResource(R.string.vehicle_not_for_sale)
+				else {
+					if (priceCredit == 0)
+						priceGold.bigToString() + " " + stringResource(R.string.vehicle_price_gold)
+					else if (priceGold == 0)
+						priceCredit.bigToString() + " " + stringResource(R.string.vehicle_price_credits)
 					else
-						stringResource(R.string.show_more)
+						NO_DATA
+				}
+				SingleSummaryCardItem(
+					title = stringResource(R.string.vehicle_price_price),
+					value = textPrice,
 				)
 			}
-		}
-		
-		if (expanded) {
-			Box(modifier = Modifier) {
-				Image(
-					painter = painterResource(flagToResId(nation)),
-					contentDescription = null,
-					modifier = Modifier.size(347.dp, 127.dp)
-				)
-				AsyncImage(
-					model = urlIcon,
-					error = painterResource(R.drawable.ic_tank_empty),
-					placeholder = painterResource(R.drawable.ic_tank_empty),
-					contentDescription = null,
-					modifier = Modifier
-						.fillMaxWidth()
-						.size(200.dp, 127.dp)
-				)
-			}
-			
-			Text(
-				text = description ?: "",
-				modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
-				style = MaterialTheme.typography.bodySmall
-			)
-			
-			MainDivider()
-			
-			SingleSummaryCardItem(
-				title = stringResource(R.string.vehicle_role),
-				value = stringResource(role.roleResId())
-			)
-			
-			SingleSummaryCardItem(
-				title = stringResource(R.string.vehicle_tier),
-				value = tier?.toString() ?: NO_DATA
-			)
-			
-			val textPrice = if (priceCredit == null && priceGold == null)
-				stringResource(R.string.vehicle_not_for_sale)
-			else {
-				if (priceCredit == 0)
-					priceGold.bigToString() + " " + stringResource(R.string.vehicle_price_gold)
-				else if (priceGold == 0)
-					priceCredit.bigToString() + " " + stringResource(R.string.vehicle_price_credits)
-				else
-					NO_DATA
-			}
-			SingleSummaryCardItem(
-				title = stringResource(R.string.vehicle_price_price),
-				value = textPrice,
-			)
 		}
 	}
 	
@@ -214,17 +211,7 @@ fun SingleTechnicsCard(
 	val battles = item.stat[0]
 	val wins = item.stat[1]
 	
-	ElevatedCard(
-		modifier = modifier.clip(
-			androidx.compose.foundation.shape.RoundedCornerShape(
-				dimensionResource(R.dimen.padding_medium)
-			)
-		),
-		shape = androidx.compose.foundation.shape.RoundedCornerShape(dimensionResource(R.dimen.padding_medium)),
-		elevation = CardDefaults.elevatedCardElevation(
-			dimensionResource(R.dimen.padding_extra_small)
-		)
-	) {
+	DaElevatedCard(modifier = modifier) {
 		Text(
 			text = stringResource(R.string.title_details),
 			modifier = Modifier.padding(dimensionResource(R.dimen.padding_big)),
@@ -284,7 +271,20 @@ fun SingleTechnicsCardItemPreview() {
 			color = MaterialTheme.colorScheme.background
 		) {
 			Column {
-				SmoothLineGraph(null, null)
+				SingleTechnicsImageCard(
+					urlIcon = "https://api.worldoftanks.eu/static/2.71.0/wot/encyclopedia/vehicle/ussr-R04_T-34.png",
+					nation = "ussr",
+					description = "The legend of the Soviet armored forces and the most widely-produced Soviet tank of World War II, with a total of 33,805 vehicles manufactured. Three variants of this model were produced at several Soviet factories from 1940 through 1944.",
+					role = "mediumTank",
+					tier = 5,
+					priceCredit = 456456,
+					priceGold = 0,
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+				)
+				
+				SmoothLineGraph(null, null,
+					Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)))
+				
 				SingleTechnicsCard(
 					item = VehicleData(
 						tankId = 1,
@@ -333,7 +333,8 @@ fun SingleTechnicsCardItemPreview() {
 								comment = null
 							),
 						)
-					)
+					),
+					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
 				)
 			}
 		}
