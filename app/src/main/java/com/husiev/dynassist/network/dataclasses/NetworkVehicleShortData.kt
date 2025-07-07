@@ -5,14 +5,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkVehicleShortData(
-	val status: String,
-	val meta: NetworkMetaInfo? = null,
-	val data: Map<String, List<NetworkVehicleShortItem>>? = null,
-	val error: NetworkErrorInfo? = null
-)
-
-@Serializable
 data class NetworkVehicleShortItem(
 	@SerialName(value = "tank_id")
 	val tankId: Int,

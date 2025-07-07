@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class MainRoutesData @Inject constructor(
-	@ApplicationContext private val context: Context,
+	@param:ApplicationContext private val context: Context,
 ) {
 	val headers = context.resources.getStringArray(R.array.summary_headers_array).toList()
 	val items = converterToMap(

@@ -4,7 +4,6 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,35 +20,24 @@ import com.husiev.dynassist.components.main.summary.navigateToSummary
 import com.husiev.dynassist.components.main.summarysingle.navigateToSummarySingle
 import com.husiev.dynassist.components.main.technics.navigateToTechnics
 import com.husiev.dynassist.components.main.technicssingle.navigateToTechnicsSingle
-import com.husiev.dynassist.network.NetworkRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
 fun rememberDaAppState(
 	windowSizeClass: WindowSizeClass,
-	coroutineScope: CoroutineScope = rememberCoroutineScope(),
 	navController: NavHostController = rememberNavController(),
-	networkRepository: NetworkRepository,
 ): DaAppState = remember(
 	windowSizeClass,
 	navController,
-	networkRepository
 ) {
 	DaAppState(
 		windowSizeClass = windowSizeClass,
-		coroutineScope = coroutineScope,
 		navController = navController,
-		networkRepository = networkRepository,
 	)
 }
 
 class DaAppState(
 	val windowSizeClass: WindowSizeClass,
-	val coroutineScope: CoroutineScope,
 	val navController: NavHostController,
-	private val networkRepository: NetworkRepository,
 ) {
 	val shouldShowBottomBar: Boolean
 		get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
@@ -59,10 +47,6 @@ class DaAppState(
 	
 	val currentDestination: NavDestination?
 		@Composable get() = navController.currentBackStackEntryAsState().value?.destination
-	
-	val queryStatus: StateFlow<Result<String>> = networkRepository.queryStatus.asStateFlow()
-	
-	fun closeSnackbar() = networkRepository.setStatus(Result.StandBy)
 	
 	/**
 	 * Map of top level destinations to be used in the TopBar, BottomBar and NavRail. The key is the

@@ -1,6 +1,7 @@
 package com.husiev.dynassist.network
 
-import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
+import com.husiev.dynassist.network.dataclasses.AppError
+import com.husiev.dynassist.network.dataclasses.NetworkAccountInfo
 
 sealed interface SearchResultUiState {
 	
@@ -13,12 +14,12 @@ sealed interface SearchResultUiState {
 	 */
 	object EmptyQuery : SearchResultUiState
 	
-	object LoadFailed : SearchResultUiState
+	data class LoadFailed(val message: String) : SearchResultUiState
 	
 	data class Success(
-		val accounts: NetworkStartSearchInfo,
+		val accounts: List<NetworkAccountInfo>,
 	) : SearchResultUiState {
-		fun isEmpty(): Boolean = accounts.data?.isEmpty() == true
+		fun isEmpty(): Boolean = accounts.isEmpty()
 	}
 	
 }

@@ -49,7 +49,6 @@ class MainActivity : ComponentActivity() {
 				) {
 					MainScreen(
 						windowSizeClass = calculateWindowSizeClass(this),
-						networkRepository = networkRepository,
 					)
 				}
 			}

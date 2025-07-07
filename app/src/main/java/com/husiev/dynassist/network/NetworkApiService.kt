@@ -1,10 +1,11 @@
 package com.husiev.dynassist.network
 
-import com.husiev.dynassist.network.dataclasses.NetworkAccountAllData
-import com.husiev.dynassist.network.dataclasses.NetworkClanMemberInfo
-import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
-import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfo
-import com.husiev.dynassist.network.dataclasses.NetworkVehicleShortData
+import com.husiev.dynassist.network.dataclasses.BaseResponse
+import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
+import com.husiev.dynassist.network.dataclasses.NetworkAccountInfo
+import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
+import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfoItem
+import com.husiev.dynassist.network.dataclasses.NetworkVehicleShortItem
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -25,7 +26,7 @@ interface NetworkApiService {
 		@Query("application_id") appId: String,
 		@Query("search") search: String,
 		@Query("type") type: String = "startswith",
-	): NetworkStartSearchInfo
+	): BaseResponse<List<NetworkAccountInfo>>
 	
 	/**
 	 * Returns player details.
@@ -43,7 +44,7 @@ interface NetworkApiService {
 				"-statistics.stronghold_skirmish,-statistics.regular_team," +
 				"-statistics.company,-statistics.stronghold_defense,-statistics.historical," +
 				"-statistics.team,-statistics.frags,-statistics.trees_cut"
-	): NetworkAccountAllData
+	): BaseResponse<Map<String, NetworkAccountPersonalData?>>
 	
 	/**
 	 * Returns detailed clan member information and brief clan details.
@@ -58,7 +59,7 @@ interface NetworkApiService {
 		@Query("application_id") appId: String,
 		@Query("account_id") accountId: Int,
 		@Query("fields") fields: String = ""
-	): NetworkClanMemberInfo
+	): BaseResponse<Map<String, NetworkAccountClanData?>>
 	
 	/**
 	 * Returns details on player's vehicles.
@@ -75,7 +76,7 @@ interface NetworkApiService {
 		@Query("account_id") accountId: Int,
 		@Query("fields") fields: String = "",
 		@Query("tank_id") tankId: String = ""
-	): NetworkVehicleShortData
+	): BaseResponse<Map<String, List<NetworkVehicleShortItem>?>>
 	
 	/**
 	 * Returns list of available vehicles.
@@ -94,5 +95,5 @@ interface NetworkApiService {
 		@Query("fields") fields: String = "-radios,-suspensions,-engines,-crew,-guns," +
 				"-provisions,-is_premium_igr,-next_tanks,-modules_tree,-prices_xp," +
 				"-default_profile,-turrets,-multination",
-	): NetworkVehicleInfo
+	): BaseResponse<Map<String, NetworkVehicleInfoItem?>>
 }

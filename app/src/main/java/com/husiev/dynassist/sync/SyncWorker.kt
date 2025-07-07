@@ -15,6 +15,7 @@ import com.husiev.dynassist.components.start.utils.logDebugOut
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.network.NetworkRepository
+import com.husiev.dynassist.network.dataclasses.ResultWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -35,35 +36,34 @@ class SyncWorker @AssistedInject constructor(
 		return withContext(Dispatchers.IO) {
 			return@withContext try {
 				val nicknames = mutableListOf<AccountNotifierShortData>()
-				databaseRepository.checkedPlayers.first { list ->
-					if (list.isNotEmpty()) {
-						for (item in list) {
-							val response = networkRepository.getAccountAllData(item.id, false)
-							response?.data?.get(item.id.toString())?.let { networkData ->
-								databaseRepository.getStatisticData(item.id).first { list ->
-									if (list.isEmpty() ||
-										networkData.statistics.all.battles > list.last().battles &&
-										networkData.statistics.all.battles > item.notifiedBattles) {
-										
-										databaseRepository.updateNotification(
-											NotifyEnum.UPDATES_AVAIL.ordinal,
-											networkData.statistics.all.battles,
-											item.id
-										)
-										nicknames.add(setShortData(
-											accountId = item.id,
-											nickname = item.nickname,
-											lastBattleTime = networkData.lastBattleTime,
-											battles = networkData.statistics.all.battles - list.last().battles,
-											wins = networkData.statistics.all.wins - list.last().wins
-										))
-									}
-									true
-								}
-							}
+				val checkedPlayers = databaseRepository.checkedPlayers.first()
+				
+				if (checkedPlayers.isNotEmpty()) {
+					for (item in checkedPlayers) {
+						val networkData = when(val response = networkRepository.getAccountAllData(item.id)) {
+							is ResultWrapper.Error -> return@withContext Result.failure()
+							is ResultWrapper.Success -> response.data
+						}
+						val list = databaseRepository.getStatisticData(item.id).first()
+						
+						if (list.isEmpty() ||
+							networkData.statistics.all.battles > list.last().battles &&
+							networkData.statistics.all.battles > item.notifiedBattles) {
+							
+							databaseRepository.updateNotification(
+								NotifyEnum.UPDATES_AVAIL.ordinal,
+								networkData.statistics.all.battles,
+								item.id
+							)
+							nicknames.add(setShortData(
+								accountId = item.id,
+								nickname = item.nickname,
+								lastBattleTime = networkData.lastBattleTime,
+								battles = networkData.statistics.all.battles - list.last().battles,
+								wins = networkData.statistics.all.wins - list.last().wins
+							))
 						}
 					}
-					true
 				}
 
 				if (nicknames.isNotEmpty()) {

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
@@ -5,18 +7,19 @@ plugins {
 	alias(libs.plugins.dagger.hilt)
 	alias(libs.plugins.kotlin.serialization)
 	alias(libs.plugins.compose.compiler)
+	alias(libs.plugins.androidx.room)
 }
 
 android {
 	namespace = "com.husiev.dynassist"
-	compileSdk = 35
+	compileSdk = 36
 	
 	defaultConfig {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
-		targetSdk = 35
-		versionCode = 45
-		versionName = "0.8.8"
+		targetSdk = 36
+		versionCode = 46
+		versionName = "0.8.9"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
@@ -37,22 +40,25 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
 	}
-	kotlinOptions {
-		jvmTarget = "17"
-	}
 	buildFeatures {
 		compose = true
 		buildConfig = true
-	}
-	sourceSets {
-		// Adds exported schema location as test app assets.
-		getByName("androidTest").assets.srcDir("$projectDir/schemas")
 	}
 	packaging {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
+}
+
+kotlin {
+	compilerOptions {
+		jvmTarget.set(JvmTarget.JVM_17)
+	}
+}
+
+room {
+	schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
@@ -103,19 +109,4 @@ dependencies {
 	androidTestImplementation(libs.androidx.ui.test.junit4)
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
-}
-
-class RoomSchemaArgProvider(
-	@get:InputDirectory
-	@get:PathSensitive(PathSensitivity.RELATIVE)
-	val schemaDir: File
-) : CommandLineArgumentProvider {
-	
-	override fun asArguments(): Iterable<String> {
-		 return listOf("room.schemaLocation=${schemaDir.path}")
-	}
-}
-
-ksp {
-	arg(RoomSchemaArgProvider(File(projectDir, "schemas")))
 }

@@ -36,10 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.network.dataclasses.NetworkAccountInfo
-import com.husiev.dynassist.network.dataclasses.NetworkErrorInfo
 import com.husiev.dynassist.network.SearchResultUiState
-import com.husiev.dynassist.network.dataclasses.NetworkStartSearchInfo
+import com.husiev.dynassist.network.dataclasses.AppError
 import com.husiev.dynassist.network.dataclasses.asExternalModel
+import com.husiev.dynassist.network.dataclasses.toFormattedString
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
@@ -68,31 +68,29 @@ fun SearchContent(
 		when (searchState) {
 			SearchResultUiState.EmptyQuery -> Unit
 			
-			SearchResultUiState.LoadFailed -> FailScreen(modifier = Modifier.fillMaxSize())
-			
 			SearchResultUiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
+			
+			is SearchResultUiState.LoadFailed -> {
+				ErrorScreen(
+					errorMessage = searchState.message,
+					modifier = Modifier.fillMaxSize()
+				)
+			}
 			
 			is SearchResultUiState.Success -> {
 				if (searchState.isEmpty()) {
 					EmptySearchResultBody(searchQuery)
-				} else if (searchState.accounts.status == "ok") {
+				} else {
 					LazyColumn(
 						state = state,
 					) {
-						searchState.accounts.data?.let {
-							items(it) { account ->
-								SearchListItem(
-									accountInfo = account.asExternalModel(),
-									onClick = onSelectNickname
-								)
-							}
+						items(searchState.accounts) { account ->
+							SearchListItem(
+								accountInfo = account.asExternalModel(),
+								onClick = onSelectNickname
+							)
 						}
 					}
-				} else {
-					ErrorScreen(
-						errorInfo = searchState.accounts,
-						modifier = Modifier.fillMaxSize()
-					)
 				}
 			}
 		}
@@ -178,7 +176,7 @@ fun FailScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun ErrorScreen(
-	errorInfo: NetworkStartSearchInfo,
+	errorMessage: String,
 	modifier: Modifier = Modifier
 ) {
 	Column(
@@ -208,13 +206,7 @@ fun ErrorScreen(
 					),
 				textAlign = TextAlign.Center
 			)
-			Text("status: ${errorInfo.status}")
-			errorInfo.error?.let {
-				errorInfo.error.field?.let { txt -> Text("field: $txt") }
-				Text("message: ${errorInfo.error.message}")
-				Text("code: ${errorInfo.error.code}")
-				Text("value: ${errorInfo.error.value}")
-			}
+			Text(errorMessage)
 		}
 	}
 }
@@ -225,14 +217,11 @@ fun ErrorScreen(
 fun SearchContentPreview() {
 	DynamicAssistantTheme {
 		SearchContent(searchState = SearchResultUiState.Success(
-			NetworkStartSearchInfo(
-				status = "ok",
-				data = listOf(
-					NetworkAccountInfo(1, "qwe"),
-					NetworkAccountInfo(1, "rty"),
-					NetworkAccountInfo(1, "asd"),
-					NetworkAccountInfo(1, "fgh"),
-				)
+			listOf(
+				NetworkAccountInfo(1, "qwe"),
+				NetworkAccountInfo(1, "rty"),
+				NetworkAccountInfo(1, "asd"),
+				NetworkAccountInfo(1, "fgh"),
 			)
 		))
 	}
@@ -267,15 +256,12 @@ fun FailScreenScreenPreview() {
 fun ErrorScreenPreview() {
 	DynamicAssistantTheme {
 		ErrorScreen(
-			NetworkStartSearchInfo(
-				status = "error",
-				error = NetworkErrorInfo(
-					field = "search",
-					message = "NOT_ENOUGH_BEER",
-					code = 407,
-					value = "2L"
-				)
-			),
+			AppError.ApiError(
+				field = "search",
+				message = "NOT_ENOUGH_BEER",
+				code = 407,
+				value = "2L"
+			).toFormattedString(),
 			modifier = Modifier.fillMaxSize()
 		)
 	}

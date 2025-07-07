@@ -51,7 +51,7 @@ fun StartScreen(
 				searchQuery = searchQuery,
 				onChangeContent = {
 					searchViewModel.onSearchQueryChanged("")
-					searchViewModel.searchResult.value = SearchResultUiState.EmptyQuery
+					searchViewModel.setSearchResult(SearchResultUiState.EmptyQuery)
 					showStartScreen = true
 				},
 				onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
@@ -59,7 +59,7 @@ fun StartScreen(
 				onSelectNickname = { startAccountInfo ->
 					searchViewModel.addAccount(startAccountInfo)
 					searchViewModel.onSearchQueryChanged("")
-					searchViewModel.searchResult.value = SearchResultUiState.EmptyQuery
+					searchViewModel.setSearchResult(SearchResultUiState.EmptyQuery)
 					showStartScreen = true
 					startMainActivity(mContext, startAccountInfo)
 				}

@@ -6,14 +6,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkClanMemberInfo(
-	val status: String,
-	val meta: NetworkMetaInfo? = null,
-	val data: Map<String, NetworkAccountClanData?>? = null,
-	val error: NetworkErrorInfo? = null
-)
-
-@Serializable
 data class NetworkAccountClanData(
 	@SerialName(value = "account_id")
 	val accountId: Int,

@@ -31,7 +31,7 @@ private const val SUMMARY_ID = 0
  */
 @Singleton
 class SystemTrayNotifier @Inject constructor(
-	@ApplicationContext private val context: Context,
+	@param:ApplicationContext private val context: Context,
 ) : Notifier {
 	
 	override fun postNewsNotifications(lines: List<AccountNotifierShortData>) = with(context) {

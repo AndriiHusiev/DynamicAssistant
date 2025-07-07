@@ -6,14 +6,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkVehicleInfo(
-	val status: String,
-	val meta: NetworkMetaInfo? = null,
-	val data: Map<String, NetworkVehicleInfoItem?>? = null,
-	val error: NetworkErrorInfo? = null
-)
-
-@Serializable
 data class NetworkVehicleInfoItem(
 	@SerialName(value = "tank_id")
 	val tankId: Int,

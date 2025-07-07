@@ -37,10 +37,10 @@ class DatabaseRepository @Inject constructor(
 	suspend fun deletePlayer(player: StartAccountInfo) =
 		database.playersDao().delete(player.asEntity())
 	
-	fun updateTime(updateTime: String) =
+	suspend fun updateTime(updateTime: String) =
 		database.playersDao().updateTime(updateTime, accountId)
 	
-	fun updateClan(clan: String?, emblem: String?) =
+	suspend fun updateClan(clan: String?, emblem: String?) =
 		database.playersDao().updateClan(clan, emblem, accountId)
 	
 	fun loadPlayer() = database.playersDao().loadPlayer(accountId)

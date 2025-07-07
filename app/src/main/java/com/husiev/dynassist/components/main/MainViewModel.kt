@@ -12,7 +12,7 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
-import com.husiev.dynassist.components.main.utils.Result
+import com.husiev.dynassist.network.dataclasses.DataState
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.VehicleStatDataEntity
@@ -23,7 +23,6 @@ import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfoItem
 import com.husiev.dynassist.network.dataclasses.asEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,18 +33,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
-import kotlin.collections.component2
 import androidx.core.graphics.drawable.toDrawable
+import com.husiev.dynassist.network.dataclasses.ResultWrapper
+import com.husiev.dynassist.network.dataclasses.toFormattedString
+import kotlin.collections.emptyList
 
 private const val ACCOUNT_ID = "account_id"
 private const val NICKNAME = "nickname"
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-	private val savedStateHandle: SavedStateHandle,
+	savedStateHandle: SavedStateHandle,
 	private val networkRepository: NetworkRepository,
 	private val databaseRepository: DatabaseRepository,
-	@ApplicationContext private val context: Context,
+	@param:ApplicationContext private val context: Context,
 ): ViewModel() {
 	
 	val accountId: Int = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
@@ -53,7 +54,6 @@ class MainViewModel @Inject constructor(
 	init {
 		databaseRepository.accountId = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
 		databaseRepository.nickname = savedStateHandle.get<String>(NICKNAME) ?: ""
-		getAccountAllData()
 	}
 	
 	private val _sortTechnics = MutableStateFlow(SortTechnics.BATTLES)
@@ -73,12 +73,10 @@ class MainViewModel @Inject constructor(
 	}
 	
 	fun switchNotification(state: Boolean) {
-		viewModelScope.launch(Dispatchers.IO) {
-			databaseRepository.getStatisticData().first { list ->
-				val battles = if (list.isEmpty()) 0 else list.last().battles
-				databaseRepository.updateNotification(state.toInt(), battles)
-				true
-			}
+		viewModelScope.launch {
+			val list = databaseRepository.getStatisticData().first()
+			val battles = if (list.isEmpty()) 0 else list.last().battles
+			databaseRepository.updateNotification(state.toInt(), battles)
 		}
 	}
 	
@@ -91,30 +89,101 @@ class MainViewModel @Inject constructor(
 				initialValue = NotifyEnum.UNCHECKED
 			)
 	
+	private val _queryStatus = MutableStateFlow<DataState>(DataState.StandBy)
+	val queryStatus = _queryStatus.asStateFlow()
+	
+	fun closeSnackbar() {
+		_queryStatus.value = DataState.StandBy
+	}
+	
 	fun getAccountAllData() {
-		if (networkRepository.queryStatus.value == Result.Loading) return
-		networkRepository.setStatus(Result.Loading)
+		if (_queryStatus.value == DataState.Loading) return
+		_queryStatus.value = DataState.Loading
 		
-		viewModelScope.launch(Dispatchers.IO) {
+		viewModelScope.launch {
 			// Download data from server
-			val networkAccountPersonalData = networkRepository.getAccountAllData(accountId)?.data?.get(accountId.toString())
-			val lastBattleTimeAccount = networkAccountPersonalData?.lastBattleTime
-			val networkAccountClanData = networkRepository.getClanShortInfo(accountId)?.data?.get(accountId.toString())
-			var vehicles: List<VehicleStatDataEntity> = emptyList()
-			var networkVehicleInfo: List<NetworkVehicleInfoItem> = emptyList()
-			if (lastBattleTimeAccount != null) {
-				vehicles = retrieveVehicleShortStat(accountId, lastBattleTimeAccount, networkRepository)
-				networkVehicleInfo = retrieveVehicleInfo(context, vehicles, networkRepository, databaseRepository)
+			val personalData = when (val response = networkRepository.getAccountAllData(accountId)) {
+				is ResultWrapper.Success -> response.data
+				is ResultWrapper.Error -> {
+					_queryStatus.value = DataState.Error("Failed to get player personal data: " +
+							response.error.toFormattedString())
+					return@launch
+				}
 			}
 			
+			val clanData = when (val response = networkRepository.getClanShortInfo(accountId)) {
+				is ResultWrapper.Success -> response.data
+				is ResultWrapper.Error -> {
+					_queryStatus.value = DataState.Error("Failed to get player clan data: " +
+							response.error.toFormattedString())
+					return@launch
+				}
+			}
+			
+			val vehicles = when(val response = networkRepository.getVehicleShortStat(accountId)) {
+				is ResultWrapper.Success -> response.data?.let {
+					it.map { item -> item.asEntity(accountId, personalData.lastBattleTime) }
+				} ?: emptyList()
+				is ResultWrapper.Error -> {
+					_queryStatus.value = DataState.Error("Failed to get details on player's vehicles: " +
+							response.error.toFormattedString())
+					return@launch
+				}
+			}
+			
+			val networkVehicleInfo = when(val response = retrieveVehicleInfo(vehicles)) {
+				is ResultWrapper.Success -> response.data
+				is ResultWrapper.Error -> {
+					_queryStatus.value = DataState.Error("Failed to get list of available vehicles: " +
+							response.error.toFormattedString())
+					return@launch
+				}
+			}
+			
+			_queryStatus.value = DataState.Success("All data loaded successfully!")
+			
+			
 			// Add all downloaded data to database
-			if (networkRepository.queryStatus.value !is Result.Error) {
-				savePersonalData(networkAccountPersonalData, databaseRepository)
-				saveClanData(context, networkAccountClanData, databaseRepository)
-				if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)
-				if (vehicles.isNotEmpty()) databaseRepository.addVehiclesStatData(vehicles)
+			savePersonalData(personalData, databaseRepository)
+			saveClanData(context, clanData, databaseRepository)
+			if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)
+			if (vehicles.isNotEmpty()) databaseRepository.addVehiclesStatData(vehicles)
+		}
+	}
+	
+	private suspend fun retrieveVehicleInfo(
+		vehicles: List<VehicleStatDataEntity>,
+	): ResultWrapper<List<NetworkVehicleInfoItem>> {
+		val vehicleInfo = mutableListOf<NetworkVehicleInfoItem>()
+		
+		// First get list of missing entries
+		val listOfNewVehicles = getListOfNewVehicles(vehicles, databaseRepository)
+		if (listOfNewVehicles.isEmpty()) {
+			return ResultWrapper.Success(emptyList())
+		}
+		
+		// The list needs to be split into parts first, since the server can only process
+		// a maximum of 100 items in each request.
+		val vehicleChunks = listOfNewVehicles.chunked(100)
+		
+		// Then we can request missing vehicles info from server
+		for (chunk in vehicleChunks) {
+			val sublist = chunk.joinToString(separator = ",")
+			
+			when(val response = networkRepository.getVehicleInfo(sublist)) {
+				is ResultWrapper.Error -> return response
+				is ResultWrapper.Success -> {
+					response.data.forEach { item ->
+						item.let {
+							preloadImage(context, item.images.bigIcon.secure())
+							vehicleInfo.add(item)
+						}
+					}
+				}
 			}
 		}
+		
+		return ResultWrapper.Success(vehicleInfo)
 	}
 }
 
@@ -123,18 +192,16 @@ private suspend fun savePersonalData(
 	databaseRepository: DatabaseRepository,
 ) {
 	networkAccountPersonalData?.let {
-		databaseRepository.getStatisticData().first { list ->
-			if (list.isEmpty() || list.last().battles < it.statistics.all.battles) {
-				databaseRepository.updatePersonalData(it)
-				databaseRepository.addStatisticData(
-					it.statistics.all,
-					it.globalRating,
-					it.lastBattleTime
-				)
-			}
-			databaseRepository.updateTime(Date().time.toString())
-			true
+		val list = databaseRepository.getStatisticData().first()
+		if (list.isEmpty() || list.last().battles < it.statistics.all.battles) {
+			databaseRepository.updatePersonalData(it)
+			databaseRepository.addStatisticData(
+				it.statistics.all,
+				it.globalRating,
+				it.lastBattleTime
+			)
 		}
+		databaseRepository.updateTime(Date().time.toString())
 	}
 }
 
@@ -155,66 +222,6 @@ private suspend fun saveClanData(
 	}
 }
 
-private suspend fun retrieveVehicleShortStat(
-	accountId: Int,
-	lastBattleTime: Int,
-	networkRepository: NetworkRepository,
-): List<VehicleStatDataEntity> {
-	return when(val response = networkRepository.getVehicleShortStat(accountId)) {
-		null -> emptyList()
-		else -> {
-			response.data?.get(accountId.toString())?.let {
-				val data = it.map { item -> item.asEntity(accountId, lastBattleTime) }
-				data
-			} ?: emptyList()
-		}
-	}
-}
-
-private suspend fun retrieveVehicleInfo(
-	context: Context,
-	vehicles: List<VehicleStatDataEntity>,
-	networkRepository: NetworkRepository,
-	databaseRepository: DatabaseRepository,
-): List<NetworkVehicleInfoItem> {
-	val limit = 100
-	var index = 0
-	val newVehShort = mutableListOf<NetworkVehicleInfoItem>()
-	
-	// First get list of missing entries
-	val listOfNewVehicles = getListOfNewVehicles(vehicles, databaseRepository)
-	if (listOfNewVehicles.isEmpty()) {
-		networkRepository.getVehicleInfo()
-		return emptyList()
-	}
-	
-	// Then we can request missing vehicles info from server
-	networkRepository.queriesAmount += (listOfNewVehicles.size + limit - 1) / limit - 1
-	while (index < listOfNewVehicles.size) {
-		// The list needs to be split into parts first, since the server can only process
-		// a maximum of 100 items in each request.
-		val sublist = listOfNewVehicles
-			.subList(index, (index + limit).coerceAtMost(listOfNewVehicles.size))
-			.joinToString(separator = ",")
-		
-		when(val response = networkRepository.getVehicleInfo(sublist)) {
-			null -> return emptyList()
-			else -> {
-				response.data?.let { map ->
-					map.forEach { (_, item) ->
-						item?.let {
-							preloadImage(context, item.images.bigIcon.secure())
-							newVehShort.add(item)
-						}
-					}
-				}
-			}
-		}
-		index += limit
-	}
-	return newVehShort
-}
-
 /**
  * Get list of missing entries
  */
@@ -225,10 +232,8 @@ private suspend fun getListOfNewVehicles(
 	val idsFromNW = vehicles.map { it.tankId }
 	val listOfNewVehicles = mutableListOf<Int>()
 	
-	databaseRepository.getVehiclesIds(idsFromNW).first { idsFromDB ->
-		listOfNewVehicles.addAll( idsFromNW.filter { it !in idsFromDB } )
-		true
-	}
+	val idsFromDB = databaseRepository.getVehiclesIds(idsFromNW).first().toSet()
+	listOfNewVehicles.addAll( idsFromNW.filter { it !in idsFromDB } )
 	
 	return listOfNewVehicles
 }

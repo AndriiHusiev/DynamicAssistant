@@ -30,26 +30,23 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.MainViewModel
 import com.husiev.dynassist.components.main.navigation.DaNavHost
 import com.husiev.dynassist.components.main.utils.DaAppState
-import com.husiev.dynassist.components.main.utils.Result
+import com.husiev.dynassist.network.dataclasses.DataState
 import com.husiev.dynassist.components.main.utils.rememberDaAppState
 import com.husiev.dynassist.components.start.composables.NotifyEnum
-import com.husiev.dynassist.network.NetworkRepository
 
 @Composable
 fun MainScreen(
 	windowSizeClass: WindowSizeClass,
-	networkRepository: NetworkRepository,
 	modifier: Modifier = Modifier,
 	mainViewModel: MainViewModel = hiltViewModel(),
 	appState: DaAppState = rememberDaAppState(
 		windowSizeClass = windowSizeClass,
-		networkRepository = networkRepository,
 	),
 ) {
 	val notifyState by mainViewModel.notifyState.collectAsStateWithLifecycle()
 	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
 	val filterTechnics by mainViewModel.filterTechnics.collectAsStateWithLifecycle()
-	val queryResult by appState.queryStatus.collectAsStateWithLifecycle()
+	val queryResult by mainViewModel.queryStatus.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
 	var showSortDialog by rememberSaveable { mutableStateOf(false) }
 	if (showSortDialog) {
@@ -67,14 +64,14 @@ fun MainScreen(
 			onChangeFilter = mainViewModel::changeFilterTechnics
 		)
 	}
-	if (queryResult is Result.Success && notifyState == NotifyEnum.UPDATES_AVAIL) {
+	if (queryResult is DataState.Success<*> && notifyState == NotifyEnum.UPDATES_AVAIL) {
 		mainViewModel.switchNotification(true)
 	}
 	
 	val noConnectionMessage = stringResource(R.string.no_connection)
 	val retryLabel = stringResource(R.string.retry)
 	LaunchedEffect(queryResult) {
-		if (queryResult is Result.Error) {
+		if (queryResult is DataState.Error) {
 			val result = snackbarHostState.showSnackbar(
 				message = noConnectionMessage,
 				actionLabel = retryLabel,
@@ -83,9 +80,14 @@ fun MainScreen(
 			)
 			when(result) {
 				SnackbarResult.ActionPerformed -> mainViewModel.getAccountAllData()
-				SnackbarResult.Dismissed -> appState.closeSnackbar()
+				SnackbarResult.Dismissed -> mainViewModel.closeSnackbar()
 			}
 		}
+	}
+	
+	// Launch data loading once at startup
+	LaunchedEffect(key1 = Unit) {
+		mainViewModel.getAccountAllData()
 	}
 	
 	Scaffold(
@@ -131,7 +133,7 @@ fun MainScreen(
 						onTechnicsClick = appState::navigateToTechnicsSingle,
 					)
 					
-					if (queryResult is Result.Loading) {
+					if (queryResult is DataState.Loading) {
 						LinearProgressIndicator(modifier = modifier.fillMaxWidth())
 					}
 				}

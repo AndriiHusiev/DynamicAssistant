@@ -9,11 +9,13 @@ import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.ClanEntity
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.SearchResultUiState
+import com.husiev.dynassist.network.dataclasses.ResultWrapper
+import com.husiev.dynassist.network.dataclasses.toFormattedString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +37,7 @@ class StartViewModel @Inject constructor(
 		)
 	
 	fun addAccount(account: StartAccountInfo) {
-		viewModelScope.launch(Dispatchers.IO) {
+		viewModelScope.launch {
 			databaseRepository.addPlayer(account)
 			databaseRepository.addPlayerClanInfo(ClanEntity(account.id))
 			databaseRepository.addPersonalData(AccountPersonalData(
@@ -46,21 +48,29 @@ class StartViewModel @Inject constructor(
 	}
 	
 	fun deleteAccount(account: StartAccountInfo) {
-		viewModelScope.launch(Dispatchers.IO) {
+		viewModelScope.launch {
 			databaseRepository.deletePlayer(account)
 		}
 	}
 	
 	var searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 	
-	var searchResult = MutableStateFlow<SearchResultUiState>(SearchResultUiState.EmptyQuery)
+	private val _searchResult = MutableStateFlow<SearchResultUiState>(SearchResultUiState.EmptyQuery)
+	val searchResult = _searchResult.asStateFlow()
 	
 	fun onSearchTriggered(query: String) {
-		viewModelScope.launch(Dispatchers.IO) {
-			networkRepository.getList(query).collect {
-				searchResult.value = it
+		viewModelScope.launch {
+			_searchResult.value = when(val response = networkRepository.getList(query)) {
+				is ResultWrapper.Success -> SearchResultUiState.Success(response.data)
+				is ResultWrapper.Error -> {
+					SearchResultUiState.LoadFailed(response.error.toFormattedString())
+				}
 			}
 		}
+	}
+	
+	fun setSearchResult(resultUiState: SearchResultUiState) {
+		_searchResult.value = resultUiState
 	}
 	
 	fun onSearchQueryChanged(query: String) {
