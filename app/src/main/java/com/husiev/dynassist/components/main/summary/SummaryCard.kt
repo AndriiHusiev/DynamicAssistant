@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.ReducedAccStatData
 import com.husiev.dynassist.components.main.utils.DaElevatedCard
 
 @Composable
 fun SummaryCard(
 	header: String,
-	summaryData: List<AccountStatisticsData>,
+	summaryData: List<ReducedAccStatData>,
 	modifier: Modifier = Modifier,
 	onClick: (String) -> Unit = {},
 ) {

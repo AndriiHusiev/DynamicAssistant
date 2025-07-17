@@ -1,11 +1,6 @@
 package com.husiev.dynassist.network
 
 import com.husiev.dynassist.network.dataclasses.BaseResponse
-import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
-import com.husiev.dynassist.network.dataclasses.NetworkAccountInfo
-import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
-import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfoItem
-import com.husiev.dynassist.network.dataclasses.NetworkVehicleShortItem
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -26,7 +21,7 @@ interface NetworkApiService {
 		@Query("application_id") appId: String,
 		@Query("search") search: String,
 		@Query("type") type: String = "startswith",
-	): BaseResponse<List<NetworkAccountInfo>>
+	): BaseResponse
 	
 	/**
 	 * Returns player details.
@@ -44,7 +39,7 @@ interface NetworkApiService {
 				"-statistics.stronghold_skirmish,-statistics.regular_team," +
 				"-statistics.company,-statistics.stronghold_defense,-statistics.historical," +
 				"-statistics.team,-statistics.frags,-statistics.trees_cut"
-	): BaseResponse<Map<String, NetworkAccountPersonalData?>>
+	): BaseResponse
 	
 	/**
 	 * Returns detailed clan member information and brief clan details.
@@ -59,7 +54,7 @@ interface NetworkApiService {
 		@Query("application_id") appId: String,
 		@Query("account_id") accountId: Int,
 		@Query("fields") fields: String = ""
-	): BaseResponse<Map<String, NetworkAccountClanData?>>
+	): BaseResponse
 	
 	/**
 	 * Returns details on player's vehicles.
@@ -76,7 +71,7 @@ interface NetworkApiService {
 		@Query("account_id") accountId: Int,
 		@Query("fields") fields: String = "",
 		@Query("tank_id") tankId: String = ""
-	): BaseResponse<Map<String, List<NetworkVehicleShortItem>?>>
+	): BaseResponse
 	
 	/**
 	 * Returns list of available vehicles.
@@ -95,5 +90,5 @@ interface NetworkApiService {
 		@Query("fields") fields: String = "-radios,-suspensions,-engines,-crew,-guns," +
 				"-provisions,-is_premium_igr,-next_tanks,-modules_tree,-prices_xp," +
 				"-default_profile,-turrets,-multination",
-	): BaseResponse<Map<String, NetworkVehicleInfoItem?>>
+	): BaseResponse
 }

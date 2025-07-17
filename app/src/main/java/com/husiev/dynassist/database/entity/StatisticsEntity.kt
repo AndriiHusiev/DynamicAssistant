@@ -1,6 +1,7 @@
 package com.husiev.dynassist.database.entity
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
@@ -115,6 +116,21 @@ data class StatisticsEntity(
 		lastBattleTime
 	)
 }
+
+data class StatisticsWithVehicleNames(
+	@Embedded
+	val statistics: StatisticsEntity?, // Включаем все поля из StatisticsEntity
+	
+	// Добавляем поля для названий танков
+	@ColumnInfo(name = "max_xp_tank_name")
+	val maxXpTankName: String?,
+	
+	@ColumnInfo(name = "max_damage_tank_name")
+	val maxDamageTankName: String?,
+	
+	@ColumnInfo(name = "max_frags_tank_name")
+	val maxFragsTankName: String?
+)
 
 fun StatisticsEntity.getMaxFields(): List<Int> {
 	return listOf<Int>(this.maxXpTankId?:0, this.maxDamageTankId?:0, this.maxFragsTankId?:0)

@@ -18,8 +18,8 @@ android {
 		applicationId = "com.husiev.dynassist"
 		minSdk = 24
 		targetSdk = 36
-		versionCode = 46
-		versionName = "0.8.9"
+		versionCode = 47
+		versionName = "0.8.10"
 		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {

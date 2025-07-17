@@ -27,9 +27,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.ReducedAccStatData
 import com.husiev.dynassist.components.main.utils.DaElevatedCard
+import com.husiev.dynassist.components.main.utils.FullAccStatData
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import com.husiev.dynassist.components.main.utils.SummaryGroup
 import com.husiev.dynassist.components.main.utils.VehicleData
 import com.husiev.dynassist.components.main.utils.flagToResId
 import com.husiev.dynassist.components.main.utils.masteryToResId
@@ -220,7 +222,7 @@ fun TechnicsContentPreview() {
 				isGift = false,
 				isWheeled = false,
 				stat = listOf(
-					AccountStatisticsData(
+					FullAccStatData(
 						title = "Battles",
 						mainValue = "256",
 						auxValue = null,
@@ -230,10 +232,10 @@ fun TechnicsContentPreview() {
 						sessionImpactValue = null,
 						color = null,
 						imageVector = null,
-						values = listOf(242f, 250f, 256f),
-						comment = null
+						comment = null,
+						group = SummaryGroup.OVERALL_RESULTS
 					),
-					AccountStatisticsData(
+					FullAccStatData(
 						title = "Wins",
 						mainValue = "50.8%",
 						auxValue = "0.0078 / 83.3%",
@@ -243,8 +245,8 @@ fun TechnicsContentPreview() {
 						sessionImpactValue = "+0.0078",
 						color = Color(0xFF009688),
 						imageVector = Icons.Filled.ArrowDropUp,
-						values = listOf(118f, 125f, 130f),
-						comment = null
+						comment = null,
+						group = SummaryGroup.OVERALL_RESULTS
 					),
 				)
 			),

@@ -10,7 +10,6 @@ import com.husiev.dynassist.database.DatabaseRepository
 import com.husiev.dynassist.database.entity.GlobalRatingData
 import com.husiev.dynassist.database.entity.asExternalModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -34,7 +33,7 @@ class DetailsViewModel @Inject constructor(
 			)
 	
 	fun switchNotification(state: Boolean) {
-		viewModelScope.launch(Dispatchers.IO) {
+		viewModelScope.launch {
 			databaseRepository.getBattlesCount().first { battles ->
 				databaseRepository.updateNotification(state.toInt(), battles)
 				true

@@ -2,12 +2,13 @@ package com.husiev.dynassist.network.dataclasses
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
-data class BaseResponse<T>(
+data class BaseResponse(
 	val status: String = "error",
 	val meta: NetworkMetaInfo? = null,
-	val data: T? = null,
+	val data: JsonElement? = null,
 	val error: NetworkErrorInfo? = null
 )
 

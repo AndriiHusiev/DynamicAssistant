@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.VehicleData
-import com.husiev.dynassist.components.main.utils.asStatisticModel
+//import com.husiev.dynassist.components.main.utils.asStatisticModel
 import com.husiev.dynassist.components.main.utils.getMainAvg
 
 @Entity(tableName = "vehicle_short_data")
@@ -56,6 +56,6 @@ fun VehicleShortDataEntity.asExternalModel(statEntity: List<VehicleStatDataEntit
 		isPremium = this.isPremium,
 		isGift = this.isGift,
 		isWheeled = this.isWheeled,
-		stat = statEntity.asStatisticModel()
+		stat = emptyList()//statEntity.asStatisticModel()
 	)
 }

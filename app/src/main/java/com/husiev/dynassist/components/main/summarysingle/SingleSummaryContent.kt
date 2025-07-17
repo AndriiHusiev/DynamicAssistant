@@ -35,18 +35,20 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summary.SummaryViewModel
-import com.husiev.dynassist.components.main.utils.AccountStatisticsData
+import com.husiev.dynassist.components.main.utils.ReducedAccStatData
 import com.husiev.dynassist.components.main.utils.DaElevatedCard
+import com.husiev.dynassist.components.main.utils.FullAccStatData
 import com.husiev.dynassist.components.main.utils.NO_DATA
+import com.husiev.dynassist.components.main.utils.SummaryGroup
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleSummaryContent(
 	modifier: Modifier = Modifier,
 	singleTitle: String? = null,
-	viewModel: SummaryViewModel = hiltViewModel(),
+	viewModel: SingleSummaryViewModel = hiltViewModel(),
 ) {
-	val statisticData by viewModel.getSingleParam(singleTitle).collectAsStateWithLifecycle()
+	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
 	
 	LazyColumn(
@@ -56,7 +58,7 @@ fun SingleSummaryContent(
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		statisticData?.let { item ->
-			item { SmoothLineGraph(item.item.values, item.dates) }
+			item { SmoothLineGraph(item.values, item.dates) }
 			
 			item {
 				SingleSummaryCard(item = item.item)
@@ -67,7 +69,7 @@ fun SingleSummaryContent(
 
 @Composable
 fun SingleSummaryCard(
-	item: AccountStatisticsData,
+	item: FullAccStatData,
 	modifier: Modifier = Modifier,
 ) {
 	DaElevatedCard(modifier = modifier) {
@@ -169,7 +171,7 @@ fun SingleSummaryCardItemPreview() {
 		) {
 			Column {
 				SingleSummaryCard(
-					item = AccountStatisticsData(
+					item = FullAccStatData(
 						title = "Victories",
 						mainValue = "56.3%",
 						absValue = "246",
@@ -179,7 +181,7 @@ fun SingleSummaryCardItemPreview() {
 						sessionImpactValue = "+0.024%",
 						color = Color.Green,
 						imageVector = Icons.Filled.ArrowDropUp,
-						values = listOf(233f, 241f, 246f)
+						group = SummaryGroup.OVERALL_RESULTS
 					)
 				)
 			}

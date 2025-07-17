@@ -36,6 +36,7 @@ import javax.inject.Inject
 import androidx.core.graphics.drawable.toDrawable
 import com.husiev.dynassist.network.dataclasses.ResultWrapper
 import com.husiev.dynassist.network.dataclasses.toFormattedString
+import kotlinx.coroutines.Dispatchers
 import kotlin.collections.emptyList
 
 private const val ACCOUNT_ID = "account_id"
@@ -100,7 +101,7 @@ class MainViewModel @Inject constructor(
 		if (_queryStatus.value == DataState.Loading) return
 		_queryStatus.value = DataState.Loading
 		
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			// Download data from server
 			val personalData = when (val response = networkRepository.getAccountAllData(accountId)) {
 				is ResultWrapper.Success -> response.data
@@ -121,9 +122,9 @@ class MainViewModel @Inject constructor(
 			}
 			
 			val vehicles = when(val response = networkRepository.getVehicleShortStat(accountId)) {
-				is ResultWrapper.Success -> response.data?.let {
+				is ResultWrapper.Success -> response.data.let {
 					it.map { item -> item.asEntity(accountId, personalData.lastBattleTime) }
-				} ?: emptyList()
+				}
 				is ResultWrapper.Error -> {
 					_queryStatus.value = DataState.Error("Failed to get details on player's vehicles: " +
 							response.error.toFormattedString())

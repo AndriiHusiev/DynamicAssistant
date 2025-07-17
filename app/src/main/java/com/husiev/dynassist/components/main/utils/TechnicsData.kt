@@ -21,7 +21,7 @@ data class VehicleData(
 	val isPremium: Boolean? = null,
 	val isGift: Boolean? = null,
 	val isWheeled: Boolean? = null,
-	val stat: List<AccountStatisticsData>,
+	val stat: List<FullAccStatData>,
 ) : Comparable<VehicleData> {
 	override fun compareTo(other: VehicleData): Int {
 		return compareValuesBy(this, other, { it.battles }, { it.type }, { it.tier }, { it.nation }, { it.winRate }, { it.isPremium })

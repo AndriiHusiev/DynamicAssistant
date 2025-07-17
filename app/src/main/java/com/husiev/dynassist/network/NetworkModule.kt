@@ -23,11 +23,18 @@ object NetworkModule {
 	
 	private const val BASE_URL = "https://api.worldoftanks.eu/wot/"
 	
-	private val json = Json { ignoreUnknownKeys = true }
+	@Provides
+	@Singleton
+	fun provideJson(): Json {
+		return Json {
+			ignoreUnknownKeys = true
+			isLenient = true
+		}
+	}
 	
 	@Provides
 	@Singleton
-	fun provideNetworkService(): NetworkApiService {
+	fun provideNetworkService(json: Json): NetworkApiService {
 		val retrofit: Retrofit = Retrofit.Builder()
 			.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
 			.baseUrl(BASE_URL)

@@ -29,6 +29,35 @@
 
     <!-- tab No. 1 - Summary -->
     <string name="achieved_at">achieved at</string>
+    <string name="battles">Battles</string>
+    <string name="wins">Victories</string>
+    <string name="losses">Defeats</string>
+    <string name="draws">Draws</string>
+    <string name="frags">Frags</string>
+    <string name="xp">Experience</string>
+    <string name="survived_battles">Battles survived</string>
+
+    <string name="spotted">Enemy vehicles spotted</string>
+    <string name="capture_points">Base capture points</string>
+    <string name="dropped_capture_points">Base defense points</string>
+    <string name="damage_dealt">Damage Dealt</string>
+    <string name="damage_received">Damage Received</string>
+
+    <string name="max_xp">Maximum experience</string>
+    <string name="max_xp_tank_id">Max. exp. achieved at</string>
+    <string name="max_damage">Maximum damage</string>
+    <string name="max_damage_tank_id">Max. dmg. achieved at</string>
+    <string name="max_frags">Maximum frags</string>
+    <string name="max_frags_tank_id">Max. frags achieved at</string>
+
+    <string name="avg_damage_blocked">Blocked damage</string>
+    <string name="avg_damage_assisted">Assisted damage</string>
+    <string name="avg_damage_assisted_track">Assisted track damage</string>
+    <string name="avg_damage_assisted_radio">Assisted track radio</string>
+
+<!--    <string name="global_rating">Global Rating</string>-->
+<!--    <string name="last_battle_time">Last Battle Time</string>-->
+
     <string-array name="summary_headers_array">
         <item>Overall results</item>
         <item>Battle Performance</item>
@@ -64,8 +93,8 @@
         <item>avgDamageAssistedTrack:Assisted track damage</item>
         <item>avgDamageAssistedRadio:Assisted track radio</item>
 
-        <item>globalRating:Global Rating</item>
-        <item>lastBattleTime:Last Battle Time</item>
+<!--        <item>globalRating:Global Rating</item>-->
+<!--        <item>lastBattleTime:Last Battle Time</item>-->
     </string-array>
 
     <!-- tab No. 1.1 - Single Summary -->
@@ -77,7 +106,7 @@
     <string name="session_impact">Session impact</string>
 
     <!-- tab No. 2 - Technics -->
-    <string name="battles">battles</string>
+<!--    <string name="battles">battles</string>-->
     <string name="vehicle_sort_title">Sort vehicles</string>
     <string name="vehicle_sort_battles">Battles</string>
     <string name="vehicle_sort_type">Type</string>

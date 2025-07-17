@@ -1,9 +1,5 @@
 package com.husiev.dynassist.components.main.utils
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.husiev.dynassist.database.entity.PersonalEntity
@@ -12,7 +8,6 @@ import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.math.absoluteValue
 import kotlin.reflect.full.memberProperties
 
 data class AccountPersonalData(
@@ -56,7 +51,18 @@ const val DETAILS_PATTERN = "EEE, dd MMM yyy, HH:mm:ss"
 const val SHORT_PATTERN = "dd MMM yyy"
 const val SHORTEST_PATTERN = "dd.MM.yyyy"
 
-data class AccountStatisticsData(
+data class ReducedAccStatData(
+	val title: String,
+	val mainValue: String,
+	val auxValue: String?,
+	val sessionAbsValue: String?,
+	val color: Color?,
+	val imageVector: ImageVector?,
+	val comment: String? = null,
+	val group: SummaryGroup,
+)
+
+data class FullAccStatData(
 	val title: String,
 	val mainValue: String,
 	val auxValue: String?,
@@ -66,19 +72,20 @@ data class AccountStatisticsData(
 	val sessionImpactValue: String?,
 	val color: Color?,
 	val imageVector: ImageVector?,
-	val values: List<Float>?,
 	val comment: String? = null,
+	val group: SummaryGroup,
 )
 
 data class SingleParamData(
-	val item: AccountStatisticsData,
+	val item: FullAccStatData,
+	val values: List<Float>,
 	val dates: List<String>,
 )
 
 /**
  * Transformation for vehicle statistic.
  */
-fun List<VehicleStatDataEntity>.asStatisticModel(): List<AccountStatisticsData> {
+/*fun List<VehicleStatDataEntity>.asStatisticModel(): List<ReducedAccStatData> {
 	val items = arrayOf<Int?>(null, null, null, null, null, null)
 	if (this.isNotEmpty()) {
 		items[0] = this[this.size-1].wins
@@ -118,12 +125,12 @@ fun List<VehicleStatDataEntity>.asStatisticModel(): List<AccountStatisticsData> 
 			values = this.map { it.lastBattleTime?.toFloat() ?: 0f },
 		),
 	)
-}
+}*/
 
 /**
  * Transformation for account statistic.
  */
-fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<AccountStatisticsData>> {
+/*fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, List<ReducedAccStatData>> {
 	val allMembers = mutableListOf<Map<String, Any?>>()
 	val allValues = mutableMapOf<String, List<Float>>()
 	
@@ -146,7 +153,7 @@ fun List<StatisticsEntity>.asExternalModel(mrd: MainRoutesData): Map<String, Lis
 		allValues[prop.name] = values
 	}
 	
-	val map = mutableMapOf<String, List<AccountStatisticsData>>()
+	val map = mutableMapOf<String, List<ReducedAccStatData>>()
 	
 	map[mrd.headers[0]] = listOf(
 		reducedStatItem("battles", mrd.items, allMembers, allValues["battles"]),
@@ -193,10 +200,10 @@ private fun reducedStatItem(
 	allMembers: List<Map<String, Any?>>,
 	values: List<Float>?,
 	comment: String? = null,
-): AccountStatisticsData {
+): ReducedAccStatData {
 	val mainValue = getAbsValue(allMembers[0][tag])
 	
-	return AccountStatisticsData(
+	return ReducedAccStatData(
 		title = items[tag] ?: "",
 		mainValue = mainValue,
 		auxValue = null,
@@ -208,6 +215,7 @@ private fun reducedStatItem(
 		imageVector = null,
 		values = values,
 		comment = comment?.let { allMembers[0][it].toString() },
+		group = SummaryGroup.OVERALL_RESULTS,
 	)
 }
 
@@ -218,7 +226,7 @@ private fun fullStatItem(
 	values: List<Float>?,
 	multiplier: Float = 100f,
 	revertHappiness: Boolean = false,
-): AccountStatisticsData {
+): ReducedAccStatData {
 	val suffix = if (multiplier == 100f) "%" else ""
 	
 	val mainValue = getMainAvg(
@@ -247,7 +255,7 @@ private fun fullStatItem(
 		allMembers[1]["battles"],
 	).toScreen(multiplier, suffix)
 	
-	return AccountStatisticsData(
+	return ReducedAccStatData(
 		title = items[tag] ?: "",
 		mainValue = mainValue,
 		auxValue = auxProgressValue.toScreen(multiplier, suffix) + " / " + sessionAvgValue,
@@ -257,10 +265,12 @@ private fun fullStatItem(
 		sessionImpactValue = sessionImpactValue,
 		color = auxProgressValue.happyColor(revertHappiness),
 		imageVector = auxProgressValue.happyIcon(),
-		values = values
+		values = values,
+		group = SummaryGroup.OVERALL_RESULTS,
 	)
-}
+}*/
 
+/*
 fun getMainAvg(actualParam: Any?, actualBattles: Any?): Float? {
 	val param = actualParam.toString().toFloatOrNull() ?: 1f
 	return when(val battles = actualBattles.toString().toFloatOrNull()) {
@@ -307,7 +317,7 @@ fun getAbsSessionDiff(actualParam: Any?, prevParam: Any?): String {
 			showPlus = true
 		)
 	} else NO_DATA
-}
+}*/
 
 fun calcFloatList(param: List<Float>?, battles: List<Float>?, multiplier: Float = 100f): List<Float> {
 	val list = mutableListOf<Float>()
@@ -318,7 +328,7 @@ fun calcFloatList(param: List<Float>?, battles: List<Float>?, multiplier: Float 
 	}
 	return list
 }
-
+/*
 fun Float?.toScreen(
 	multiplier: Float,
 	suffix: String = "",
@@ -375,4 +385,4 @@ fun Float?.happyColor(revert: Boolean): Color? {
 		Color(0xFFE91E63)
 }
 
-const val NO_DATA = "--"
+const val NO_DATA = "--"*/

@@ -6,14 +6,6 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
-data class NetworkStartSearchInfo (
-	val status: String,
-	val meta: NetworkMetaInfo? = null,
-	val data: List<NetworkAccountInfo>? = null,
-	val error: NetworkErrorInfo? = null
-)
-
-@Serializable
 data class NetworkAccountInfo (
 	@SerialName(value = "account_id")
 	val accountId: Int,

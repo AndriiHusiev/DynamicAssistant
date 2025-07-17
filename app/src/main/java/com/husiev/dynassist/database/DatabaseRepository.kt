@@ -1,6 +1,7 @@
 package com.husiev.dynassist.database
 
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
+import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
 import com.husiev.dynassist.components.main.utils.asEntity
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.components.start.utils.asEntity
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DatabaseRepository @Inject constructor(
-	private val database: AppDatabase
+	private val database: AppDatabase,
 ) {
 	var accountId: Int = 0
 	var nickname: String = ""
@@ -69,6 +70,9 @@ class DatabaseRepository @Inject constructor(
 	
 	fun getStatisticData(id: Int? = null) =
 		database.statisticsDao().loadStatisticsData(id ?: accountId)
+	
+	fun getNewStatisticData(id: Int? = null) =
+		database.statisticsDao().getStatisticsWithVehicleNames(id ?: accountId)
 	
 	fun getBattlesCount() = database.statisticsDao().loadLastBattlesCount(accountId)
 	
