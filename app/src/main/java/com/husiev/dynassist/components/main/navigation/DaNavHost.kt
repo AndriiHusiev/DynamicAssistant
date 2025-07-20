@@ -19,7 +19,7 @@ fun DaNavHost(
 	navController: NavHostController,
 	sort: SortTechnics,
 	filter: FilterTechnics,
-	onSummaryClick: (String) -> Unit,
+	onSummaryClick: (Int) -> Unit,
 	onTechnicsClick: (Int) -> Unit,
 	modifier: Modifier = Modifier,
 	startDestination: String = summaryNavigationRoute,

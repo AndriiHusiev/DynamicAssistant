@@ -7,15 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.ReducedAccStatData
+import com.husiev.dynassist.components.main.utils.FullAccStatData
 import com.husiev.dynassist.components.main.utils.DaElevatedCard
 
 @Composable
 fun SummaryCard(
 	header: String,
-	summaryData: List<ReducedAccStatData>,
+	summaryData: List<FullAccStatData>,
 	modifier: Modifier = Modifier,
-	onClick: (String) -> Unit = {},
+	onClick: (Int) -> Unit = {},
 ) {
 	DaElevatedCard(modifier = modifier) {
 		Text(
@@ -34,7 +34,7 @@ fun SummaryCard(
 					absSessionValue = item.sessionAbsValue,
 					color = item.color,
 					imageVector = item.imageVector,
-					onClick = onClick
+					onClick = { onClick(item.statId) }
 				)
 			} else {
 				MainCardVehicle(

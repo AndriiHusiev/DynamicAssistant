@@ -27,9 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.ReducedAccStatData
-import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.FullAccStatData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.SummaryGroup
 import com.husiev.dynassist.components.main.utils.VehicleData
@@ -223,6 +222,7 @@ fun TechnicsContentPreview() {
 				isWheeled = false,
 				stat = listOf(
 					FullAccStatData(
+						statId = 0,
 						title = "Battles",
 						mainValue = "256",
 						auxValue = null,
@@ -236,6 +236,7 @@ fun TechnicsContentPreview() {
 						group = SummaryGroup.OVERALL_RESULTS
 					),
 					FullAccStatData(
+						statId = 0,
 						title = "Wins",
 						mainValue = "50.8%",
 						auxValue = "0.0078 / 83.3%",

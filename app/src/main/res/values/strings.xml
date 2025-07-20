@@ -55,17 +55,6 @@
     <string name="avg_damage_assisted_track">Assisted track damage</string>
     <string name="avg_damage_assisted_radio">Assisted track radio</string>
 
-<!--    <string name="global_rating">Global Rating</string>-->
-<!--    <string name="last_battle_time">Last Battle Time</string>-->
-
-    <string-array name="summary_headers_array">
-        <item>Overall results</item>
-        <item>Battle Performance</item>
-        <item>Record Score</item>
-        <item>Average Score per Battle</item>
-        <item>Other</item>
-    </string-array>
-
     <string-array name="summary_items_array">
         <item>battles:Battles</item>
         <item>wins:Victories</item>

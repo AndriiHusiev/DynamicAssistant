@@ -18,8 +18,10 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.MainViewModel
 import com.husiev.dynassist.components.main.sessions.sessionsNavigationRoute
 import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
+import com.husiev.dynassist.components.main.summarysingle.SUMMARY_SINGLE_ARG
 import com.husiev.dynassist.components.main.technics.TechnicsViewModel
 import com.husiev.dynassist.components.main.technics.technicsNavigationRoute
+import com.husiev.dynassist.components.main.technicssingle.TECHNICS_SINGLE_ARG
 import com.husiev.dynassist.components.main.utils.DaAppState
 import com.husiev.dynassist.components.start.composables.DaTopAppBar
 
@@ -75,10 +77,10 @@ fun MainTopBar(
 				val argKeys = it.arguments.keys
 				if (argKeys.isNotEmpty()) {
 					when(val arg = argKeys.first()) {
-						"single_title" -> appState.getStringDestArg(arg)?.let { param ->
-							title = param
+						SUMMARY_SINGLE_ARG -> appState.getIntDestArg(arg)?.let { param ->
+							title = mainViewModel.getTitleById(param) ?: technicsViewModel.nickname
 						}
-						"single_id" -> appState.getIntDestArg(arg)?.let { id ->
+						TECHNICS_SINGLE_ARG -> appState.getIntDestArg(arg)?.let { id ->
 							title = vehicleData.singleOrNull { vehicle ->
 								vehicle.tankId == id
 							}?.name ?: ""

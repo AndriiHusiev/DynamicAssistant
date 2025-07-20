@@ -44,9 +44,8 @@ import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summarysingle.SingleSummaryCardItem
 import com.husiev.dynassist.components.main.technics.TechnicsViewModel
-import com.husiev.dynassist.components.main.utils.ReducedAccStatData
-import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.FullAccStatData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.SummaryGroup
 import com.husiev.dynassist.components.main.utils.VehicleData
@@ -309,6 +308,7 @@ fun SingleTechnicsCardItemPreview() {
 						isWheeled = false,
 						stat = listOf(
 							FullAccStatData(
+								statId = 0,
 								title = "Battles",
 								mainValue = "256",
 								auxValue = null,
@@ -322,6 +322,7 @@ fun SingleTechnicsCardItemPreview() {
 								group = SummaryGroup.OVERALL_RESULTS
 							),
 							FullAccStatData(
+								statId = 0,
 								title = "Wins",
 								mainValue = "50.8%",
 								auxValue = "0.0078 / 83.3%",

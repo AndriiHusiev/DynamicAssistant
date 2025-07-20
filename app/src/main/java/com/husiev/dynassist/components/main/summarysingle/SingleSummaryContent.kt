@@ -34,10 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.summary.MainDivider
-import com.husiev.dynassist.components.main.summary.SummaryViewModel
-import com.husiev.dynassist.components.main.utils.ReducedAccStatData
-import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.FullAccStatData
+import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
 import com.husiev.dynassist.components.main.utils.SummaryGroup
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
@@ -45,7 +43,6 @@ import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 @Composable
 fun SingleSummaryContent(
 	modifier: Modifier = Modifier,
-	singleTitle: String? = null,
 	viewModel: SingleSummaryViewModel = hiltViewModel(),
 ) {
 	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
@@ -172,6 +169,7 @@ fun SingleSummaryCardItemPreview() {
 			Column {
 				SingleSummaryCard(
 					item = FullAccStatData(
+						statId = 0,
 						title = "Victories",
 						mainValue = "56.3%",
 						absValue = "246",

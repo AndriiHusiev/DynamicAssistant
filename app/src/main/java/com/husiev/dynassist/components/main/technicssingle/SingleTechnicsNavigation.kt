@@ -18,7 +18,7 @@ fun NavGraphBuilder.technicsSingleScreen() {
 	composable(
 		route = "$technicsSingleRoute/{$TECHNICS_SINGLE_ARG}",
 		arguments = listOf(
-			navArgument(TECHNICS_SINGLE_ARG) { type = NavType.Companion.IntType },
+			navArgument(TECHNICS_SINGLE_ARG) { type = NavType.IntType },
 		),
 	) { navBackStackEntry ->
 		val singleArg = navBackStackEntry.arguments?.getInt(TECHNICS_SINGLE_ARG)

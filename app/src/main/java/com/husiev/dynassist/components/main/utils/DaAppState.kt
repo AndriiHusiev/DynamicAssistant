@@ -88,7 +88,7 @@ class DaAppState(
 		navController.navigateToDetails(navOptions)
 	}
 	
-	fun navigateToSummarySingle(singleArg: String) {
+	fun navigateToSummarySingle(singleArg: Int) {
 		val navOptions = navOptions { launchSingleTop = true }
 		navController.navigateToSummarySingle(singleArg, navOptions)
 	}

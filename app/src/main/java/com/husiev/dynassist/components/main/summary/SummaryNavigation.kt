@@ -12,7 +12,7 @@ fun NavController.navigateToSummary(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.summaryScreen(
-	onClick: (String) -> Unit
+	onClick: (Int) -> Unit
 ) {
 	composable(
 		route = summaryNavigationRoute,

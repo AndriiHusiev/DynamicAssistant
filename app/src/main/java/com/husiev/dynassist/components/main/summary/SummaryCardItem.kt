@@ -35,12 +35,12 @@ fun SummaryCardItem(
 	color: Color?,
 	imageVector: ImageVector?,
 	modifier: Modifier = Modifier,
-	onClick: (String) -> Unit = {},
+	onClick: () -> Unit = {},
 ) {
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
-			.clickable { onClick(title) },
+			.clickable { onClick() },
 		verticalAlignment = Alignment.Companion.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {

@@ -22,22 +22,22 @@ interface StatisticsDao: BaseDao<StatisticsEntity> {
 	@Transaction
 	@Query("""
 		SELECT
-            s.*,
+            stat.*,
             v_xp.name AS max_xp_tank_name,
             v_dmg.name AS max_damage_tank_name,
             v_frags.name AS max_frags_tank_name
         FROM
-            statistics AS s
+            statistics AS stat
         LEFT JOIN
-            vehicle_short_data AS v_xp ON s.max_xp_tank_id = v_xp.tank_id
+            vehicle_short_data AS v_xp ON stat.max_xp_tank_id = v_xp.tank_id
         LEFT JOIN
-            vehicle_short_data AS v_dmg ON s.max_damage_tank_id = v_dmg.tank_id
+            vehicle_short_data AS v_dmg ON stat.max_damage_tank_id = v_dmg.tank_id
         LEFT JOIN
-            vehicle_short_data AS v_frags ON s.max_frags_tank_id = v_frags.tank_id
+            vehicle_short_data AS v_frags ON stat.max_frags_tank_id = v_frags.tank_id
         WHERE
-            s.account_id = :accountId
+            stat.account_id = :accountId
 		ORDER BY
-            s.id DESC
+            stat.id DESC
         LIMIT 2
     """)
 	fun getStatisticsWithVehicleNames(accountId: Int): Flow<List<StatisticsWithVehicleNames>>

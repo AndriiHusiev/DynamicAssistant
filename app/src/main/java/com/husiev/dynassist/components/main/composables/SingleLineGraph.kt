@@ -63,8 +63,7 @@ import androidx.compose.ui.unit.toSize
 import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.utils.DaElevatedCard
 import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.Range
-import com.husiev.dynassist.components.main.utils.getPureExponent
+import com.husiev.dynassist.components.main.utils.getPureDecimalExponent
 import com.husiev.dynassist.components.main.utils.toScreen
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 import java.util.Locale
@@ -149,9 +148,9 @@ fun SmoothLineGraph(
                 var highlightedOffset: Offset? = null
                 val numDots = graphData.size
                 val list = if (allRangeMode && numDots > MAX_DOTS) graphData
-                else graphData.takeLast(minOf(MAX_DOTS, numDots))
+                    else graphData.takeLast(minOf(MAX_DOTS, numDots))
                 val listDate = if (allRangeMode && numDots > MAX_DOTS) dateData
-                else dateData?.takeLast(minOf(MAX_DOTS, numDots))
+                    else dateData?.takeLast(minOf(MAX_DOTS, numDots))
                 val dotsAmount = list.size
                 val graphRange = getRange(list)
                 
@@ -378,34 +377,32 @@ fun getExactPathPos(path: Path, x: Float, width: Float): Offset {
     return pm.getPosition((posX / width) * pm.length)
 }
 
-fun getRange(data: List<Float>?): Range {
-    data?.let {
-        val max = data.maxBy { it }
-        val min = data.minBy { it }
-        val range = max - min
-        val exp = getPureExponent(range)
-        val mul = 10f.pow(if (exp==1) 0 else exp)
-        val filledParts = 3f
-        val allParts = 5f
-        
-        val rawStep = (range / mul) / filledParts
-        val allRange = ((rawStep) * 10f).roundToInt() * allParts / 10f * mul
-        val step = allRange / allParts
-        var rMax = max + step
-        var rMin = rMax - allRange
-        val expo = if(exp < 2) exp.absoluteValue + 1 else 0
-        rMin = (rMin / mul * 10f).roundToInt() / 10f * mul
-        rMax = (rMax / mul * 10f).roundToInt() / 10f * mul
-        
-        val lines = mutableListOf<String>()
-        val horizontalLines = allParts.toInt()
-        repeat(horizontalLines) { i ->
-            val item = rMax - step * (i + 1)
-            lines.add(String.format(Locale.getDefault(), "%,.${expo}f", item))
-        }
-        
-        return Range(rMin, rMax, lines, horizontalLines)
-    } ?: return Range(1f, 5f, listOf("1", "2", "3", "4", "5"))
+fun getRange(data: List<Float>): Range {
+    val max = data.maxBy { it }
+    val min = data.minBy { it }
+    val range = max - min
+    val exp = getPureDecimalExponent(range)
+    val mul = 10f.pow(if (exp==1) 0 else exp)
+    val filledParts = 3f
+    val allParts = 5f
+    
+    val rawStep = (range / mul) / filledParts
+    val allRange = ((rawStep) * 10f).roundToInt() * allParts / 10f * mul
+    val step = allRange / allParts
+    var rMax = max + step
+    var rMin = rMax - allRange
+    val expo = if(exp < 2) exp.absoluteValue + 1 else 0
+    rMin = (rMin / mul * 10f).roundToInt() / 10f * mul
+    rMax = (rMax / mul * 10f).roundToInt() / 10f * mul
+    
+    val lines = mutableListOf<String>()
+    val horizontalLines = allParts.toInt()
+    repeat(horizontalLines) { i ->
+        val item = rMax - step * (i + 1)
+        lines.add(String.format(Locale.getDefault(), "%,.${expo}f", item))
+    }
+    
+    return Range(rMin, rMax, lines, horizontalLines)
 }
 
 fun DrawScope.drawHighlight(
@@ -509,3 +506,11 @@ fun SmoothLineGraphPreview() {
         }
     }
 }
+
+data class Range(
+    val min: Float,
+    val max: Float,
+    val dots: List<String>,
+    val numLines: Int = 5,
+    val range: Float = max - min,
+)

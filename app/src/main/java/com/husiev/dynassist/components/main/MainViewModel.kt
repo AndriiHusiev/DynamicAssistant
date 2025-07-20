@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 import androidx.core.graphics.drawable.toDrawable
+import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
 import com.husiev.dynassist.network.dataclasses.ResultWrapper
 import com.husiev.dynassist.network.dataclasses.toFormattedString
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +48,7 @@ class MainViewModel @Inject constructor(
 	savedStateHandle: SavedStateHandle,
 	private val networkRepository: NetworkRepository,
 	private val databaseRepository: DatabaseRepository,
+	private val uiMapper: StatisticsUIMapper,
 	@param:ApplicationContext private val context: Context,
 ): ViewModel() {
 	
@@ -72,6 +74,8 @@ class MainViewModel @Inject constructor(
 	fun changeFilterTechnics(filter: FilterTechnics) {
 		_filterTechnics.value = filter
 	}
+	
+	fun getTitleById(id: Int) = uiMapper.getTitleById(id)
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch {

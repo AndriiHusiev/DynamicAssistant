@@ -17,12 +17,11 @@ import com.husiev.dynassist.R
 @Composable
 fun SummaryContent(
 	modifier: Modifier = Modifier,
-	onClick: (String) -> Unit = {},
+	onClick: (Int) -> Unit = {},
 	viewModel: SummaryViewModel = hiltViewModel(),
 ) {
 	val statisticData by viewModel.statisticData.collectAsStateWithLifecycle()
 	val state = rememberLazyListState()
-//	val statisticData = mapOf("Overall results" to statistic1Data, "Battle Performance" to statistic1Data)
 	
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
@@ -31,7 +30,6 @@ fun SummaryContent(
 		contentPadding = PaddingValues(dimensionResource(R.dimen.padding_big)),
 	) {
 		statisticData.forEach { (group, item) ->
-//			if (item.key == "Other") return@forEach
 			item {
 				SummaryCard(
 					header = stringResource(id = group.titleResId),
