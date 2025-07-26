@@ -2,14 +2,7 @@ package com.husiev.dynassist.components.main.technics
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronRight
@@ -27,22 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.utils.FullAccStatData
-import com.husiev.dynassist.components.main.utils.DaElevatedCard
-import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.SummaryGroup
-import com.husiev.dynassist.components.main.utils.VehicleData
-import com.husiev.dynassist.components.main.utils.flagToResId
-import com.husiev.dynassist.components.main.utils.masteryToResId
-import com.husiev.dynassist.components.main.utils.roleToResId
-import com.husiev.dynassist.components.main.utils.symbolToResId
-import com.husiev.dynassist.components.main.utils.tierToResId
+import com.husiev.dynassist.components.main.utils.*
 import com.husiev.dynassist.database.entity.asStringDate
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun TechnicsCard(
-	vehicleData: VehicleData,
+	vehicleData: ReducedVehicleData,
 	modifier: Modifier = Modifier,
 	onClick: (Int) -> Unit = {}
 ) {
@@ -110,27 +94,24 @@ fun TechnicsCard(
 						modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_extra_small)),
 						horizontalAlignment = Alignment.End
 					) {
-						val battles = vehicleData.stat[0]
-						val wins = vehicleData.stat[1]
-						
 						Row(verticalAlignment = Alignment.CenterVertically) {
-							if (wins.imageVector != null && wins.color != null) {
+							if (vehicleData.stat.imageVector != null && vehicleData.stat.color != null) {
 								Box(modifier = Modifier.requiredSize(16.dp)) {
 									Icon(
-										imageVector = wins.imageVector,
+										imageVector = vehicleData.stat.imageVector,
 										contentDescription = null,
 										modifier = Modifier.requiredSize(24.dp),
-										tint = wins.color
+										tint = vehicleData.stat.color
 									)
 								}
 							}
 							
 							var winRateSlash = " / "
-							if (wins.sessionImpactValue == null || wins.sessionImpactValue == NO_DATA)
+							if (vehicleData.stat.sessionImpactValue == NO_DATA)
 								winRateSlash = ""
 							else
 								Text(
-									text = wins.sessionImpactValue,
+									text = vehicleData.stat.sessionImpactValue!!,
 									modifier = Modifier.padding(
 										start = dimensionResource(
 											R.dimen.padding_extra_small
@@ -140,17 +121,13 @@ fun TechnicsCard(
 								)
 							
 							Text(
-								text = winRateSlash + wins.mainValue,
+								text = winRateSlash + vehicleData.stat.mainValue,
 								style = MaterialTheme.typography.bodyLarge
 							)
 						}
 						
-						val sssBattles = battles.sessionAbsValue?.toIntOrNull()
-						val sessionBattles = if (sssBattles != null && sssBattles > 0)
-							"+$sssBattles / "
-						else ""
 						Text(
-							text = "$sessionBattles${vehicleData.battles} " + stringResource(R.string.battles),
+							text = "${vehicleData.stat.auxValue} " + stringResource(R.string.battles),
 							style = MaterialTheme.typography.bodySmall
 						)
 					}
@@ -201,55 +178,41 @@ fun TechnicsCard(
 fun TechnicsContentPreview() {
 	DynamicAssistantTheme {
 		TechnicsCard(
-			vehicleData = VehicleData(
+			vehicleData = ReducedVehicleData(
 				tankId = 1,
 				markOfMastery = 4,
 				battles = 256,
-				wins = 130,
 				winRate = 50.78f,
 				lastBattleTime = 1692967640.asStringDate("short"),
 				name = "T-34",
 				type = "mediumTank",
-				description = "desc",
 				nation = "ussr",
-				urlSmallIcon = "",
 				urlBigIcon = "",
 				tier = 5,
-				priceGold = 0,
-				priceCredit = 356700,
 				isPremium = false,
 				isGift = false,
 				isWheeled = false,
-				stat = listOf(
-					FullAccStatData(
-						statId = 0,
-						title = "Battles",
-						mainValue = "256",
-						auxValue = null,
-						absValue = "256",
-						sessionAbsValue = "6",
-						sessionAvgValue = null,
-						sessionImpactValue = null,
-						color = null,
-						imageVector = null,
-						comment = null,
-						group = SummaryGroup.OVERALL_RESULTS
-					),
+				stat =
+//					FullAccStatData(
+//						statId = 0,
+//						title = "Battles",
+//						mainValue = "50.8%",
+//						auxValue = "130",
+//						sessionImpactValue = null,
+//						color = null,
+//						imageVector = null,
+//						group = SummaryGroup.OVERALL_RESULTS
+//					),
 					FullAccStatData(
 						statId = 0,
 						title = "Wins",
 						mainValue = "50.8%",
-						auxValue = "0.0078 / 83.3%",
-						absValue = "130",
-						sessionAbsValue = "5",
-						sessionAvgValue = "83.3%",
+						auxValue = "+5 / 130",
 						sessionImpactValue = "+0.0078",
 						color = Color(0xFF009688),
 						imageVector = Icons.Filled.ArrowDropUp,
-						comment = null,
 						group = SummaryGroup.OVERALL_RESULTS
 					),
-				)
 			),
 			modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
 		)

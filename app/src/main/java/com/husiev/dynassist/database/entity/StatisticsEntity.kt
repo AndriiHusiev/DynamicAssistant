@@ -1,12 +1,6 @@
 package com.husiev.dynassist.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.husiev.dynassist.components.main.utils.NO_DATA
 
 @Entity(
@@ -131,30 +125,6 @@ data class StatisticsWithVehicleNames(
 	@ColumnInfo(name = "max_frags_tank_name")
 	val maxFragsTankName: String?
 )
-
-fun StatisticsEntity.getMaxFields(): List<Int> {
-	return listOf<Int>(this.maxXpTankId?:0, this.maxDamageTankId?:0, this.maxFragsTankId?:0)
-}
-
-fun StatisticsEntity.fillMaxFields(vehicleData: List<VehicleShortDataEntity>) {
-	vehicleData.singleOrNull {
-		this.maxXpTankId == it.tankId
-	}?.let {
-		this.maxXpTank = it.name ?: NO_DATA
-	}
-	
-	vehicleData.singleOrNull {
-		this.maxFragsTankId == it.tankId
-	}?.let {
-		this.maxFragsTank = it.name ?: NO_DATA
-	}
-	
-	vehicleData.singleOrNull {
-		this.maxDamageTankId == it.tankId
-	}?.let {
-		this.maxDamageTank = it.name ?: NO_DATA
-	}
-}
 
 data class GlobalRatingSubSet(
 	@ColumnInfo(name = "global_rating")

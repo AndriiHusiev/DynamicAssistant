@@ -8,43 +8,36 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination
 import com.husiev.dynassist.R
-import com.husiev.dynassist.components.main.MainViewModel
 import com.husiev.dynassist.components.main.sessions.sessionsNavigationRoute
 import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
-import com.husiev.dynassist.components.main.summarysingle.SUMMARY_SINGLE_ARG
-import com.husiev.dynassist.components.main.technics.TechnicsViewModel
 import com.husiev.dynassist.components.main.technics.technicsNavigationRoute
-import com.husiev.dynassist.components.main.technicssingle.TECHNICS_SINGLE_ARG
-import com.husiev.dynassist.components.main.utils.DaAppState
 import com.husiev.dynassist.components.start.composables.DaTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(
-	mainViewModel: MainViewModel,
-	appState: DaAppState,
+	title: String,
+	currentDestination: NavDestination?,
+	onReloadClick: () -> Unit,
 	onSortClick: () -> Unit,
 	onFilterClick: () -> Unit,
+	navigateUp: () -> Unit,
+	navigateToDetails: () -> Unit,
 	modifier: Modifier = Modifier,
-	technicsViewModel: TechnicsViewModel = hiltViewModel(),
 ) {
-	var title = technicsViewModel.nickname
 	var navigationIconContentDescription: String? = null
 	var actionIconContentDescription: String? = null
 	var navigationIcon: ImageVector? = null
 	var actionIcon: ImageVector? = null
 	var onNavigationClick: () -> Unit = {}
 	var onActionClick: () -> Unit = {}
-	val vehicleData by technicsViewModel.vehicleData.collectAsStateWithLifecycle()
 	
-	appState.currentDestination?.let {
+	currentDestination?.let {
 		when(it.route) {
 			summaryNavigationRoute,
 			sessionsNavigationRoute -> {
@@ -53,10 +46,10 @@ fun MainTopBar(
 				navigationIconContentDescription = stringResource(R.string.description_account_details)
 				actionIconContentDescription = stringResource(R.string.description_refresh)
 				onNavigationClick = {
-					appState.navigateToDetails()
+					navigateToDetails()
 				}
 				onActionClick = {
-					mainViewModel.getAccountAllData()
+					onReloadClick()
 				}
 			}
 			
@@ -74,22 +67,9 @@ fun MainTopBar(
 			}
 			
 			else -> {
-				val argKeys = it.arguments.keys
-				if (argKeys.isNotEmpty()) {
-					when(val arg = argKeys.first()) {
-						SUMMARY_SINGLE_ARG -> appState.getIntDestArg(arg)?.let { param ->
-							title = mainViewModel.getTitleById(param) ?: technicsViewModel.nickname
-						}
-						TECHNICS_SINGLE_ARG -> appState.getIntDestArg(arg)?.let { id ->
-							title = vehicleData.singleOrNull { vehicle ->
-								vehicle.tankId == id
-							}?.name ?: ""
-						}
-					}
-				}
 				navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
 				navigationIconContentDescription = stringResource(R.string.description_back)
-				onNavigationClick = { appState.navController.popBackStack() }
+				onNavigationClick = { navigateUp() }
 			}
 		}
 	}

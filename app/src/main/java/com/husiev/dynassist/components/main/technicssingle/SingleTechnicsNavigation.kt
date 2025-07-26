@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 
 const val TECHNICS_SINGLE_ARG = "single_id"
 const val technicsSingleRoute = "technics_single"
+const val technicsSingleFullRoute = "$technicsSingleRoute/{$TECHNICS_SINGLE_ARG}"
 
 fun NavController.navigateToTechnicsSingle(singleArg: Int, navOptions: NavOptions? = null) {
 	this.navigate("$technicsSingleRoute/$singleArg", navOptions)
@@ -16,12 +17,11 @@ fun NavController.navigateToTechnicsSingle(singleArg: Int, navOptions: NavOption
 
 fun NavGraphBuilder.technicsSingleScreen() {
 	composable(
-		route = "$technicsSingleRoute/{$TECHNICS_SINGLE_ARG}",
+		route = technicsSingleFullRoute,
 		arguments = listOf(
 			navArgument(TECHNICS_SINGLE_ARG) { type = NavType.IntType },
 		),
 	) { navBackStackEntry ->
-		val singleArg = navBackStackEntry.arguments?.getInt(TECHNICS_SINGLE_ARG)
-		SingleTechnicsContent(singleId = singleArg)
+		SingleTechnicsContent()
 	}
 }

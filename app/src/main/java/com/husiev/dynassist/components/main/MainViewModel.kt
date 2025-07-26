@@ -2,6 +2,7 @@ package com.husiev.dynassist.components.main
 
 import android.content.Context
 import android.graphics.Color
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,33 +13,20 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.husiev.dynassist.components.main.composables.FilterTechnics
 import com.husiev.dynassist.components.main.composables.SortTechnics
-import com.husiev.dynassist.network.dataclasses.DataState
+import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
+import com.husiev.dynassist.database.entity.VehicleInfoEntity
 import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import com.husiev.dynassist.network.NetworkRepository
-import com.husiev.dynassist.network.dataclasses.NetworkAccountClanData
-import com.husiev.dynassist.network.dataclasses.NetworkAccountPersonalData
-import com.husiev.dynassist.network.dataclasses.NetworkVehicleInfoItem
-import com.husiev.dynassist.network.dataclasses.asEntity
+import com.husiev.dynassist.network.dataclasses.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
-import androidx.core.graphics.drawable.toDrawable
-import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
-import com.husiev.dynassist.network.dataclasses.ResultWrapper
-import com.husiev.dynassist.network.dataclasses.toFormattedString
-import kotlinx.coroutines.Dispatchers
-import kotlin.collections.emptyList
 
 private const val ACCOUNT_ID = "account_id"
 private const val NICKNAME = "nickname"
@@ -53,6 +41,7 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
 	
 	val accountId: Int = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
+	val nickname: String = savedStateHandle.get<String>(NICKNAME) ?: ""
 	
 	init {
 		databaseRepository.accountId = savedStateHandle.get<Int>(ACCOUNT_ID) ?: 0
@@ -75,7 +64,7 @@ class MainViewModel @Inject constructor(
 		_filterTechnics.value = filter
 	}
 	
-	fun getTitleById(id: Int) = uiMapper.getTitleById(id)
+	fun getParamTitles() = uiMapper.getTitles()
 	
 	fun switchNotification(state: Boolean) {
 		viewModelScope.launch {
@@ -92,6 +81,14 @@ class MainViewModel @Inject constructor(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
 				initialValue = NotifyEnum.UNCHECKED
+			)
+	
+	val vehicles: StateFlow<List<VehicleInfoEntity>> =
+		databaseRepository.getAllVehiclesInfo()
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.WhileSubscribed(5_000),
+				initialValue = emptyList()
 			)
 	
 	private val _queryStatus = MutableStateFlow<DataState>(DataState.StandBy)
@@ -151,7 +148,7 @@ class MainViewModel @Inject constructor(
 			// Add all downloaded data to database
 			savePersonalData(personalData, databaseRepository)
 			saveClanData(context, clanData, databaseRepository)
-			if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesShortData(networkVehicleInfo)
+			if (networkVehicleInfo.isNotEmpty()) databaseRepository.addVehiclesInfo(networkVehicleInfo)
 			if (vehicles.isNotEmpty()) databaseRepository.addVehiclesStatData(vehicles)
 		}
 	}

@@ -4,25 +4,13 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +18,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,57 +30,45 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.composables.SmoothLineGraph
 import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summarysingle.SingleSummaryCardItem
-import com.husiev.dynassist.components.main.technics.TechnicsViewModel
-import com.husiev.dynassist.components.main.utils.FullAccStatData
-import com.husiev.dynassist.components.main.utils.DaElevatedCard
-import com.husiev.dynassist.components.main.utils.NO_DATA
-import com.husiev.dynassist.components.main.utils.SummaryGroup
-import com.husiev.dynassist.components.main.utils.VehicleData
-import com.husiev.dynassist.components.main.utils.bigToString
-import com.husiev.dynassist.components.main.utils.flagToResId
-import com.husiev.dynassist.components.main.utils.masteryToResId
-import com.husiev.dynassist.components.main.utils.roleResId
-import com.husiev.dynassist.database.entity.asStringDate
+import com.husiev.dynassist.components.main.utils.*
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
 
 @Composable
 fun SingleTechnicsContent(
 	modifier: Modifier = Modifier,
-	singleId: Int? = null,
-	viewModel: TechnicsViewModel = hiltViewModel(),
+	viewModel: SingleTechnicsViewModel = hiltViewModel(),
 ) {
 	val state = rememberLazyListState()
 	val vehicleData by viewModel.vehicleData.collectAsStateWithLifecycle()
-	val singleItem = vehicleData.singleOrNull { it.tankId == singleId }
 	
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
 		state = state,
 	) {
-		singleItem?.let { item ->
+		vehicleData?.let { item ->
 			item {
 				SingleTechnicsImageCard(
-					urlIcon = item.urlBigIcon,
-					nation = item.nation,
-					description = item.description,
-					role = item.type,
-					tier = item.tier,
-					priceCredit = item.priceCredit,
-					priceGold = item.priceGold,
+					urlIcon = item.info.urlBigIcon,
+					nation = item.info.nation,
+					description = item.info.description,
+					role = item.info.type,
+					tier = item.info.tier,
+					priceCredit = item.info.priceCredit,
+					priceGold = item.info.priceGold,
 					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
 				)
 			}
 			item {
-//				SmoothLineGraph(
-//					item.stat[1].values,
-//					item.stat[2].values?.map { it.toInt().asStringDate("shortest") },
-//					Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big))
-//				)
+				SmoothLineGraph(
+					graphData = item.victories,
+					dateData = item.dates,
+					modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big))
+				)
 			}
 			
 			item {
 				SingleTechnicsCard(
-					item = item,
+					item = item.ui,
 					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
 				)
 			}
@@ -206,12 +181,9 @@ fun SingleTechnicsImageCard(
 
 @Composable
 fun SingleTechnicsCard(
-	item: VehicleData,
+	item: VehicleUiData,
 	modifier: Modifier = Modifier,
 ) {
-	val battles = item.stat[0]
-	val wins = item.stat[1]
-	
 	DaElevatedCard(modifier = modifier) {
 		Text(
 			text = stringResource(R.string.title_details),
@@ -223,29 +195,29 @@ fun SingleTechnicsCard(
 		Column(modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))) {
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_battles),
-				value = item.battles.doubleBubble(battles.sessionAbsValue)
+				value = item.battles
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_victories),
-				value = item.wins.doubleBubble(wins.sessionAbsValue)
+				value = item.victories
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.vehicle_win_rate),
-				value = wins.mainValue
+				value = item.winRate
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.average_value_per_session),
-				value = wins.sessionAvgValue
+				value = item.sessionAvgValue
 			)
 			
 			SingleSummaryCardItem(
 				title = stringResource(R.string.session_impact),
-				value = wins.sessionImpactValue,
-				imageVector = wins.imageVector,
-				color = wins.color
+				value = item.sessionImpactValue,
+				imageVector = item.imageVector,
+				color = item.color
 			)
 			
 			SingleSummaryCardItem(
@@ -255,13 +227,6 @@ fun SingleTechnicsCard(
 			)
 		}
 	}
-}
-
-fun Int.doubleBubble(session: String?): String {
-	return if (session != null && session != NO_DATA)
-		"$session / " + this.bigToString()
-	else
-		this.bigToString()
 }
 
 @Preview(showBackground = true)
@@ -286,7 +251,7 @@ fun SingleTechnicsCardItemPreview() {
 				SmoothLineGraph(null, null,
 					Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big)))
 				
-				SingleTechnicsCard(
+/*				SingleTechnicsCard(
 					item = VehicleData(
 						tankId = 1,
 						markOfMastery = 1,
@@ -338,7 +303,7 @@ fun SingleTechnicsCardItemPreview() {
 						)
 					),
 					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
-				)
+				)*/
 			}
 		}
 	}

@@ -98,6 +98,8 @@ class DaAppState(
 		navController.navigateToTechnicsSingle(singleArg, navOptions)
 	}
 	
+	fun navigateUp() = navController.navigateUp()
+	
 	@Composable
 	fun getStringDestArg(key: String): String? =
 		 navController.currentBackStackEntryAsState().value?.arguments?.getString(key)

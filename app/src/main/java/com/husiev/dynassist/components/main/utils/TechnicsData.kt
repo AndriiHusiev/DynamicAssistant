@@ -1,32 +1,48 @@
 package com.husiev.dynassist.components.main.utils
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.husiev.dynassist.R
+import com.husiev.dynassist.database.entity.VehicleInfoEntity
 
-data class VehicleData(
+data class ReducedVehicleData(
 	val tankId: Int,
 	val markOfMastery: Int,
 	val battles: Int,
-	val wins: Int,
 	val winRate: Float,
 	val lastBattleTime: String,
 	val name: String? = null,
 	val type: String? = null,
-	val description: String? = null,
 	val nation: String? = null,
-	val urlSmallIcon: String? = null,
 	val urlBigIcon: String? = null,
 	val tier: Int? = null,
-	val priceGold: Int? = null,
-	val priceCredit: Int? = null,
 	val isPremium: Boolean? = null,
 	val isGift: Boolean? = null,
 	val isWheeled: Boolean? = null,
-	val stat: List<FullAccStatData>,
-) : Comparable<VehicleData> {
-	override fun compareTo(other: VehicleData): Int {
+	val stat: FullAccStatData,
+) : Comparable<ReducedVehicleData> {
+	override fun compareTo(other: ReducedVehicleData): Int {
 		return compareValuesBy(this, other, { it.battles }, { it.type }, { it.tier }, { it.nation }, { it.winRate }, { it.isPremium })
 	}
 }
+
+data class VehicleData(
+	val info: VehicleInfoEntity,
+	val ui: VehicleUiData,
+	val victories: List<Float>,
+	val dates: List<String>,
+)
+
+data class VehicleUiData(
+	val battles: String,
+	val victories: String,
+	val winRate: String,
+	val sessionAvgValue: String,
+	val sessionImpactValue: String,
+	val markOfMastery: Int,
+	val color: Color?,
+	val imageVector: ImageVector?,
+)
 
 fun masteryToResId(markOfMastery: Int) = when(markOfMastery) {
 	1 -> R.drawable.ic_step_mark_3

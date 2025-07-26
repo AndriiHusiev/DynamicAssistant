@@ -74,7 +74,7 @@ class StatisticsUIMapper @Inject constructor(
 			lst.map { it?.lastBattleTime?.toFloat() } },
 	)
 	
-	fun getTitleById(id: Int) = statsToProcess.find { it.statId == id }?.title
+	fun getTitles() = statsToProcess.map { Pair(it.statId, it.title) }
 	
 	/**
 	 * Prepares full parameters list with session impact

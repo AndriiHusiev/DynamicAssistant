@@ -19,7 +19,7 @@ import com.husiev.dynassist.R
 enum class TopLevelDestination(
 	val selectedIcon: ImageVector,
 	val unselectedIcon: ImageVector,
-	@StringRes val iconTextId: Int,
+	@param:StringRes val iconTextId: Int,
 ) {
 	SUMMARY(
 		selectedIcon = Icons.Filled.Home,

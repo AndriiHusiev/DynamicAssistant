@@ -1,7 +1,6 @@
 package com.husiev.dynassist.database
 
 import com.husiev.dynassist.components.main.utils.AccountPersonalData
-import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
 import com.husiev.dynassist.components.main.utils.asEntity
 import com.husiev.dynassist.components.start.utils.StartAccountInfo
 import com.husiev.dynassist.components.start.utils.asEntity
@@ -88,17 +87,27 @@ class DatabaseRepository @Inject constructor(
 	fun getPlayerClanInfo() =
 		database.clanDataDao().loadClanData(accountId)
 	
-	suspend fun addVehiclesShortData(data: List<NetworkVehicleInfoItem>) =
-		database.vehicleShortDao().insertOrReplace(data.asEntity())
+	suspend fun addVehiclesInfo(data: List<NetworkVehicleInfoItem>) =
+		database.vehicleInfoDao().insertOrReplace(data.asEntity())
 	
-	fun getExactVehiclesShortData(vehicles: List<Int>) =
-		database.vehicleShortDao().loadExactVehicleShortData(vehicles)
+	fun getExactVehiclesInfo(vehicles: List<Int>) =
+		database.vehicleInfoDao().loadExactVehicleInfo(vehicles)
 	
 	fun getVehiclesIds(vehicles: List<Int>) =
-		database.vehicleShortDao().loadExactVehicleIds(vehicles)
+		database.vehicleInfoDao().loadExactVehicleIds(vehicles)
+	
+	fun getAllVehiclesInfo() =
+		database.vehicleInfoDao().loadVehicleInfo()
 	
 	suspend fun addVehiclesStatData(data: List<VehicleStatDataEntity>) =
 		database.vehicleStatDao().insertAll(data)
 	
-	fun getAllVehiclesStatData() = database.vehicleStatDao().loadAllVehiclesStatData(accountId)
+	fun getAllVehiclesStatData() =
+		database.vehicleStatDao().loadAllVehiclesStatData(accountId)
+	
+	fun getFlatVehiclesData() =
+		database.vehicleStatDao().loadFlatVehiclesWithInfo(accountId)
+	
+	fun getFlatVehicleData(tankId: Int) =
+		database.vehicleStatDao().loadFlatVehicleWithInfo(accountId, tankId)
 }

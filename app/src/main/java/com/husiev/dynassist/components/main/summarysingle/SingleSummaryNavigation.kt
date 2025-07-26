@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 
 const val SUMMARY_SINGLE_ARG = "single_summary"
 const val summarySingleRoute = "summary_single"
+const val summarySingleFullRoute = "$summarySingleRoute/{$SUMMARY_SINGLE_ARG}"
 
 fun NavController.navigateToSummarySingle(singleArg: Int, navOptions: NavOptions? = null) {
 	this.navigate("$summarySingleRoute/$singleArg", navOptions)
@@ -16,7 +17,7 @@ fun NavController.navigateToSummarySingle(singleArg: Int, navOptions: NavOptions
 
 fun NavGraphBuilder.summarySingleScreen() {
 	composable(
-		route = "$summarySingleRoute/{$SUMMARY_SINGLE_ARG}",
+		route = summarySingleFullRoute,
 		arguments = listOf(
 			navArgument(SUMMARY_SINGLE_ARG) { type = NavType.IntType },
 		),

@@ -4,19 +4,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.husiev.dynassist.database.entity.VehicleShortDataEntity
+import com.husiev.dynassist.database.entity.VehicleInfoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface VehicleShortDao: BaseDao<VehicleShortDataEntity> {
+interface VehicleInfoDao: BaseDao<VehicleInfoEntity> {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	suspend fun insertOrReplace(list: List<VehicleShortDataEntity>)
+	suspend fun insertOrReplace(list: List<VehicleInfoEntity>)
 	
 	@Query("SELECT * FROM vehicle_short_data")
-	fun loadVehicleShortData(): Flow<List<VehicleShortDataEntity>>
+	fun loadVehicleInfo(): Flow<List<VehicleInfoEntity>>
 	
 	@Query("SELECT * FROM vehicle_short_data WHERE tank_id IN (:tanks)")
-	fun loadExactVehicleShortData(tanks: List<Int>): Flow<List<VehicleShortDataEntity>>
+	fun loadExactVehicleInfo(tanks: List<Int>): Flow<List<VehicleInfoEntity>>
 	
 	@Query("SELECT tank_id FROM vehicle_short_data WHERE tank_id IN (:tanks)")
 	fun loadExactVehicleIds(tanks: List<Int>): Flow<List<Int>>
