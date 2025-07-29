@@ -1,14 +1,7 @@
 package com.husiev.dynassist.components.main.composables
 
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.NavigationRailItemDefaults
-import androidx.compose.material3.Text
+import androidx.compose.animation.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,36 +11,42 @@ import com.husiev.dynassist.components.main.navigation.TopLevelDestination
 
 @Composable
 fun MainBottomBar(
+	show: Boolean,
 	destinations: List<TopLevelDestination>,
 	currentDestination: NavDestination?,
 	modifier: Modifier = Modifier,
 	onNavigateToDestination: (TopLevelDestination) -> Unit = {},
 ) {
-	
-	NavigationBar(
-		modifier = modifier,
+	AnimatedVisibility(
+		visible = show,
+		enter = slideInVertically { it } + fadeIn(),
+		exit = slideOutVertically { it } + fadeOut()
 	) {
-		destinations.forEach { dst ->
-			val selected = currentDestination.isTopLevelDestinationInHierarchy(dst)
-			
-			NavigationBarItem(
-				selected = selected,
-				onClick = { onNavigateToDestination(dst) },
-				icon = {
-					Icon(
-						imageVector = if (selected) dst.selectedIcon else dst.unselectedIcon,
-						contentDescription = null,
-					)
-				},
-				label = { Text(stringResource(dst.iconTextId)) },
-				colors = NavigationBarItemDefaults.colors(
-					selectedIconColor = NavigationDefaults.navigationSelectedItemColor(),
-					unselectedIconColor = NavigationDefaults.navigationContentColor(),
-					selectedTextColor = NavigationDefaults.navigationSelectedItemColor(),
-					unselectedTextColor = NavigationDefaults.navigationContentColor(),
-					indicatorColor = NavigationDefaults.navigationIndicatorColor(),
-				),
-			)
+		NavigationBar(
+			modifier = modifier,
+		) {
+			destinations.forEach { dst ->
+				val selected = currentDestination.isTopLevelDestinationInHierarchy(dst)
+				
+				NavigationBarItem(
+					selected = selected,
+					onClick = { onNavigateToDestination(dst) },
+					icon = {
+						Icon(
+							imageVector = if (selected) dst.selectedIcon else dst.unselectedIcon,
+							contentDescription = null,
+						)
+					},
+					label = { Text(stringResource(dst.iconTextId)) },
+					colors = NavigationBarItemDefaults.colors(
+						selectedIconColor = NavigationDefaults.navigationSelectedItemColor(),
+						unselectedIconColor = NavigationDefaults.navigationContentColor(),
+						selectedTextColor = NavigationDefaults.navigationSelectedItemColor(),
+						unselectedTextColor = NavigationDefaults.navigationContentColor(),
+						indicatorColor = NavigationDefaults.navigationIndicatorColor(),
+					),
+				)
+			}
 		}
 	}
 }

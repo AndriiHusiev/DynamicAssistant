@@ -16,6 +16,7 @@ kotlin = "2.2.0"
 kotlinReflect = "2.1.21"
 kotlinxSerializationJson = "1.9.0"
 lifecycleRuntimeKtx = "2.9.2"
+navigationCompose = "2.9.2"
 okhttp = "5.1.0"
 retrofit = "3.0.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
@@ -41,7 +42,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 androidx-material-icons-extended-android = { group = "androidx.compose.material", name = "material-icons-extended-android" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material3-window-size-clazz = { group = "androidx.compose.material3", name = "material3-window-size-class" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }

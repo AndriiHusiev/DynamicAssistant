@@ -1,5 +1,10 @@
 package com.husiev.dynassist.components.main.summarysingle
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -21,6 +26,10 @@ fun NavGraphBuilder.summarySingleScreen() {
 		arguments = listOf(
 			navArgument(SUMMARY_SINGLE_ARG) { type = NavType.IntType },
 		),
+		enterTransition = { slideInHorizontally(tween()) { it } + fadeIn(tween()) },
+		exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
+		popEnterTransition = { slideInHorizontally(tween()) { -it } + fadeIn(tween()) },
+		popExitTransition = { slideOutHorizontally(tween()) { it } + fadeOut(tween()) }
 	) { navBackStackEntry ->
 		SingleSummaryContent()
 	}

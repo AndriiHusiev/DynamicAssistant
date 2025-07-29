@@ -3,11 +3,11 @@ package com.husiev.dynassist.components.main.technicssingle
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
@@ -18,10 +18,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,54 +40,188 @@ import com.husiev.dynassist.components.main.summary.MainDivider
 import com.husiev.dynassist.components.main.summarysingle.SingleSummaryCardItem
 import com.husiev.dynassist.components.main.utils.*
 import com.husiev.dynassist.ui.theme.DynamicAssistantTheme
+import com.husiev.dynassist.ui.theme.md_theme_dark_secondary
+
+private const val FlagRatio = 278f / 102f
+private val titleHeight = 52.dp
+private val minHeaderHeight = titleHeight * 2f
+private var maxHeaderHeight = 240.dp
+private var expandedImageSize = maxHeaderHeight - titleHeight
+private val collapsedImageSize = minHeaderHeight
 
 @Composable
 fun SingleTechnicsContent(
+	upPress: () -> Unit,
 	modifier: Modifier = Modifier,
 	viewModel: SingleTechnicsViewModel = hiltViewModel(),
 ) {
-	val state = rememberLazyListState()
 	val vehicleData by viewModel.vehicleData.collectAsStateWithLifecycle()
+	val screenWidth = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.width.toDp() }
+	maxHeaderHeight = screenWidth / 1.6f
 	
-	LazyColumn(
+	Box(
 		modifier = modifier.fillMaxSize(),
-		state = state,
 	) {
-		vehicleData?.let { item ->
-			item {
-				SingleTechnicsImageCard(
-					urlIcon = item.info.urlBigIcon,
-					nation = item.info.nation,
-					description = item.info.description,
-					role = item.info.type,
-					tier = item.info.tier,
-					priceCredit = item.info.priceCredit,
-					priceGold = item.info.priceGold,
-					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
-				)
+		val scroll = rememberScrollState(0)
+		Body(vehicleData, scroll)
+		Header(vehicleData?.info?.nation ?: "") { scroll.value }
+		Title(vehicleData?.info?.name ?: "--") { scroll.value }
+		Image(vehicleData?.info?.urlBigIcon) { scroll.value }
+		Up(upPress)
+	}
+}
+
+@Composable
+private fun Header(flag: String, scrollProvider: () -> Int) {
+	val density = LocalDensity.current
+	val maxHeight = with(density) { (maxHeaderHeight).toPx() }
+	val minHeight = with(density) { (minHeaderHeight).toPx() }
+	val scroll = scrollProvider()
+	val height = with(density) { (maxHeight - scroll).coerceAtLeast(minHeight).toDp() }
+	
+	Column(modifier = Modifier.fillMaxWidth().background(md_theme_dark_secondary)) {
+		Box(
+			modifier = Modifier
+				.size(height * FlagRatio, height)
+		) {
+			Image(
+				painter = painterResource(flagToResId(flag)),
+				contentDescription = null,
+				modifier = Modifier.fillMaxHeight(),
+				alignment = Alignment.CenterStart,
+				contentScale = ContentScale.FillHeight
+			)
+		}
+		HorizontalDivider(color = Color.Black)
+	}
+}
+
+@Composable
+private fun Title(title: String, scrollProvider: () -> Int) {
+	val density = LocalDensity.current
+	val maxOffset = with(density) { (maxHeaderHeight - titleHeight).toPx() }
+	val minOffset = with(density) { ((minHeaderHeight - titleHeight)).toPx() }
+	
+	val gradientBrush = Brush.verticalGradient(listOf(
+		Color(0x66000000),
+		Color(0x00000000)))
+	
+	Column(
+		verticalArrangement = Arrangement.Bottom,
+		modifier = Modifier
+			.fillMaxWidth()
+			.heightIn(min = titleHeight)
+			.offset {
+				val scroll = scrollProvider()
+				val offset = (maxOffset - scroll).coerceAtLeast(minOffset)
+				IntOffset(x = 0, y = offset.toInt())
 			}
-			item {
-				SmoothLineGraph(
-					graphData = item.victories,
-					dateData = item.dates,
-					modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big))
-				)
-			}
-			
-			item {
-				SingleTechnicsCard(
-					item = item.ui,
-					modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
-				)
+			.background(gradientBrush)
+	) {
+		Text(
+			text = title,
+			modifier = Modifier.padding(horizontal = 16.dp)
+				.fillMaxWidth()
+				.padding(8.dp),
+			overflow = TextOverflow.Ellipsis,
+			maxLines = 1,
+			style = MaterialTheme.typography.headlineSmall,
+			fontWeight = FontWeight.Bold
+		)
+	}
+}
+
+@Composable
+private fun Body(vehicleData: VehicleData?, scroll: ScrollState) {
+	Column(
+		modifier = Modifier.verticalScroll(scroll),
+	) {
+		Spacer(Modifier.height(maxHeaderHeight))
+		
+		Box(Modifier.fillMaxWidth()){
+			Column {
+				vehicleData?.let { item ->
+					SingleTechnicsImageCard(
+						description = item.info.description,
+						role = item.info.type,
+						tier = item.info.tier,
+						priceCredit = item.info.priceCredit,
+						priceGold = item.info.priceGold,
+						modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+					)
+					
+					SmoothLineGraph(
+						graphData = item.victories,
+						dateData = item.dates,
+						modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_big))
+					)
+					
+					SingleTechnicsCard(
+						item = item.ui,
+						modifier = Modifier.padding(dimensionResource(R.dimen.padding_big))
+					)
+				}
 			}
 		}
 	}
 }
 
 @Composable
-fun SingleTechnicsImageCard(
+private fun Image(
 	urlIcon: String?,
-	nation: String?,
+	scrollProvider: () -> Int,
+) {
+	val density = LocalDensity.current
+	val gradientBrush = Brush.radialGradient(
+		colors = listOf(Color(0xFF515138), Color(0x00515138)),
+		radius = with(density) { minHeaderHeight.toPx() / 2f }
+	)
+	expandedImageSize = maxHeaderHeight - titleHeight
+	val scroll = scrollProvider()
+	val maxHeight = with(density) { (expandedImageSize).toPx() }
+	val minHeight = with(density) { (collapsedImageSize).toPx() }
+	val height = with(density) { (maxHeight - scroll).coerceAtLeast(minHeight).toDp() }
+	val width = height * 1.6f
+	
+	Box(
+		modifier = Modifier.fillMaxWidth(),
+		contentAlignment = Alignment.CenterEnd
+	) {
+		AsyncImage(
+			model = urlIcon,
+			error = painterResource(R.drawable.ic_tank_empty),
+			placeholder = painterResource(R.drawable.ic_tank_empty),
+			contentDescription = null,
+			modifier = Modifier
+				.background(gradientBrush)
+				.size(width, height)
+		)
+	}
+}
+
+@Composable
+private fun Up(upPress: () -> Unit) {
+	IconButton(
+		onClick = upPress,
+		modifier = Modifier
+			.statusBarsPadding()
+			.padding(horizontal = 8.dp, vertical = 8.dp)
+			.size(36.dp)
+			.background(
+				color = Color(0x52121212),
+				shape = CircleShape,
+			),
+	) {
+		Icon(
+			imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+			tint = Color.White,
+			contentDescription = stringResource(R.string.description_back),
+		)
+	}
+}
+
+@Composable
+fun SingleTechnicsImageCard(
 	description: String?,
 	role: String?,
 	tier: Int?,
@@ -124,23 +266,6 @@ fun SingleTechnicsImageCard(
 			}
 			
 			if (expanded) {
-				Box(modifier = Modifier) {
-					Image(
-						painter = painterResource(flagToResId(nation)),
-						contentDescription = null,
-						modifier = Modifier.size(347.dp, 127.dp)
-					)
-					AsyncImage(
-						model = urlIcon,
-						error = painterResource(R.drawable.ic_tank_empty),
-						placeholder = painterResource(R.drawable.ic_tank_empty),
-						contentDescription = null,
-						modifier = Modifier
-							.fillMaxWidth()
-							.size(200.dp, 127.dp)
-					)
-				}
-				
 				Text(
 					text = description ?: "",
 					modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
@@ -238,8 +363,8 @@ fun SingleTechnicsCardItemPreview() {
 		) {
 			Column {
 				SingleTechnicsImageCard(
-					urlIcon = "https://api.worldoftanks.eu/static/2.71.0/wot/encyclopedia/vehicle/ussr-R04_T-34.png",
-					nation = "ussr",
+//					urlIcon = "https://api.worldoftanks.eu/static/2.71.0/wot/encyclopedia/vehicle/ussr-R04_T-34.png",
+//					nation = "ussr",
 					description = "The legend of the Soviet armored forces and the most widely-produced Soviet tank of World War II, with a total of 33,805 vehicles manufactured. Three variants of this model were produced at several Soviet factories from 1940 through 1944.",
 					role = "mediumTank",
 					tier = 5,

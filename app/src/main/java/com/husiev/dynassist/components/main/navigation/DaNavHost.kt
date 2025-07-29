@@ -45,6 +45,8 @@ fun DaNavHost(
 		
 		summarySingleScreen()
 		
-		technicsSingleScreen()
+		technicsSingleScreen(
+			upPress = navController::navigateUp
+		)
 	}
 }

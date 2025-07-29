@@ -40,13 +40,16 @@ class DaAppState(
 	val navController: NavHostController,
 ) {
 	val shouldShowBottomBar: Boolean
-		get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
+		@Composable get() = isTopLevelDestination && windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
 	
 	val shouldShowNavRail: Boolean
-		get() = !shouldShowBottomBar
+		@Composable get() = isTopLevelDestination && !shouldShowBottomBar
 	
 	val currentDestination: NavDestination?
 		@Composable get() = navController.currentBackStackEntryAsState().value?.destination
+	
+	val isTopLevelDestination: Boolean
+		@Composable get() = topLevelDestinations.any { it.route == currentDestination?.route }
 	
 	/**
 	 * Map of top level destinations to be used in the TopBar, BottomBar and NavRail. The key is the

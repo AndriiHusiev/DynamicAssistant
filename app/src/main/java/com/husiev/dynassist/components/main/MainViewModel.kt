@@ -16,7 +16,6 @@ import com.husiev.dynassist.components.main.composables.SortTechnics
 import com.husiev.dynassist.components.main.utils.StatisticsUIMapper
 import com.husiev.dynassist.components.start.composables.NotifyEnum
 import com.husiev.dynassist.database.DatabaseRepository
-import com.husiev.dynassist.database.entity.VehicleInfoEntity
 import com.husiev.dynassist.database.entity.VehicleStatDataEntity
 import com.husiev.dynassist.network.NetworkRepository
 import com.husiev.dynassist.network.dataclasses.*
@@ -81,14 +80,6 @@ class MainViewModel @Inject constructor(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
 				initialValue = NotifyEnum.UNCHECKED
-			)
-	
-	val vehicles: StateFlow<List<VehicleInfoEntity>> =
-		databaseRepository.getAllVehiclesInfo()
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.WhileSubscribed(5_000),
-				initialValue = emptyList()
 			)
 	
 	private val _queryStatus = MutableStateFlow<DataState>(DataState.StandBy)

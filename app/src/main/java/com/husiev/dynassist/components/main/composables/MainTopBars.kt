@@ -1,5 +1,7 @@
 package com.husiev.dynassist.components.main.composables
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -16,6 +18,7 @@ import com.husiev.dynassist.R
 import com.husiev.dynassist.components.main.sessions.sessionsNavigationRoute
 import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
 import com.husiev.dynassist.components.main.technics.technicsNavigationRoute
+import com.husiev.dynassist.components.main.technicssingle.technicsSingleFullRoute
 import com.husiev.dynassist.components.start.composables.DaTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +39,7 @@ fun MainTopBar(
 	var actionIcon: ImageVector? = null
 	var onNavigationClick: () -> Unit = {}
 	var onActionClick: () -> Unit = {}
+	var show = true
 	
 	currentDestination?.let {
 		when(it.route) {
@@ -66,6 +70,10 @@ fun MainTopBar(
 				}
 			}
 			
+			technicsSingleFullRoute -> {
+				show = false
+			}
+			
 			else -> {
 				navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
 				navigationIconContentDescription = stringResource(R.string.description_back)
@@ -74,14 +82,18 @@ fun MainTopBar(
 		}
 	}
 	
-	DaTopAppBar(
-		title = title,
-		modifier = modifier,
-		navigationIcon = navigationIcon,
-		navigationIconContentDescription = navigationIconContentDescription,
-		onNavigationClick = onNavigationClick,
-		actionIcon = actionIcon,
-		actionIconContentDescription = actionIconContentDescription,
-		onActionClick = onActionClick,
-	)
+	Box(modifier = Modifier.animateContentSize()) {
+		if (show) {
+			DaTopAppBar(
+				title = title,
+				modifier = modifier,
+				navigationIcon = navigationIcon,
+				navigationIconContentDescription = navigationIconContentDescription,
+				onNavigationClick = onNavigationClick,
+				actionIcon = actionIcon,
+				actionIconContentDescription = actionIconContentDescription,
+				onActionClick = onActionClick,
+			)
+		}
+	}
 }

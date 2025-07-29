@@ -1,5 +1,6 @@
 package com.husiev.dynassist.components.main.composables
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -20,13 +21,10 @@ import com.husiev.dynassist.components.main.summary.summaryNavigationRoute
 import com.husiev.dynassist.components.main.summarysingle.SUMMARY_SINGLE_ARG
 import com.husiev.dynassist.components.main.summarysingle.summarySingleFullRoute
 import com.husiev.dynassist.components.main.technics.technicsNavigationRoute
-import com.husiev.dynassist.components.main.technicssingle.TECHNICS_SINGLE_ARG
-import com.husiev.dynassist.components.main.technicssingle.technicsSingleFullRoute
 import com.husiev.dynassist.components.main.utils.DaAppState
-import com.husiev.dynassist.network.dataclasses.DataState
 import com.husiev.dynassist.components.main.utils.rememberDaAppState
 import com.husiev.dynassist.components.start.composables.NotifyEnum
-import com.husiev.dynassist.database.entity.VehicleInfoEntity
+import com.husiev.dynassist.network.dataclasses.DataState
 
 @Composable
 fun MainScreen(
@@ -41,13 +39,11 @@ fun MainScreen(
 	val sortTechnics by mainViewModel.sortTechnics.collectAsStateWithLifecycle()
 	val filterTechnics by mainViewModel.filterTechnics.collectAsStateWithLifecycle()
 	val queryResult by mainViewModel.queryStatus.collectAsStateWithLifecycle()
-	val vehicles by mainViewModel.vehicles.collectAsStateWithLifecycle()
 	val snackbarHostState = remember { SnackbarHostState() }
-	val title = remember(appState.currentDestination, vehicles) {
+	val title = remember(appState.currentDestination) {
 		determineTitle(
 			nickname = mainViewModel.nickname,
 			paramTitles = mainViewModel.getParamTitles(),
-			vehicleList = vehicles,
 			navController = appState.navController
 		)
 	}
@@ -111,24 +107,25 @@ fun MainScreen(
 			)
 		},
 		bottomBar = {
-			if (appState.shouldShowBottomBar) {
-				MainBottomBar(
-					destinations = appState.topLevelDestinations,
-					currentDestination = appState.currentDestination,
-					onNavigateToDestination = appState::navigateToTopLevelDestination,
-				)
-			}
+			MainBottomBar(
+				show = appState.shouldShowBottomBar,
+				destinations = appState.topLevelDestinations,
+				currentDestination = appState.currentDestination,
+				onNavigateToDestination = appState::navigateToTopLevelDestination,
+			)
 		},
 	) { innerPadding ->
 		Row(
 			Modifier.padding(innerPadding),
 		) {
-			if (appState.shouldShowNavRail) {
-				MainNavigationRail(
-					destinations = appState.topLevelDestinations,
-					onNavigateToDestination = appState::navigateToTopLevelDestination,
-					currentDestination = appState.currentDestination,
-				)
+			Box(modifier = Modifier.animateContentSize()) {
+				if (appState.shouldShowNavRail) {
+					MainNavigationRail(
+						destinations = appState.topLevelDestinations,
+						onNavigateToDestination = appState::navigateToTopLevelDestination,
+						currentDestination = appState.currentDestination,
+					)
+				}
 			}
 			
 			Box(Modifier.fillMaxSize()) {
@@ -151,7 +148,6 @@ fun MainScreen(
 fun determineTitle(
 	nickname: String,
 	paramTitles: List<Pair<Int, String>>,
-	vehicleList: List<VehicleInfoEntity>,
 	navController: NavHostController
 ): String {
 	val currentDestination = navController.currentDestination
@@ -168,14 +164,6 @@ fun determineTitle(
 			if (argKeys.isNotEmpty()) {
 				val paramId = navController.currentBackStackEntry?.arguments?.getInt(SUMMARY_SINGLE_ARG)
 				paramTitles.find { it.first == paramId }?.second ?: nickname
-			} else nickname
-		}
-		
-		technicsSingleFullRoute -> {
-			val argKeys = currentDestination.arguments.keys
-			if (argKeys.isNotEmpty()) {
-				val paramId = navController.currentBackStackEntry?.arguments?.getInt(TECHNICS_SINGLE_ARG)
-				vehicleList.find { it.tankId == paramId }?.name ?: nickname
 			} else nickname
 		}
 		
